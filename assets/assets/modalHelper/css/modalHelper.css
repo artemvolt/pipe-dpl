@@ -1,0 +1,23 @@
+/*Прелоадер*/
+.preloading {
+	position: fixed;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	z-index: 1050;
+	background-image: url("../img/preloading.gif");
+	background-repeat: no-repeat;
+	background-position: center center;
+}
+
+.preloading:after {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(0, 0, 0, .1);
+	z-index: 1049;
+}

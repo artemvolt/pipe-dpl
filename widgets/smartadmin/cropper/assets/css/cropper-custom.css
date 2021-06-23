@@ -1,0 +1,19 @@
+.img-container,
+.img-preview {
+	background-color: #f7f7f7;
+	text-align: center;
+	width: 100%;
+}
+
+.img-container {
+	max-height: 400px;
+	min-height: 200px;
+}
+
+.img-container > img {
+	max-width: 100%;
+}
+
+.cropper-view-box {
+	border-radius: 50%;
+}
