@@ -1,8 +1,10 @@
 <?php
 declare(strict_types = 1);
 
-namespace app\models\core\prototypes;
+namespace app\components\web;
 
+use app\components\db\ActiveRecordTrait;
+use app\models\core\prototypes\EditableFieldAction;
 use app\models\sys\permissions\filters\PermissionFilter;
 use app\models\sys\permissions\traits\ControllerPermissionsTrait;
 use app\modules\import\models\ImportAction;

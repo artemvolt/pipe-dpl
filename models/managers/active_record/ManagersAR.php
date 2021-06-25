@@ -3,7 +3,7 @@ declare(strict_types = 1);
 
 namespace app\models\managers\active_record;
 
-use app\models\core\prototypes\ActiveRecordTrait;
+use app\components\db\ActiveRecordTrait;
 use app\models\dealers\active_record\relations\RelDealersToManagers;
 use app\models\dealers\Dealers;
 use app\models\managers\active_record\relations\RelManagersToStores;

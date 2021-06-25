@@ -3,15 +3,14 @@ declare(strict_types = 1);
 
 namespace app\models\seller;
 
+use app\components\db\ActiveQuery;
 use app\models\dealers\Dealers;
 use app\models\managers\Managers;
 use app\models\store\Stores;
 use app\models\sys\users\Users;
 use app\modules\status\models\Status;
 use app\modules\status\models\StatusRulesModel;
-use pozitronik\core\models\LCQuery;
 use yii\data\ActiveDataProvider;
-use yii\db\ActiveQuery;
 use yii\helpers\ArrayHelper;
 use Throwable;
 
@@ -245,10 +244,10 @@ final class SellersSearch extends Sellers {
 	}
 
 	/**
-	 * @param LCQuery $query
+	 * @param ActiveQuery $query
 	 * @throws Throwable
 	 */
-	private function initQuery(LCQuery $query):void {
+	private function initQuery(ActiveQuery $query):void {
 		$query->select([
 			self::tableName().'.*',
 			Users::tableName().'.id AS userId',

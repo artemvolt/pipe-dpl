@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 namespace app\models\dealers;
 
+use app\components\db\ActiveQuery;
 use app\models\branches\active_record\references\RefBranches;
 use app\models\dealers\active_record\DealersAR;
 use app\models\dealers\active_record\references\RefDealersGroups;
@@ -12,7 +13,6 @@ use app\models\managers\Managers;
 use app\models\seller\Sellers;
 use app\models\store\Stores;
 use app\models\sys\users\Users;
-use pozitronik\core\models\LCQuery;
 use Throwable;
 use yii\data\ActiveDataProvider;
 use yii\helpers\ArrayHelper;
@@ -102,10 +102,10 @@ final class DealersSearch extends DealersAR {
 	}
 
 	/**
-	 * @param LCQuery $query
+	 * @param ActiveQuery $query
 	 * @throws Throwable
 	 */
-	private function initQuery(LCQuery $query):void {
+	private function initQuery(ActiveQuery $query):void {
 		$query->select([
 			self::tableName().'.*',
 			RefDealersGroups::tableName().'.name AS groupName',

@@ -8,7 +8,7 @@ use app\controllers\SellersController;
 use app\controllers\SiteController;
 use app\controllers\StoresController;
 use app\controllers\UsersController;
-use app\models\core\prototypes\DefaultController;
+use app\components\web\DefaultController;
 use app\models\sys\users\Users;
 use app\modules\fraud\FraudModule;
 use app\modules\history\HistoryModule;

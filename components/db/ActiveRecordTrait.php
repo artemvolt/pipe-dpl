@@ -1,10 +1,8 @@
 <?php
 declare(strict_types = 1);
 
-namespace app\models\core\prototypes;
+namespace app\components\db;
 
-use DomainException;
-use pozitronik\core\models\LCQuery;
 use pozitronik\helpers\ArrayHelper;
 use Throwable;
 use Yii;
@@ -21,10 +19,10 @@ use yii\db\Transaction;
 trait ActiveRecordTrait {
 
 	/**
-	 * @return LCQuery
+	 * @return ActiveQuery
 	 */
-	public static function find():LCQuery {
-		return new LCQuery(static::class);
+	public static function find():ActiveQuery {
+		return new ActiveQuery(static::class);
 	}
 
 	/**
@@ -204,13 +202,4 @@ trait ActiveRecordTrait {
 		return $model;
 	}
 
-	public function saveAndReturn():self {
-		if (!$this->save()) {
-			throw new DomainException(
-				"Не получилось сохранить запись" .
-				implode(". ", $this->getFirstErrors())
-			);
-		}
-		return $this;
-	}
 }

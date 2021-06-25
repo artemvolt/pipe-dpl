@@ -4,7 +4,7 @@ declare(strict_types = 1);
 namespace app\models\store\active_record;
 
 use app\models\branches\active_record\references\RefBranches;
-use app\models\core\prototypes\ActiveRecordTrait;
+use app\components\db\ActiveRecordTrait;
 use app\models\dealers\active_record\relations\RelDealersToStores;
 use app\models\dealers\Dealers;
 use app\models\managers\active_record\relations\RelManagersToStores;

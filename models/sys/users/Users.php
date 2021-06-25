@@ -3,7 +3,6 @@ declare(strict_types = 1);
 
 namespace app\models\sys\users;
 
-use app\models\core\prototypes\ActiveRecordTrait;
 use app\models\phones\Phones;
 use app\models\sys\permissions\traits\UsersPermissionsTrait;
 use app\models\sys\users\active_record\Users as ActiveRecordUsers;
@@ -31,7 +30,6 @@ use yii\web\IdentityInterface;
  */
 class Users extends ActiveRecordUsers implements IdentityInterface {
 	use UsersPermissionsTrait;
-	use ActiveRecordTrait;
 	use FileStorageTrait;
 
 	public const DEFAULT_AVATAR_ALIAS_PATH = '@webroot/img/theme/avatar-m.png';

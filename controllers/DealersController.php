@@ -3,7 +3,7 @@ declare(strict_types = 1);
 
 namespace app\controllers;
 
-use app\models\core\prototypes\DefaultController;
+use app\components\web\DefaultController;
 use app\models\branches\active_record\references\RefBranches;
 use app\models\dealers\active_record\references\RefDealersGroups;
 use app\models\dealers\active_record\references\RefDealersTypes;

@@ -6,6 +6,7 @@ namespace app\modules\fraud\models;
 use app\modules\fraud\models\active_record\FraudCheckStepAr;
 use DomainException;
 use pozitronik\helpers\DateHelper;
+use Throwable;
 use Yii;
 use yii\db\Exception;
 use yii\helpers\ArrayHelper;
@@ -52,6 +53,7 @@ class FraudCheckStep extends FraudCheckStepAr {
 
 	/**
 	 * @return string|null
+	 * @throws Throwable
 	 */
 	public function getStatusName():?string {
 		return ArrayHelper::getValue(self::$statusesWithNames, $this->status);

@@ -5,7 +5,7 @@ namespace app\models\products\active_record;
 
 use app\models\products\active_record\relations\RelOrderToProduct;
 use app\models\products\ProductsInterface;
-use app\models\core\prototypes\ActiveRecordTrait;
+use app\components\db\ActiveRecordTrait;
 use app\models\store\Stores;
 use app\models\sys\users\Users;
 use app\modules\fraud\models\behaviours\ProductOrderSimcardAsyncBehaviour;

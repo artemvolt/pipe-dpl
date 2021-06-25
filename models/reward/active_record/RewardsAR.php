@@ -3,7 +3,7 @@ declare(strict_types = 1);
 
 namespace app\models\reward\active_record;
 
-use app\models\core\prototypes\ActiveRecordTrait;
+use app\components\db\ActiveRecordTrait;
 use app\models\products\Products;
 use app\models\products\ProductsInterface;
 use app\models\sys\users\Users;

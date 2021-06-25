@@ -3,7 +3,7 @@ declare(strict_types = 1);
 
 namespace app\models\dealers\active_record;
 
-use app\models\core\prototypes\ActiveRecordTrait;
+use app\components\db\ActiveRecordTrait;
 use app\models\branches\active_record\references\RefBranches;
 use app\models\dealers\active_record\references\RefDealersGroups;
 use app\models\dealers\active_record\references\RefDealersTypes;
@@ -13,9 +13,9 @@ use app\models\dealers\active_record\relations\RelDealersToStores;
 use app\models\managers\Managers;
 use app\models\seller\Sellers;
 use app\models\store\Stores;
+use pozitronik\helpers\DateHelper;
 use Throwable;
 use app\modules\history\behaviors\HistoryBehavior;
-use pozitronik\helpers\DateHelper;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 

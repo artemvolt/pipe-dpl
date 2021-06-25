@@ -3,10 +3,10 @@ declare(strict_types = 1);
 
 namespace app\models\managers;
 
+use app\components\db\ActiveQuery;
 use app\models\dealers\Dealers;
 use app\models\store\Stores;
 use app\models\sys\users\Users;
-use pozitronik\core\models\LCQuery;
 use yii\data\ActiveDataProvider;
 use Throwable;
 use yii\helpers\ArrayHelper;
@@ -167,10 +167,10 @@ final class ManagersSearch extends Managers {
 	}
 
 	/**
-	 * @param LCQuery $query
+	 * @param ActiveQuery $query
 	 * @throws Throwable
 	 */
-	private function initQuery(LCQuery $query):void {
+	private function initQuery(ActiveQuery $query):void {
 		$query->select([
 			self::tableName().'.*',
 			Users::tableName().'.id AS userId',

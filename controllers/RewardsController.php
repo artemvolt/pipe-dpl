@@ -3,7 +3,7 @@ declare(strict_types = 1);
 
 namespace app\controllers;
 
-use app\models\core\prototypes\DefaultController;
+use app\components\web\DefaultController;
 use app\models\reward\Rewards;
 use app\models\reward\RewardsSearch;
 

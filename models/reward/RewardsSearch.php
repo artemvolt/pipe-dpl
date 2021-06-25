@@ -3,17 +3,16 @@ declare(strict_types = 1);
 
 namespace app\models\reward;
 
+use app\components\db\ActiveQuery;
 use app\models\reward\active_record\RewardsAR;
 use app\models\reward\config\RewardsOperationsConfig;
 use app\models\reward\config\RewardsRulesConfig;
 use app\modules\status\models\Status;
 use app\modules\status\models\StatusRulesModel;
-use pozitronik\core\models\LCQuery;
 use pozitronik\helpers\ArrayHelper;
 use yii\base\InvalidConfigException;
 use yii\data\ActiveDataProvider;
 use app\models\sys\users\Users;
-use yii\db\ActiveQuery;
 use Throwable;
 
 /**
@@ -87,10 +86,10 @@ final class RewardsSearch extends RewardsAR {
 	}
 
 	/**
-	 * @param LCQuery $query
+	 * @param ActiveQuery $query
 	 * @throws Throwable
 	 */
-	private function initQuery(LCQuery $query):void {
+	private function initQuery(ActiveQuery $query):void {
 		$query->select([
 			self::tableName().'.*',
 			Users::tableName().'.username AS userName',
