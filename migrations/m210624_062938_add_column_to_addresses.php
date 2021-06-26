@@ -24,7 +24,7 @@ class m210624_062938_add_column_to_addresses extends Migration {
 	 * {@inheritdoc}
 	 */
 	public function safeDown() {
-		$this->dropColumn(self::TABLE, self::COLUMN,);
+		$this->dropColumn(self::TABLE, self::COLUMN);
 	}
 
 }
