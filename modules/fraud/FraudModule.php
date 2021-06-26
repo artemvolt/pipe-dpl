@@ -3,7 +3,7 @@ declare(strict_types = 1);
 
 namespace app\modules\fraud;
 
-use pozitronik\core\traits\ModuleExtended;
+use pozitronik\traits\traits\ModuleTrait;
 use yii\base\Application;
 use yii\base\BootstrapInterface;
 use yii\base\Module;
@@ -14,7 +14,7 @@ use yii\console\Application as ConsoleApplication;
  * @package app\modules\fraud
  */
 class FraudModule extends Module implements BootstrapInterface {
-	use ModuleExtended;
+	use ModuleTrait;
 
 	/**
 	 * @param Application $app

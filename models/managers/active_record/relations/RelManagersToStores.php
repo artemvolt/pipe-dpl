@@ -3,7 +3,7 @@ declare(strict_types = 1);
 
 namespace app\models\managers\active_record\relations;
 
-use pozitronik\core\traits\Relations;
+use pozitronik\relations\traits\RelationsTrait;
 use yii\db\ActiveRecord;
 
 /**
@@ -15,7 +15,7 @@ use yii\db\ActiveRecord;
  * @property int $store_id
  */
 class RelManagersToStores extends ActiveRecord {
-	use Relations;
+	use RelationsTrait;
 
 	/**
 	 * {@inheritdoc}

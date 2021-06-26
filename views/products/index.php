@@ -11,9 +11,9 @@ declare(strict_types = 1);
 use app\assets\ModalHelperAsset;
 use app\models\core\TemporaryHelper;
 use kartik\grid\GridView;
-use pozitronik\core\traits\ControllerTrait;
 use pozitronik\grid_config\GridConfig;
 use pozitronik\helpers\Utils;
+use pozitronik\traits\traits\ControllerTrait;
 use yii\data\ActiveDataProvider;
 use yii\web\View;
 
