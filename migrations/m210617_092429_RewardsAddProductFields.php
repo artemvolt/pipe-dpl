@@ -23,7 +23,6 @@ class m210617_092429_RewardsAddProductFields extends Migration {
 		$this->dropColumn('rewards', 'product_id');
 		$this->dropColumn('rewards', 'product_type');
 
-		$this->dropIndex('product_id_product_type', 'rewards');
 	}
 
 }
