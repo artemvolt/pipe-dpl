@@ -96,7 +96,7 @@ $config = [
 		],
 		'graphql' => [
 			'class' => GraphqlModule::class
-		]
+		],
 		'fraud' => [
 			'class' => FraudModule::class
 		]
