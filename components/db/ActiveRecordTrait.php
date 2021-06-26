@@ -4,6 +4,7 @@ declare(strict_types = 1);
 namespace app\components\db;
 
 use pozitronik\helpers\ArrayHelper;
+use pozitronik\traits\traits\ActiveRecordTrait as VendorActiveRecordTrait;
 use Throwable;
 use Yii;
 use yii\db\ActiveRecord;
@@ -17,6 +18,7 @@ use yii\db\Transaction;
  * Попытка переделать правильно трейт с вспомогательными функциями ActiveRecord-классов
  */
 trait ActiveRecordTrait {
+	use VendorActiveRecordTrait;
 
 	/**
 	 * @return ActiveQuery

@@ -10,7 +10,7 @@ use app\models\sys\permissions\traits\ControllerPermissionsTrait;
 use app\models\sys\users\Users;
 use app\modules\import\models\ImportAction;
 use app\modules\import\models\ProcessImportAction;
-use pozitronik\core\helpers\ControllerHelper;
+use pozitronik\helpers\ControllerHelper;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use Throwable;
@@ -67,7 +67,7 @@ class DefaultController extends Controller {
 	 * @return string
 	 */
 	public static function Title():string {
-		return static::DEFAULT_TITLE??self::ExtractControllerId(static::class);
+		return static::DEFAULT_TITLE??ControllerHelper::ExtractControllerId(static::class);
 	}
 
 	/**

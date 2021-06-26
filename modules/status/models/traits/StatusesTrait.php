@@ -82,7 +82,9 @@ trait StatusesTrait {
 	/**
 	 * @param int $status
 	 * @return bool
-	 * @throws Throwable Не совсем красиво, что присвоение статуса проксифицируется сюда (дублируются проверки), но пока не заморачиваюсь.
+	 * @throws Throwable
+	 *
+	 * Не совсем красиво, что присвоение статуса проксифицируется сюда (дублируются проверки), но пока не заморачиваюсь.
 	 */
 	public function setCurrentStatusId(int $status):bool {
 		if (in_array($status, ArrayHelper::getColumn($this->availableStatuses, 'id'), true)) {

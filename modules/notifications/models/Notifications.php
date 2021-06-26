@@ -3,8 +3,8 @@ declare(strict_types = 1);
 
 namespace app\modules\notifications\models;
 
+use app\components\db\ActiveRecordTrait;
 use app\models\sys\users\Users;
-use pozitronik\core\traits\ARExtended;
 use pozitronik\helpers\ArrayHelper;
 use Throwable;
 use Yii;
@@ -35,7 +35,7 @@ use yii\web\ForbiddenHttpException;
  * @property string $message Сообщение события
  */
 class Notifications extends ActiveRecord {
-	use ARExtended;
+	use ActiveRecordTrait;
 
 	/*Константы типов*/
 	public const TYPE_DEFAULT = 0;//уведомление без особого типа

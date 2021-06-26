@@ -8,8 +8,8 @@ declare(strict_types = 1);
  */
 
 use app\modules\import\models\ImportModel;
-use pozitronik\core\traits\ControllerTrait;
 use pozitronik\helpers\Utils;
+use pozitronik\traits\traits\ControllerTrait;
 use yii\bootstrap4\Html;
 use yii\web\View;
 

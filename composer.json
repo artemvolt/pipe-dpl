@@ -28,6 +28,8 @@
 		"pozitronik/yii2-cachedwidget": "dev-master",
 		"pozitronik/yii2-filestorage": "dev-master",
 		"pozitronik/yii2-grid-config": "dev-master",
+		"pozitronik/yii2-relations": "dev-master",
+		"pozitronik/yii2-dbmon": "dev-master",
 		"yiisoft/yii2-swiftmailer": "dev-master",
 		"kartik-v/yii2-widget-typeahead": "dev-master",
 		"kartik-v/yii2-editable": "dev-master",

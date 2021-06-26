@@ -3,8 +3,8 @@ declare(strict_types = 1);
 
 namespace app\modules\status;
 
-use pozitronik\core\traits\ModuleExtended;
 use pozitronik\helpers\ArrayHelper;
+use pozitronik\traits\traits\ModuleTrait;
 use Throwable;
 use Yii;
 use yii\base\InvalidConfigException;
@@ -15,7 +15,7 @@ use yii\base\Module;
  * @package status
  */
 class StatusModule extends Module {
-	use ModuleExtended;
+	use ModuleTrait;
 
 	/**
 	 * @param string $className
