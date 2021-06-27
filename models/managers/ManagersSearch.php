@@ -70,7 +70,7 @@ final class ManagersSearch extends Managers {
 	 * @throws Throwable
 	 */
 	public function search(array $params):ActiveDataProvider {
-		$query = self::find()->distinct()->active();
+		$query = self::find()->distinct()->active()->scope();
 		$query->joinWith(['stores', 'dealers', 'relatedUser']);
 		$this->initQuery($query);
 
@@ -107,7 +107,6 @@ final class ManagersSearch extends Managers {
 			->andFilterWhere(['like', Stores::tableName().'.name', $this->store])
 			->andFilterWhere(['like', Dealers::tableName().'.name', $this->dealer]);
 
-		$query->scope();
 	}
 
 	/**
