@@ -69,7 +69,7 @@ final class StoresSearch extends StoresAR {
 	 */
 	public function search(array $params):ActiveDataProvider {
 		$query = self::find()->distinct()->active();
-		$query->scope(Stores::class);
+		$query->scope();
 		$query->joinWith([
 			'sellers',
 			'managers',

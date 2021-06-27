@@ -107,7 +107,7 @@ final class ManagersSearch extends Managers {
 			->andFilterWhere(['like', Stores::tableName().'.name', $this->store])
 			->andFilterWhere(['like', Dealers::tableName().'.name', $this->dealer]);
 
-		$query->scope(Managers::class);
+		$query->scope();
 	}
 
 	/**

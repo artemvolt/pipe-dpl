@@ -310,7 +310,7 @@ class DefaultController extends Controller {
 				->where(['like', "{$tableName}.{$column}", "%$term%", false])
 				->active()
 				->distinct()
-				->scope($this->modelClass, Users::Current())
+				->scope()
 				->asArray()
 				->all();
 			$out['results'] = array_values($data);
