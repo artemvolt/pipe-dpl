@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 namespace app\components\db;
 
+use app\models\sys\permissions\traits\ActiveRecordPermissionsTrait;
 use pozitronik\helpers\ArrayHelper;
 use pozitronik\traits\traits\ActiveRecordTrait as VendorActiveRecordTrait;
 use Throwable;
@@ -19,6 +20,7 @@ use yii\db\Transaction;
  */
 trait ActiveRecordTrait {
 	use VendorActiveRecordTrait;
+	use ActiveRecordPermissionsTrait;
 
 	/**
 	 * @return ActiveQuery

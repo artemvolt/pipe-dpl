@@ -4,9 +4,9 @@ declare(strict_types = 1);
 namespace app\models\sys\permissions\traits;
 
 use app\models\sys\users\Users;
+use Throwable;
 use yii\db\ActiveQueryInterface;
 use yii\web\IdentityInterface;
-use Throwable;
 
 /**
  * Trait ActiveRecordPermissionsTrait
@@ -16,7 +16,8 @@ trait ActiveRecordPermissionsTrait {
 
 	/**
 	 * Интерфейс функции установки области доступа пользователя в этой таблице
-	 * @param ActiveQueryInterface $query
+	 * @see ActiveQueryPermissionsTrait::scope()
+	 * @param ActiveQueryInterface|ActiveQueryPermissionsTrait $query
 	 * @param IdentityInterface $user
 	 * @return mixed
 	 * @throws Throwable
