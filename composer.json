@@ -62,7 +62,8 @@
 		"process-timeout": 1800,
 		"fxp-asset": {
 			"enabled": false
-		}
+		},
+		"use-github-api": false
 	},
 	"scripts": {
 		"post-install-cmd": [
