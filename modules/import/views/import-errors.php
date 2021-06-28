@@ -8,8 +8,8 @@ declare(strict_types = 1);
  * @var ControllerTrait $controller
  */
 
-use pozitronik\core\traits\ControllerTrait;
 use pozitronik\helpers\Utils;
+use pozitronik\traits\traits\ControllerTrait;
 use yii\bootstrap4\Html;
 use yii\web\View;
 

@@ -4,8 +4,8 @@ declare(strict_types = 1);
 namespace app\controllers;
 
 use app\models\sys\permissions\filters\PermissionFilter;
-use pozitronik\core\models\DbMonitor;
-use pozitronik\core\traits\ControllerTrait;
+use pozitronik\dbmon\models\DbMonitor;
+use pozitronik\traits\traits\ControllerTrait;
 use Throwable;
 use Yii;
 use yii\data\ArrayDataProvider;

@@ -39,22 +39,27 @@ use app\controllers\DealersController;
 		[
 			'label' => DealersController::Title(),
 			'url' => [DealersController::to('index')],
-			'iconClass' => 'fa-building'
+			'iconClass' => 'fa-building',
+			'visible' => DealersController::hasPermission('index')
 		],
 		[
 			'label' => ManagersController::Title(),
 			'url' => [ManagersController::to('index')],
-			'iconClass' => 'fa fa-user-tie'
+			'iconClass' => 'fa fa-user-tie',
+			'visible' => ManagersController::hasPermission('index')
+
 		],
 		[
 			'label' => StoresController::Title(),
 			'url' => [StoresController::to('index')],
-			'iconClass' => 'fa-store'
+			'iconClass' => 'fa-store',
+			'visible' => StoresController::hasPermission('index')
 		],
 		[
 			'label' => SellersController::Title(),
 			'url' => [SellersController::to('index')],
-			'iconClass' => 'fa-smile-beam'
+			'iconClass' => 'fa-smile-beam',
+			'visible' => SellersController::hasPermission('index')
 		],
 		[
 			'label' => 'Фродмониторинг',

@@ -13,6 +13,8 @@ use app\assets\ModalHelperAsset;
 use app\controllers\DealersController;
 use app\controllers\StoresController;
 use app\models\core\prototypes\ProjectConstants;
+use app\models\countries\active_record\references\RefCountries;
+use app\models\regions\active_record\references\RefRegions;
 use app\models\seller\Sellers;
 use app\models\seller\SellersSearch;
 use app\modules\status\models\StatusRulesModel;
@@ -20,9 +22,10 @@ use kartik\date\DatePicker;
 use kartik\datetime\DateTimePicker;
 use kartik\grid\DataColumn;
 use kartik\grid\GridView;
-use pozitronik\core\traits\ControllerTrait;
+use kartik\select2\Select2;
 use pozitronik\grid_config\GridConfig;
 use pozitronik\helpers\Utils;
+use pozitronik\traits\traits\ControllerTrait;
 use pozitronik\widgets\BadgeWidget;
 use yii\data\ActiveDataProvider;
 use yii\grid\ActionColumn;
@@ -31,8 +34,10 @@ use yii\helpers\ArrayHelper;
 use yii\web\JsExpression;
 use yii\web\View;
 use app\controllers\UsersController;
+use app\assets\ValidationAsset;
 
 ModalHelperAsset::register($this);
+ValidationAsset::register($this);
 ?>
 <?= GridConfig::widget([
 	'id' => "{$modelName}-index-grid",
@@ -171,17 +176,98 @@ ModalHelperAsset::register($this);
 					]
 				]
 			],
-			'is_resident:boolean',
 			[
-				'attribute' => 'non_resident_type',
-				'value' => static function(SellersSearch $model) {
-					return ArrayHelper::getValue(ProjectConstants::NON_RESIDENT_TYPE, $model->non_resident_type);
-				},
+				'attribute' => 'citizenName',
 				'format' => 'raw',
-				'filter' => ProjectConstants::NON_RESIDENT_TYPE,
-				'filterWidgetOptions' => [
-					'pluginOptions' => ['allowClear' => true, 'placeholder' => '']
-				]
+				'value' => static function(SellersSearch $model):string {
+					return BadgeWidget::widget([
+						'items' => $model->refCountry,
+						'subItem' => 'name'
+					]);
+				},
+				'filter' => Select2::widget([
+					'model' => $searchModel,
+					'attribute' => 'citizen',
+					'data' => RefCountries::mapData(),
+					'pluginOptions' => [
+						'allowClear' => true,
+						'placeholder' => ''
+					]
+				])
+			],
+			[
+				'attribute' => 'index',
+				'format' => 'raw',
+				'value' => static function(SellersSearch $model):string {
+					return BadgeWidget::widget([
+						'items' => $model->relAddress,
+						'subItem' => 'index',
+						'useBadges' => false
+					]);
+				}
+			],
+			[
+				'attribute' => 'areaName',
+				'format' => 'raw',
+				'value' => static function(SellersSearch $model):string {
+					return BadgeWidget::widget([
+						'items' => $model->relAddress->refRegion??null,
+						'subItem' => 'name'
+					]);
+				},
+				'filter' => Select2::widget([
+					'model' => $searchModel,
+					'attribute' => 'area',
+					'data' => RefRegions::mapData(),
+					'pluginOptions' => [
+						'allowClear' => true,
+						'placeholder' => ''
+					]
+				])
+			],
+			[
+				'attribute' => 'region',
+				'format' => 'raw',
+				'value' => static function(SellersSearch $model):string {
+					return BadgeWidget::widget([
+						'items' => $model->relAddress,
+						'subItem' => 'region',
+						'useBadges' => false
+					]);
+				}
+			],
+			[
+				'attribute' => 'city',
+				'format' => 'raw',
+				'value' => static function(SellersSearch $model):string {
+					return BadgeWidget::widget([
+						'items' => $model->relAddress,
+						'subItem' => 'city',
+						'useBadges' => false
+					]);
+				}
+			],
+			[
+				'attribute' => 'street',
+				'format' => 'raw',
+				'value' => static function(SellersSearch $model):string {
+					return BadgeWidget::widget([
+						'items' => $model->relAddress,
+						'subItem' => 'street',
+						'useBadges' => false
+					]);
+				}
+			],
+			[
+				'attribute' => 'building',
+				'format' => 'raw',
+				'value' => static function(SellersSearch $model):string {
+					return BadgeWidget::widget([
+						'items' => $model->relAddress,
+						'subItem' => 'building',
+						'useBadges' => false
+					]);
+				}
 			],
 			[
 				'attribute' => 'passport',
@@ -191,7 +277,6 @@ ModalHelperAsset::register($this);
 			],
 			'passport_whom',
 			'passport_when',
-			'reg_address',
 			[
 				'attribute' => 'entry_date',
 				'filterType' => DatePicker::class,

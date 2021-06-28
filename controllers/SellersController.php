@@ -45,6 +45,7 @@ class SellersController extends DefaultController {
 		if (true === $posting) {
 			$model->uploadAttributes();
 			$model->createAccess();
+			$model->createUpdateAddress(Yii::$app->request->post());
 			return $this->redirect('index');
 		}
 		/* Пришёл постинг, но есть ошибки */
@@ -77,6 +78,7 @@ class SellersController extends DefaultController {
 		if (true === $posting) {/* Модель была успешно прогружена */
 			$model->uploadAttributes();
 			$model->modifyName();
+			$model->createUpdateAddress(Yii::$app->request->post());
 			return $this->redirect('index');
 		}
 		/* Пришёл постинг, но есть ошибки */

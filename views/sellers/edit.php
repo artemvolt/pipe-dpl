@@ -6,10 +6,12 @@ declare(strict_types = 1);
  * @var Sellers $model
  */
 
+use app\assets\ValidationAsset;
 use app\models\seller\Sellers;
 use yii\web\View;
 use yii\bootstrap4\ActiveForm;
 
+ValidationAsset::register($this);
 ?>
 
 <?php $form = ActiveForm::begin(['enableAjaxValidation' => true]); ?>

@@ -5,7 +5,7 @@ namespace app\models\sys\permissions\active_record\relations;
 
 use app\models\sys\permissions\active_record\PermissionsCollections;
 use app\models\sys\users\Users;
-use pozitronik\core\traits\Relations;
+use pozitronik\relations\traits\RelationsTrait;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 
@@ -20,7 +20,7 @@ use yii\db\ActiveRecord;
  * @property null|PermissionsCollections $relatedPermissionsCollections Связанная группа доступа
  */
 class RelUsersToPermissionsCollections extends ActiveRecord {
-	use Relations;
+	use RelationsTrait;
 
 	/**
 	 * {@inheritdoc}

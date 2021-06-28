@@ -6,7 +6,7 @@ declare(strict_types = 1);
  * @var string|false $message
  */
 
-use pozitronik\core\models\ProcessListItem;
+use pozitronik\dbmon\models\ProcessListItem;
 use yii\data\ArrayDataProvider;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;

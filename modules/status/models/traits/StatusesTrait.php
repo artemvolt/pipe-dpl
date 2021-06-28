@@ -82,8 +82,6 @@ trait StatusesTrait {
 	/**
 	 * @param int $status
 	 * @return bool
-	 * @throws InvalidConfigException
-	 * @throws StaleObjectException
 	 * @throws Throwable
 	 *
 	 * Не совсем красиво, что присвоение статуса проксифицируется сюда (дублируются проверки), но пока не заморачиваюсь.
@@ -91,7 +89,12 @@ trait StatusesTrait {
 	public function setCurrentStatusId(int $status):bool {
 		if (in_array($status, ArrayHelper::getColumn($this->availableStatuses, 'id'), true)) {
 			/** @var ActiveRecord $this */
-			return Status::setCurrentStatus($this, $status);
+			$this->on(ActiveRecord::EVENT_AFTER_UPDATE, function($event) {//отложим связывание после сохранения
+				return Status::setCurrentStatus($event->data[0], $event->data[1]);
+			}, [$this, $status]);
+			$this->on(ActiveRecord::EVENT_AFTER_INSERT, function($event) {//отложим связывание после сохранения
+				return Status::setCurrentStatus($event->data[0], $event->data[1]);
+			}, [$this, $status]);
 		}
 		/** @var ActiveRecord $this */
 		$this->addError('currentStatusId', 'Нет права на изменение статуса.');

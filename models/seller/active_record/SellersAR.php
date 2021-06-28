@@ -4,11 +4,16 @@ declare(strict_types = 1);
 namespace app\models\seller\active_record;
 
 use app\components\db\ActiveRecordTrait;
+use app\models\addresses\Addresses;
+use app\models\countries\active_record\references\RefCountries;
 use app\models\dealers\active_record\relations\RelDealersToSellers;
 use app\models\dealers\Dealers;
+use app\models\managers\Managers;
 use app\models\phones\PhoneNumberValidator;
+use app\models\regions\active_record\references\RefRegions;
 use app\models\store\active_record\relations\RelStoresToSellers;
 use app\models\store\Stores;
+use app\models\sys\permissions\traits\ActiveRecordPermissionsTrait;
 use app\models\sys\users\Users;
 use app\modules\history\behaviors\HistoryBehavior;
 use app\modules\status\models\traits\StatusesTrait;
@@ -16,7 +21,11 @@ use pozitronik\helpers\DateHelper;
 use Throwable;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
+use yii\db\ActiveQueryInterface;
 use yii\db\ActiveRecord;
+use yii\helpers\ArrayHelper;
+use yii\web\IdentityInterface;
+use yii\web\JsExpression;
 
 /**
  * This is the model class for table "sellers".
@@ -28,14 +37,13 @@ use yii\db\ActiveRecord;
  * @property string $birthday Дата рождения
  * @property string $create_date Дата регистрации
  * @property string $update_date Дата обновления
- * @property int $is_resident Резидент
- * @property int $non_resident_type Категория нерезидента
+ * @property int $citizen Гражданство
  * @property string $passport_series Серия паспорта
  * @property string $passport_number Номер паспорта
  * @property string $passport_whom Кем выдан паспорт
  * @property string $passport_when Когда выдан паспорт
  * @property int $gender Пол
- * @property string $reg_address Адрес регистрации
+ * @property string $reg_address Адрес регистрации/проживания
  * @property string $entry_date Дата въезда в страну
  * @property string $inn ИНН
  * @property string $snils СНИЛС
@@ -45,18 +53,19 @@ use yii\db\ActiveRecord;
  * @property int $contract_signing_address Адрес подписания договора
  * @property int $deleted
  *
- * @property string $email
- * @property string $login
- *
+ * @property RefCountries $refCountry Страна (справочник)
  * @property RelStoresToSellers[] $relatedStoresToSellers Связь к промежуточной таблице к продавцам
  * @property Stores[] $stores Магазины продавца
  * @property RelDealersToSellers[] $relatedDealersToSellers Связь от промежуточной таблице дилеров к продавцам
  * @property Dealers[] $dealers Дилеры продавца
  * @property Users $relatedUser Пользователь связанный с продавцом
+ * @property Addresses $relAddress Адрес регистрации/проживания связанный с продавцом
+ * @property RefRegions $refRegion
  */
 class SellersAR extends ActiveRecord {
 	use ActiveRecordTrait;
 	use StatusesTrait;
+	use ActiveRecordPermissionsTrait;
 
 	public $email;
 	public $login;
@@ -110,7 +119,7 @@ class SellersAR extends ActiveRecord {
 			[
 				[
 					'name', 'surname', 'passport_series', 'passport_number', 'passport_whom',
-					'passport_when', 'birthday', 'reg_address', 'keyword', 'is_wireman_shpd', 'is_resident'
+					'passport_when', 'birthday', 'inn', 'citizen'
 				],
 				'required'
 			],
@@ -135,24 +144,32 @@ class SellersAR extends ActiveRecord {
 				'on' => self::SCENARIO_CREATE
 			],
 			['login', PhoneNumberValidator::class],
-			[
-				['entry_date', 'non_resident_type'],
-				'required',
-				'when' => static function($model) {
-					/** @var self $model */
-					return !$model->is_resident;
-				},
-				'whenClient' => "function() {
-					return !document.getElementById('sellers-is_resident').checked;
-				}"
-			],
 			[['create_date', 'update_date', 'stores', 'dealers', 'currentStatusId'], 'safe'],
 			[['passport_when', 'birthday', 'entry_date'], 'date', 'format' => 'php:Y-m-d'],
 			['patronymic', 'default', 'value' => null],
-			[['gender', 'is_resident', 'non_resident_type', 'is_wireman_shpd', 'deleted', 'user', 'inn'], 'integer'],
+			[
+				'entry_date',
+				'required',
+				'when' => static function($model) {
+					/** @var self $model */
+					return 0 === (null !== $model->refCountry?$model->refCountry->is_homeland:1);
+				},
+				'whenClient' => new JsExpression("function() {
+					return isForeigner([".
+					implode(',', ArrayHelper::getColumn(RefCountries::getHomelandCountries(), 'id', [])).
+					"], document.getElementById('sellers-citizen').value)
+					}"),
+			],
+			[
+				[
+					'gender', 'is_wireman_shpd', 'deleted', 'user', 'inn', 'citizen',
+					'reg_address'
+				],
+				'integer'
+			],
 			[['name', 'surname', 'patronymic'], 'string', 'max' => 128],
 			[['passport_series', 'passport_number', 'keyword', 'login'], 'string', 'max' => 64],
-			[['passport_whom', 'email', 'reg_address', 'contract_signing_address'], 'string', 'max' => 255],
+			[['passport_whom', 'email', 'contract_signing_address'], 'string', 'max' => 255],
 			['inn', 'string', 'length' => 12],
 			[
 				'snils',
@@ -193,14 +210,15 @@ class SellersAR extends ActiveRecord {
 			'userLogin' => 'Логин',
 			'create_date' => 'Дата регистрации',
 			'update_date' => 'Дата обновления',
-			'is_resident' => 'Резидент',
-			'non_resident_type' => 'Категория нерезидента',
+			'citizen' => 'Гражданство',
+			'passport' => 'Паспорт',
 			'passport_series' => 'Серия паспорта',
 			'passport_number' => 'Номер паспорта',
 			'passport_whom' => 'Кем выдан паспорт',
 			'passport_when' => 'Когда выдан паспорт',
 			'gender' => 'Пол',
-			'reg_address' => 'Адрес регистрации',
+			'reg_address' => 'Адрес регистрации/проживания',
+			'relAddress' => 'Адрес регистрации/проживания',
 			'entry_date' => 'Дата въезда в страну',
 			'inn' => 'ИНН',
 			'snils' => 'СНИЛС',
@@ -285,4 +303,55 @@ class SellersAR extends ActiveRecord {
 		$this->link('relatedUser', $relatedUser);
 	}
 
+	/**
+	 * @return ActiveQuery
+	 */
+	public function getRefCountry():ActiveQuery {
+		return $this->hasOne(RefCountries::class, ['id' => 'citizen']);
+	}
+
+	/**
+	 * @return ActiveQuery
+	 */
+	public function getRelAddress():ActiveQuery {
+		return $this->hasOne(Addresses::class, ['id' => 'reg_address']);
+	}
+
+	/**
+	 * @param mixed $relAddress
+	 */
+	public function setRelAddress($relAddress):void {
+		/** @var Addresses $relAddress */
+		$this->link('relAddress', $relAddress);
+	}
+
+	/**
+	 * @return ActiveQuery
+	 */
+	public function getRefRegion():ActiveQuery {
+		return $this->hasOne(RefRegions::class, ['id' => 'area'])->via('relAddress');
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public static function scope(ActiveQueryInterface $query, IdentityInterface $user):ActiveQueryInterface {
+		/** @var Users $user */
+		if ($user->isAllPermissionsGranted()) return $query;
+		if ($user->hasPermission(['show_all_sellers'])) return $query;
+
+		$query->where([self::tableName().'.id' => '0']);
+
+		if (null !== $manager = Managers::findOne(['user' => $user->id])) {
+			if ($user->hasPermission(['dealer_sellers'])) {
+				$query->joinWith(['dealers']);
+				$query->orWhere([Dealers::tableName().'.id' => $manager->getRelatedDealersToManagers()->select('dealer_id')]);
+			}
+			if ($user->hasPermission(['dealer_store_sellers'])) {
+				$query->joinWith(['stores']);
+				$query->orWhere([Stores::tableName().'.id' => $manager->getRelatedManagersToStores()->select('store_id')]);
+			}
+		}
+		return $query;
+	}
 }

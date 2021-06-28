@@ -27,7 +27,7 @@ class UsersSearch extends ActiveRecordUsers {
 	 * @return ActiveDataProvider
 	 */
 	public function search(array $params, array $allowedGroups = []):ActiveDataProvider {
-		$query = Users::find()->active();
+		$query = Users::find()->active()->scope();
 
 		$dataProvider = new ActiveDataProvider([
 			'query' => $query

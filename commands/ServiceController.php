@@ -7,7 +7,7 @@ use app\models\core\Service;
 use app\models\core\TemporaryHelper;
 use app\models\sys\permissions\Permissions;
 use app\models\sys\permissions\PermissionsCollections;
-use pozitronik\core\helpers\ControllerHelper;
+use pozitronik\helpers\ControllerHelper;
 use ReflectionException;
 use Throwable;
 use Yii;

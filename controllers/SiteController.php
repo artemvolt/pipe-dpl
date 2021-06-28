@@ -10,7 +10,7 @@ use app\models\site\RegistrationForm;
 use app\models\site\RestorePasswordForm;
 use app\models\site\UpdatePasswordForm;
 use app\models\sys\users\Users;
-use pozitronik\core\traits\ControllerTrait;
+use pozitronik\traits\traits\ControllerTrait;
 use pozitronik\helpers\ArrayHelper;
 use pozitronik\sys_options\models\SysOptions;
 use Throwable;
