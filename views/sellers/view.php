@@ -76,13 +76,13 @@ use app\models\seller\active_record\SellersAR;
 			}
 		],
 		'birthday',
-		'is_resident:boolean',
 		[
-			'attribute' => 'non_resident_type',
-			'value' => static function(Sellers $model) {
-				return ArrayHelper::getValue(ProjectConstants::NON_RESIDENT_TYPE, $model->non_resident_type);
-			},
+			'attribute' => 'citizen',
+			'value' => static function(SellersAR $model) {
+				return $model->refCountry->name??null;
+			}
 		],
+		'entry_date',
 		[
 			'attribute' => 'passport',
 			'value' => static function(Sellers $model) {
@@ -91,8 +91,12 @@ use app\models\seller\active_record\SellersAR;
 		],
 		'passport_whom',
 		'passport_when',
-		'reg_address',
-		'entry_date',
+		[
+			'attribute' => 'relAddress',
+			'value' => static function(Sellers $model) {
+				return $model->relAddress->addressString??null;
+			}
+		],
 		'keyword',
 		'is_wireman_shpd:boolean',
 		'inn',

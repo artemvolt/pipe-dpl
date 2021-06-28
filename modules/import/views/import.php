@@ -8,7 +8,7 @@ declare(strict_types = 1);
  */
 
 use app\modules\import\models\ImportModel;
-use pozitronik\core\traits\ControllerTrait;
+use pozitronik\traits\traits\ControllerTrait;
 use pozitronik\filestorage\widgets\file_input\FileInputWidget;
 use yii\bootstrap4\ActiveForm;
 use yii\bootstrap4\Html;

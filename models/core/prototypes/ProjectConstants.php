@@ -11,9 +11,4 @@ final class ProjectConstants {
 		2 => 'Женский'
 	];
 
-	public const NON_RESIDENT_TYPE = [
-		1 => 'Вид на жительство',
-		2 => ' Виза',
-		3 => 'Временное пребывание'
-	];
 }

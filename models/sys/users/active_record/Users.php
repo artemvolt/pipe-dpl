@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 namespace app\models\sys\users\active_record;
 
+use app\components\db\ActiveRecordTrait;
 use app\models\phones\active_record\PhonesAR;
 use app\models\phones\PhoneNumberValidator;
 use app\models\phones\Phones;
@@ -37,6 +38,7 @@ use yii\helpers\ArrayHelper;
  * @property string[] $phones Виртуальный атрибут: телефонные номера в строковом массиве, используется для редактирования
  */
 class Users extends ActiveRecord {
+	use ActiveRecordTrait;
 
 	private ?array $_phones = null;
 
@@ -157,7 +159,7 @@ class Users extends ActiveRecord {
 		if (true === $saved = parent::save($runValidation, $attributeNames)) {
 			/*
 			 * Это не очень красиво, и я предполагал сделать это через релейшен-атрибуты, проверяемые в
-			 * \app\models\core\prototypes\ActiveRecordTrait::createModel(mappedParams)
+			 * \app\components\db\ActiveRecordTrait::createModel(mappedParams)
 			 * Вышло так, пусть будет. По крайней мере, выглядит логично.
 			*/
 			$this->relatedPhones = Phones::add($this->_phones);

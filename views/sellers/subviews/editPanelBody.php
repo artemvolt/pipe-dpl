@@ -10,6 +10,7 @@ declare(strict_types = 1);
 use app\controllers\DealersController;
 use app\controllers\StoresController;
 use app\models\core\prototypes\ProjectConstants;
+use app\models\countries\active_record\references\RefCountries;
 use app\models\dealers\Dealers;
 use app\models\seller\Sellers;
 use app\models\store\Stores;
@@ -18,20 +19,20 @@ use kartik\form\ActiveForm;
 use kartik\date\DatePicker;
 use kartik\switchinput\SwitchInput;
 use pozitronik\filestorage\widgets\file_input\FileInputWidget;
+use pozitronik\references\widgets\reference_select\ReferenceSelectWidget;
 use yii\helpers\ArrayHelper;
 use yii\web\View;
+use app\models\regions\active_record\references\RefRegions;
 
 ?>
-<?php if (!$model->isNewRecord): ?>
-	<div class="row">
-		<div class="col-md-12">
-			<?= $form->field($model, 'currentStatusId')->dropDownList(
-				ArrayHelper::map($model->getAvailableStatuses(), 'id', 'name'),
-				['prompt' => '']
-			) ?>
-		</div>
+<div class="row">
+	<div class="col-md-12">
+		<?= $form->field($model, 'currentStatusId')->dropDownList(
+			ArrayHelper::map($model->getAvailableStatuses(), 'id', 'name'),
+			['prompt' => '']
+		) ?>
 	</div>
-<?php endif; ?>
+</div>
 <div class="row">
 	<div class="col-md-12">
 		<?= $form->field($model, 'gender')->dropDownList(ProjectConstants::GENDER, ['prompt' => '']) ?>
@@ -76,6 +77,25 @@ use yii\web\View;
 </div>
 <div class="row">
 	<div class="col-md-12">
+		<?= $form->field($model, 'citizen')->widget(ReferenceSelectWidget::class, [
+			'referenceClass' => RefCountries::class,
+			'options' => ['placeholder' => '']
+		]) ?>
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-12">
+		<?= $form->field($model, 'entry_date')->widget(DatePicker::class, [
+			'type' => DatePicker::TYPE_COMPONENT_APPEND,
+			'pluginOptions' => [
+				'autoclose' => true,
+				'format' => 'yyyy-mm-dd'
+			]
+		]) ?>
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-12">
 		<?= $form->field($model, 'passport_series')->textInput() ?>
 	</div>
 </div>
@@ -102,35 +122,35 @@ use yii\web\View;
 </div>
 <div class="row">
 	<div class="col-md-12">
-		<?= $form->field($model, 'reg_address')->textarea(['row' => 6]) ?>
+		<?= $form->field($model->relAddress??$model->addressesInstance, 'index')->textInput() ?>
 	</div>
 </div>
 <div class="row">
 	<div class="col-md-12">
-		<?= $form->field($model, 'is_resident')->widget(SwitchInput::class, [
-			'tristate' => false,
-			'pluginOptions' => [
-				'size' => 'mini',
-				'onText' => '<i class="fa fa-check"></i>',
-				'offText' => null
-			],
+		<?= $form->field($model->relAddress??$model->addressesInstance, 'area')->widget(ReferenceSelectWidget::class, [
+			'referenceClass' => RefRegions::class,
+			'options' => ['placeholder' => '']
 		]) ?>
 	</div>
 </div>
 <div class="row">
 	<div class="col-md-12">
-		<?= $form->field($model, 'non_resident_type')->dropDownList(ProjectConstants::NON_RESIDENT_TYPE, ['prompt' => '']) ?>
+		<?= $form->field($model->relAddress??$model->addressesInstance, 'region')->textInput() ?>
 	</div>
 </div>
 <div class="row">
 	<div class="col-md-12">
-		<?= $form->field($model, 'entry_date')->widget(DatePicker::class, [
-			'type' => DatePicker::TYPE_COMPONENT_APPEND,
-			'pluginOptions' => [
-				'autoclose' => true,
-				'format' => 'yyyy-mm-dd'
-			]
-		]) ?>
+		<?= $form->field($model->relAddress??$model->addressesInstance, 'city')->textInput() ?>
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-12">
+		<?= $form->field($model->relAddress??$model->addressesInstance, 'street')->textInput() ?>
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-12">
+		<?= $form->field($model->relAddress??$model->addressesInstance, 'building')->textInput() ?>
 	</div>
 </div>
 <div class="row">

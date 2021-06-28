@@ -1,13 +1,16 @@
 <?php
 declare(strict_types = 1);
 
-namespace app\models\core\prototypes;
+namespace app\components\web;
 
+use app\components\db\ActiveRecordTrait;
+use app\models\core\prototypes\EditableFieldAction;
 use app\models\sys\permissions\filters\PermissionFilter;
 use app\models\sys\permissions\traits\ControllerPermissionsTrait;
+use app\models\sys\users\Users;
 use app\modules\import\models\ImportAction;
 use app\modules\import\models\ProcessImportAction;
-use pozitronik\core\helpers\ControllerHelper;
+use pozitronik\helpers\ControllerHelper;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use Throwable;
@@ -19,6 +22,7 @@ use yii\filters\AjaxFilter;
 use yii\filters\ContentNegotiator;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
@@ -63,7 +67,7 @@ class DefaultController extends Controller {
 	 * @return string
 	 */
 	public static function Title():string {
-		return static::DEFAULT_TITLE??self::ExtractControllerId(static::class);
+		return static::DEFAULT_TITLE??ControllerHelper::ExtractControllerId(static::class);
 	}
 
 	/**
@@ -282,6 +286,7 @@ class DefaultController extends Controller {
 	 * @param string|null $concatFields Это список полей для конкатенации. Если этот параметр передан, то вернем
 	 * результат CONCAT() для этих полей вместо поля параметра $column
 	 * @return string[][]
+	 * @throws ForbiddenHttpException
 	 */
 	public function actionAjaxSearch(?string $term, string $column = 'name', string $concatFields = null):array {
 		$out = [
@@ -305,6 +310,7 @@ class DefaultController extends Controller {
 				->where(['like', "{$tableName}.{$column}", "%$term%", false])
 				->active()
 				->distinct()
+				->scope()
 				->asArray()
 				->all();
 			$out['results'] = array_values($data);

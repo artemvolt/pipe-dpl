@@ -3,7 +3,7 @@ declare(strict_types = 1);
 
 namespace app\models\products\active_record;
 
-use app\models\core\prototypes\ActiveRecordTrait;
+use app\components\db\ActiveRecordTrait;
 use yii\db\ActiveRecord;
 
 /**

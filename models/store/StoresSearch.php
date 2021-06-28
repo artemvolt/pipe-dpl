@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 namespace app\models\store;
 
+use app\components\db\ActiveQuery;
 use app\models\branches\active_record\references\RefBranches;
 use app\models\dealers\Dealers;
 use app\models\managers\Managers;
@@ -11,8 +12,6 @@ use app\models\seller\Sellers;
 use app\models\store\active_record\references\RefSellingChannels;
 use app\models\store\active_record\references\RefStoresTypes;
 use app\models\store\active_record\StoresAR;
-use app\models\sys\users\Users;
-use pozitronik\core\models\LCQuery;
 use yii\data\ActiveDataProvider;
 use yii\helpers\ArrayHelper;
 use Throwable;
@@ -69,14 +68,8 @@ final class StoresSearch extends StoresAR {
 	 * @throws Throwable
 	 */
 	public function search(array $params):ActiveDataProvider {
-		$query = $this->setQuery();
-
-		$dataProvider = new ActiveDataProvider([
-			'query' => $query
-		]);
-
-		$this->setSort($dataProvider);
-		$this->load($params);
+		$query = self::find()->distinct()->active();
+		$query->scope();
 		$query->joinWith([
 			'sellers',
 			'managers',
@@ -86,6 +79,14 @@ final class StoresSearch extends StoresAR {
 			'refSellingChannels',
 			'refBranches'
 		]);
+		$this->initQuery($query);
+
+		$dataProvider = new ActiveDataProvider([
+			'query' => $query
+		]);
+
+		$this->setSort($dataProvider);
+		$this->load($params);
 
 		if (!$this->validate()) return $dataProvider;
 
@@ -111,42 +112,6 @@ final class StoresSearch extends StoresAR {
 			->andFilterWhere(['like', Sellers::tableName().'.surname', $this->seller])
 			->andFilterWhere(['like', Managers::tableName().'.surname', $this->manager])
 			->andFilterWhere(['like', Dealers::tableName().'.name', $this->dealerSearch]);
-
-		$this->filterDataByUser($query);
-	}
-
-	/**
-	 * Filters the records shown for current user
-	 * @param $query
-	 * @throws Throwable
-	 */
-	private function filterDataByUser($query):void {
-		$user = Users::Current();
-		if ($user->isAllPermissionsGranted()) {
-			return;
-		}
-		$manager = Managers::findOne(['user' => $user->id]);
-		if (null === $manager) {
-			return;
-		}
-
-		if ($user->hasPermission(['dealer_stores'])) {
-			$query->andFilterWhere(
-				[
-					'in',
-					Dealers::tableName().'.id',
-					ArrayHelper::getColumn($manager->relatedDealersToManagers, 'dealer_id')
-				]
-			);
-		} elseif ($user->hasPermission(['manager_store'])) {
-			$query->andFilterWhere(
-				[
-					'in',
-					self::tableName().'.id',
-					ArrayHelper::getColumn($manager->relatedManagersToStores, 'store_id')
-				]
-			);
-		}
 	}
 
 	/**
@@ -184,22 +149,20 @@ final class StoresSearch extends StoresAR {
 	}
 
 	/**
-	 * @return LCQuery
+	 * @param ActiveQuery $query
+	 * @throws Throwable
 	 */
-	private function setQuery():LCQuery {
-		return self::find()
-			->select(
-				[
-					self::tableName().'.*',
-					RefStoresTypes::tableName().'.name  AS typeName',
-					RefRegions::tableName().'.name  AS regionName',
-					RefBranches::tableName().'.name  AS branchName',
-					RefSellingChannels::tableName().'.name  AS sellingChannelsName',
-					Dealers::tableName().'.name  AS dealerSearch'
-				]
-			)
-			->distinct()
-			->active();
+	private function initQuery(ActiveQuery $query):void {
+		$query->select(
+			[
+				self::tableName().'.*',
+				RefStoresTypes::tableName().'.name  AS typeName',
+				RefRegions::tableName().'.name  AS regionName',
+				RefBranches::tableName().'.name  AS branchName',
+				RefSellingChannels::tableName().'.name  AS sellingChannelsName',
+				Dealers::tableName().'.name  AS dealerSearch'
+			]
+		);
 	}
 
 }

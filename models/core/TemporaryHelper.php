@@ -3,8 +3,8 @@ declare(strict_types = 1);
 
 namespace app\models\core;
 
-use pozitronik\core\helpers\ControllerHelper;
 use pozitronik\helpers\ArrayHelper;
+use pozitronik\helpers\ControllerHelper;
 use pozitronik\helpers\ReflectionHelper;
 use ReflectionException;
 use Throwable;

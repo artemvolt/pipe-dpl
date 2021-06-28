@@ -3,7 +3,7 @@ declare(strict_types = 1);
 
 namespace app\models\sys\users;
 
-use app\models\core\prototypes\ActiveRecordTrait;
+use app\components\db\ActiveRecordTrait;
 use app\models\sys\users\active_record\UsersTokens as ActiveRecordUsersTokens;
 use Exception;
 use pozitronik\helpers\DateHelper;

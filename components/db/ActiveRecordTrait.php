@@ -1,11 +1,11 @@
 <?php
 declare(strict_types = 1);
 
-namespace app\models\core\prototypes;
+namespace app\components\db;
 
-use DomainException;
-use pozitronik\core\models\LCQuery;
+use app\models\sys\permissions\traits\ActiveRecordPermissionsTrait;
 use pozitronik\helpers\ArrayHelper;
+use pozitronik\traits\traits\ActiveRecordTrait as VendorActiveRecordTrait;
 use Throwable;
 use Yii;
 use yii\db\ActiveRecord;
@@ -19,12 +19,14 @@ use yii\db\Transaction;
  * Попытка переделать правильно трейт с вспомогательными функциями ActiveRecord-классов
  */
 trait ActiveRecordTrait {
+	use VendorActiveRecordTrait;
+	use ActiveRecordPermissionsTrait;
 
 	/**
-	 * @return LCQuery
+	 * @return ActiveQuery
 	 */
-	public static function find():LCQuery {
-		return new LCQuery(static::class);
+	public static function find():ActiveQuery {
+		return new ActiveQuery(static::class);
 	}
 
 	/**
@@ -204,13 +206,14 @@ trait ActiveRecordTrait {
 		return $model;
 	}
 
-	public function saveAndReturn():self {
-		if (!$this->save()) {
-			throw new DomainException(
-				"Не получилось сохранить запись" .
-				implode(". ", $this->getFirstErrors())
-			);
-		}
-		return $this;
+	/**
+	 * Возвращает существующую запись в ActiveRecord-модели, найденную по условию, если же такой записи нет - возвращает новую модель
+	 * @param array|string $searchCondition
+	 * @return ActiveRecord|self
+	 */
+	public static function getInstance($searchCondition):self {
+		$instance = static::find()->where($searchCondition)->one();
+		return $instance??new static();
 	}
+
 }

@@ -1,6 +1,6 @@
 <?php
 declare(strict_types = 1);
-use pozitronik\core\models\RelationMigration;
+use pozitronik\relations\models\RelationMigration;
 
 /**
 * Class m210517_094546_RelStoresToUsers

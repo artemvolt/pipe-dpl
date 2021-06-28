@@ -3,8 +3,10 @@ declare(strict_types = 1);
 
 namespace app\modules\fraud\components;
 
+use app\models\core\TemporaryHelper;
 use app\modules\fraud\models\FraudCheckStep;
 use app\modules\fraud\models\FraudCheckStepSearch;
+use DomainException;
 
 /**
  * Обертка для валидаторов, после валидации
@@ -47,10 +49,10 @@ class ValidateWithChangeStep {
 	protected function validateWithCatch(FraudCheckStep $step):void {
 		try {
 			$this->validator->validate($step->entity_id);
-			$step->statusSuccess()->saveAndReturn();
+			if (!$step->statusSuccess()->save()) throw new DomainException("Не получилось сохранить запись ".TemporaryHelper::Errors2String($step->statusSuccess()->errors));
 		} catch (FraudException $e) {
 			$step->addFraudMessage($e->getMessage());
-			$step->statusFail()->saveAndReturn();
+			if (!$step->statusFail()->save()) throw new DomainException("Не получилось сохранить запись ".TemporaryHelper::Errors2String($step->statusFail()->errors));
 		}
 	}
 }

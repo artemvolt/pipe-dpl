@@ -4,7 +4,8 @@ declare(strict_types = 1);
 namespace app\models\sys\permissions\traits;
 
 use app\models\sys\users\Users;
-use pozitronik\core\traits\ControllerTrait;
+use pozitronik\helpers\ControllerHelper;
+use pozitronik\traits\traits\ControllerTrait;
 use Throwable;
 use yii\web\NotFoundHttpException;
 
@@ -27,7 +28,7 @@ trait ControllerPermissionsTrait {
 			throw new NotFoundHttpException();
 		}
 
-		return $user->hasControllerPermission(self::ExtractControllerId(static::class), $actionId);
+		return $user->hasControllerPermission(ControllerHelper::ExtractControllerId(static::class), $actionId);
 	}
 
 }

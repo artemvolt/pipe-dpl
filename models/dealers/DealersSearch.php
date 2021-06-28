@@ -3,16 +3,15 @@ declare(strict_types = 1);
 
 namespace app\models\dealers;
 
+use app\components\db\ActiveQuery;
 use app\models\branches\active_record\references\RefBranches;
 use app\models\dealers\active_record\DealersAR;
 use app\models\dealers\active_record\references\RefDealersGroups;
 use app\models\dealers\active_record\references\RefDealersTypes;
-use app\models\dealers\active_record\relations\RelDealersToStores;
 use app\models\managers\Managers;
 use app\models\seller\Sellers;
 use app\models\store\Stores;
 use app\models\sys\users\Users;
-use pozitronik\core\models\LCQuery;
 use Throwable;
 use yii\data\ActiveDataProvider;
 use yii\helpers\ArrayHelper;
@@ -98,14 +97,14 @@ final class DealersSearch extends DealersAR {
 			->andFilterWhere(['like', Managers::tableName().'.surname', $this->manager])
 			->andFilterWhere(['like', Sellers::tableName().'.surname', $this->seller]);
 
-		$this->filterDataByUser($query);
+		$query->scope(Dealers::class, Users::Current());
 	}
 
 	/**
-	 * @param LCQuery $query
+	 * @param ActiveQuery $query
 	 * @throws Throwable
 	 */
-	private function initQuery(LCQuery $query):void {
+	private function initQuery(ActiveQuery $query):void {
 		$query->select([
 			self::tableName().'.*',
 			RefDealersGroups::tableName().'.name AS groupName',
@@ -114,32 +113,6 @@ final class DealersSearch extends DealersAR {
 		])
 			->distinct()
 			->active();
-	}
-
-	/**
-	 * Filters the records shown for current user
-	 * @param $query
-	 * @throws Throwable
-	 */
-	private function filterDataByUser($query):void {
-		$user = Users::Current();
-		if ($user->isAllPermissionsGranted()) {
-			return;
-		}
-		$manager = Managers::findOne(['user' => $user->id]);
-		if (null === $manager) {
-			return;
-		}
-
-		if ($user->hasPermission(['dealer_managers'])) {
-			$query->andFilterWhere(
-				[
-					'in',
-					RelDealersToStores::tableName().'.dealer_id',
-					ArrayHelper::getColumn($manager->relatedDealersToManagers, 'dealer_id')
-				]
-			);
-		}
 	}
 
 	/**

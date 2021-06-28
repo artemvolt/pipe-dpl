@@ -7,7 +7,7 @@ use app\modules\history\behaviors\HistoryBehavior;
 use app\modules\history\HistoryModule;
 use app\modules\history\models\active_record\History;
 use app\modules\history\models\active_record\HistoryTags;
-use pozitronik\core\helpers\ModuleHelper;
+use pozitronik\helpers\ModuleHelper;
 use pozitronik\helpers\ReflectionHelper;
 use pozitronik\helpers\ArrayHelper;
 use ReflectionException;

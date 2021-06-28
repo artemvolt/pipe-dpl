@@ -9,7 +9,7 @@ declare(strict_types = 1);
 
 use app\modules\import\ImportModuleAssets;
 use app\modules\import\models\ImportModel;
-use pozitronik\core\traits\ControllerTrait;
+use pozitronik\traits\traits\ControllerTrait;
 use yii\bootstrap4\Progress;
 use yii\web\JsExpression;
 use yii\web\View;

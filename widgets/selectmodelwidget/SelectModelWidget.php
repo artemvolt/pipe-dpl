@@ -114,7 +114,7 @@ class SelectModelWidget extends Select2 {
 
 			if (null !== $filterValue) {
 				if (is_array($filterValue)) {
-					$this->selectionQuery->andWhere(['in', $this->pkName, $filterValue]);
+				$this->selectionQuery->andWhere(['in', $this->pkName, $filterValue]);
 				} else {
 					$this->selectionQuery->andWhere(['id' => $filterValue]);
 				}

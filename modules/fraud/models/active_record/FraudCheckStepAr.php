@@ -3,7 +3,7 @@ declare(strict_types = 1);
 
 namespace app\modules\fraud\models\active_record;
 
-use app\models\core\prototypes\ActiveRecordTrait;
+use app\components\db\ActiveRecordTrait;
 use pozitronik\helpers\DateHelper;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;

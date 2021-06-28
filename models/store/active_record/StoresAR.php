@@ -4,7 +4,7 @@ declare(strict_types = 1);
 namespace app\models\store\active_record;
 
 use app\models\branches\active_record\references\RefBranches;
-use app\models\core\prototypes\ActiveRecordTrait;
+use app\components\db\ActiveRecordTrait;
 use app\models\dealers\active_record\relations\RelDealersToStores;
 use app\models\dealers\Dealers;
 use app\models\managers\active_record\relations\RelManagersToStores;
@@ -15,11 +15,14 @@ use app\models\store\active_record\references\RefSellingChannels;
 use app\models\store\active_record\references\RefStoresTypes;
 use app\models\store\active_record\relations\RelStoresToSellers;
 use app\models\store\active_record\relations\RelStoresToUsers;
+use app\models\sys\permissions\traits\ActiveRecordPermissionsTrait;
 use app\models\sys\users\Users;
 use pozitronik\helpers\DateHelper;
 use Throwable;
 use yii\db\ActiveQuery;
+use yii\db\ActiveQueryInterface;
 use yii\db\ActiveRecord;
+use yii\web\IdentityInterface;
 
 /**
  * This is the model class for table "stores".
@@ -48,6 +51,7 @@ use yii\db\ActiveRecord;
  */
 class StoresAR extends ActiveRecord {
 	use ActiveRecordTrait;
+	use ActiveRecordPermissionsTrait;
 
 	/**
 	 * {@inheritdoc}
@@ -202,6 +206,29 @@ class StoresAR extends ActiveRecord {
 	 */
 	public function getRefRegions():ActiveQuery {
 		return $this->hasOne(RefRegions::class, ['id' => 'region']);
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public static function scope(ActiveQueryInterface $query, IdentityInterface $user):ActiveQueryInterface {
+		/** @var Users $user */
+		if ($user->isAllPermissionsGranted()) return $query;
+		if ($user->hasPermission(['show_all_stores'])) return $query;
+
+		$query->where([self::tableName().'.id' => '0']);
+
+		if (null !== $manager = Managers::findOne(['user' => $user->id])) {
+			if ($user->hasPermission(['dealer_stores'])) {
+				$query->joinWith(['dealer']);
+				$query->orWhere([Dealers::tableName().'.id' => $manager->getRelatedDealersToManagers()->select('dealer_id')]);
+			}
+			if ($user->hasPermission(['manager_store'])) {
+				$query->orWhere([self::tableName().'.id' => $manager->getRelatedManagersToStores()->select('store_id')]);
+			}
+
+		}
+		return $query;
 	}
 
 }

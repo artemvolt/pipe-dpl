@@ -4,7 +4,7 @@ declare(strict_types = 1);
 namespace app\controllers;
 
 use app\models\branches\active_record\references\RefBranches;
-use app\models\core\prototypes\DefaultController;
+use app\components\web\DefaultController;
 use app\models\regions\active_record\references\RefRegions;
 use app\models\store\active_record\references\RefSellingChannels;
 use app\models\store\active_record\references\RefStoresTypes;

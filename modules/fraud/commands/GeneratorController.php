@@ -3,9 +3,11 @@ declare(strict_types = 1);
 
 namespace app\modules\fraud\commands;
 
+use app\models\core\TemporaryHelper;
 use app\models\products\ProductOrder;
 use app\modules\fraud\models\behaviours\ProductOrderSimcardAsyncBehaviour;
 use app\modules\fraud\models\FraudCheckStep;
+use DomainException;
 use pozitronik\helpers\DateHelper;
 use yii\console\Controller;
 use yii\db\Exception;
@@ -22,7 +24,7 @@ class GeneratorController extends Controller {
 		$newOrder->store = 2;
 		$newOrder->status = 3;
 		$newOrder->create_date = DateHelper::lcDate();
-		$newOrder->saveAndReturn();
+		if (!$newOrder->save()) throw new DomainException("Не получилось сохранить запись ".TemporaryHelper::Errors2String($newOrder->errors));
 	}
 
 	/**

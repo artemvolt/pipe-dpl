@@ -3,10 +3,10 @@ declare(strict_types = 1);
 
 namespace app\modules\history\models\active_record;
 
+use app\components\db\ActiveRecordTrait;
 use app\modules\history\HistoryModule;
-use pozitronik\core\helpers\ModuleHelper;
-use pozitronik\core\traits\ARExtended;
 use pozitronik\helpers\ArrayHelper;
+use pozitronik\helpers\ModuleHelper;
 use yii\db\ActiveRecord;
 
 /**
@@ -17,7 +17,7 @@ use yii\db\ActiveRecord;
  * @property string $tag
  */
 class HistoryTags extends ActiveRecord {
-	use ARExtended;
+	use ActiveRecordTrait;
 
 	public const TAG_CREATED = 'created';
 

@@ -3,18 +3,20 @@ declare(strict_types = 1);
 
 namespace app\models\managers\active_record;
 
-use app\models\core\prototypes\ActiveRecordTrait;
+use app\components\db\ActiveRecordTrait;
 use app\models\dealers\active_record\relations\RelDealersToManagers;
 use app\models\dealers\Dealers;
 use app\models\managers\active_record\relations\RelManagersToStores;
 use app\models\phones\PhoneNumberValidator;
 use app\models\store\Stores;
+use app\models\sys\permissions\traits\ActiveRecordPermissionsTrait;
 use app\models\sys\users\Users;
 use app\modules\history\behaviors\HistoryBehavior;
 use pozitronik\helpers\DateHelper;
 use Throwable;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
+use yii\db\ActiveQueryInterface;
 use yii\db\ActiveRecord;
 
 /**
@@ -40,6 +42,7 @@ use yii\db\ActiveRecord;
  */
 class ManagersAR extends ActiveRecord {
 	use ActiveRecordTrait;
+	use ActiveRecordPermissionsTrait;
 
 	public $email;
 	public $login;
@@ -207,5 +210,22 @@ class ManagersAR extends ActiveRecord {
 		}
 
 		$this->link('relatedUser', $relatedUser);
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public static function scope(ActiveQueryInterface $query, Users $user):ActiveQueryInterface {
+		if ($user->isAllPermissionsGranted()) return $query;
+		if ($user->hasPermission(['show_all_managers'])) return $query;
+
+		$query->where([self::tableName().'.id' => '0']);//пользователь получает сасай
+
+		if ((null !== $manager = self::findOne(['user' => $user->id])) && $user->hasPermission(['manager_dealer'])) {
+			$query->joinWith(['dealers']);
+			return $query->orWhere([Dealers::tableName().'.id' => $manager->getRelatedDealersToManagers()->select('dealer_id')]);
+		}
+
+		return $query;
 	}
 }

@@ -33,10 +33,6 @@ class ProductsSearch extends ProductsClassesAR {
 
 		$this->load($params);
 
-		if (!$this->validate()) {
-			return $dataProvider;
-		}
-
 		return $dataProvider;
 	}
 
@@ -48,7 +44,7 @@ class ProductsSearch extends ProductsClassesAR {
 		if ($find = ProductOrder::findOne(['id' => $orderId])) {
 			return $find;
 		}
-		throw new DomainException("Не получилось найти заказ по симкарте с id $orderId");
+		throw new DomainException("Не получилось найти заказ по сим-карте с id $orderId");
 	}
 
 }

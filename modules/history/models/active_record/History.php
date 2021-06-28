@@ -4,8 +4,8 @@ declare(strict_types = 1);
 namespace app\modules\history\models\active_record;
 
 use app\modules\history\HistoryModule;
-use pozitronik\core\helpers\ModuleHelper;
 use pozitronik\helpers\ArrayHelper;
+use pozitronik\helpers\ModuleHelper;
 use yii\db\ActiveRecord;
 
 /**

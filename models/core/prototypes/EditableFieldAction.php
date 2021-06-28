@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 namespace app\models\core\prototypes;
 
+use app\components\db\ActiveRecordTrait;
 use app\models\core\TemporaryHelper;
 use Throwable;
 use Yii;

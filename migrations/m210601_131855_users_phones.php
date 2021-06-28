@@ -2,7 +2,6 @@
 declare(strict_types = 1);
 use yii\db\Expression;
 use yii\db\Migration;
-use yii\db\SqlToken;
 
 /**
  * Class m210601_131855_users_phones

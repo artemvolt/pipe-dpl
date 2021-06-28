@@ -3,7 +3,7 @@ declare(strict_types = 1);
 
 namespace app\models\phones;
 
-use app\models\core\prototypes\ActiveRecordTrait;
+use app\components\db\ActiveRecordTrait;
 use app\models\phones\active_record\PhonesAR;
 use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumberFormat;

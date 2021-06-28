@@ -4,9 +4,9 @@ declare(strict_types = 1);
 namespace app\models\seller;
 
 use app\controllers\SellersController;
+use app\models\common\traits\CreateAddressTrait;
 use app\models\seller\active_record\SellersAR;
 use app\models\common\traits\CreateAccessTrait;
-use app\models\sys\users\Users;
 use pozitronik\filestorage\traits\FileStorageTrait;
 use yii\helpers\ArrayHelper;
 
@@ -27,6 +27,7 @@ use yii\helpers\ArrayHelper;
 class Sellers extends SellersAR {
 	use FileStorageTrait;
 	use CreateAccessTrait;
+	use CreateAddressTrait;
 
 	public $passportTranslation;
 	public $migrationCard;
@@ -35,7 +36,6 @@ class Sellers extends SellersAR {
 	public $residence;
 	public $temporaryResidence;
 	public $visa;
-	public ?Users $sysUser = null;
 
 	/**
 	 * {@inheritdoc}

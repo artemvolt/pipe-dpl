@@ -3,10 +3,10 @@ declare(strict_types = 1);
 
 namespace app\models\managers;
 
+use app\components\db\ActiveQuery;
 use app\models\dealers\Dealers;
 use app\models\store\Stores;
 use app\models\sys\users\Users;
-use pozitronik\core\models\LCQuery;
 use yii\data\ActiveDataProvider;
 use Throwable;
 use yii\helpers\ArrayHelper;
@@ -70,7 +70,7 @@ final class ManagersSearch extends Managers {
 	 * @throws Throwable
 	 */
 	public function search(array $params):ActiveDataProvider {
-		$query = self::find()->distinct()->active();
+		$query = self::find()->distinct()->active()->scope();
 		$query->joinWith(['stores', 'dealers', 'relatedUser']);
 		$this->initQuery($query);
 
@@ -89,11 +89,11 @@ final class ManagersSearch extends Managers {
 	}
 
 	/**
-	 * @param $query
+	 * @param ActiveQuery $query
 	 * @return void
 	 * @throws Throwable
 	 */
-	private function filterData($query):void {
+	private function filterData(ActiveQuery $query):void {
 		$query->andFilterWhere([self::tableName().'.id' => $this->id])
 			->andFilterWhere(['like', self::tableName().'.name', $this->name])
 			->andFilterWhere(['like', self::tableName().'.surname', $this->surname])
@@ -107,33 +107,6 @@ final class ManagersSearch extends Managers {
 			->andFilterWhere(['like', Stores::tableName().'.name', $this->store])
 			->andFilterWhere(['like', Dealers::tableName().'.name', $this->dealer]);
 
-		$this->filterDataByUser($query);
-	}
-
-	/**
-	 * Filters the records shown for current user
-	 * @param $query
-	 * @throws Throwable
-	 */
-	private function filterDataByUser($query):void {
-		$user = Users::Current();
-		if ($user->isAllPermissionsGranted()) {
-			return;
-		}
-		$manager = Managers::findOne(['user' => $user->id]);
-		if (null === $manager) {
-			return;
-		}
-
-		if ($user->hasPermission(['manager_dealer'])) {
-			$query->andFilterWhere(
-				[
-					'in',
-					Dealers::tableName().'.id',
-					ArrayHelper::getColumn($manager->relatedDealersToManagers, 'dealer_id')
-				]
-			);
-		}
 	}
 
 	/**
@@ -167,10 +140,10 @@ final class ManagersSearch extends Managers {
 	}
 
 	/**
-	 * @param LCQuery $query
+	 * @param ActiveQuery $query
 	 * @throws Throwable
 	 */
-	private function initQuery(LCQuery $query):void {
+	private function initQuery(ActiveQuery $query):void {
 		$query->select([
 			self::tableName().'.*',
 			Users::tableName().'.id AS userId',
