@@ -4,7 +4,10 @@ declare(strict_types = 1);
 /**
  * @var View $this
  * @var Sellers $model
+ * @var Addresses $address
  */
+
+use app\models\addresses\Addresses;
 use app\models\seller\Sellers;
 use pozitronik\widgets\BadgeWidget;
 use yii\bootstrap4\Modal;
@@ -33,6 +36,6 @@ Modal::begin([
 	]
 ]); ?>
 <?php $form = ActiveForm::begin(['id' => "{$modelName}-modal-edit", 'enableAjaxValidation' => true]) ?>
-<?= $this->render('../subviews/editPanelBody', compact('model', 'form')) ?>
+<?= $this->render('../subviews/editPanelBody', compact('model', 'form', 'address')) ?>
 <?php ActiveForm::end(); ?>
 <?php Modal::end(); ?>

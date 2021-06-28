@@ -4,6 +4,8 @@ declare(strict_types = 1);
 namespace app\models\seller;
 
 use app\controllers\SellersController;
+use app\models\addresses\active_record\AddressesAR;
+use app\models\addresses\Addresses;
 use app\models\common\traits\CreateAddressTrait;
 use app\models\seller\active_record\SellersAR;
 use app\models\common\traits\CreateAccessTrait;
@@ -59,6 +61,19 @@ class Sellers extends SellersAR {
 	 */
 	public function getUrlToEntity():string {
 		return SellersController::to('index', ['SellersSearch[id]' => $this->id], true);
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getAddressesInstance():Addresses {
+		if (null === $this->addressInstance) {
+			$this->addressInstance = new Addresses();
+			if (!$this->isNewRecord) {
+				$this->addressInstance->scenario = AddressesAR::SCENARIO_EDIT_SELLER;
+			}
+		}
+		return $this->addressInstance;
 	}
 
 }
