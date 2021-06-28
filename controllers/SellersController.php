@@ -6,10 +6,12 @@ namespace app\controllers;
 use app\components\web\DefaultController;
 use app\models\addresses\active_record\AddressesAR;
 use app\models\addresses\Addresses;
+use app\models\seller\active_record\SellersAR;
 use app\models\seller\Sellers;
 use app\models\seller\SellersSearch;
 use Throwable;
 use Yii;
+use ReflectionClass;
 use yii\db\Exception;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
@@ -38,7 +40,7 @@ class SellersController extends DefaultController {
 	public function actionCreate() {
 		/** @var Sellers $model */
 		$model = $this->model;
-		$model->scenario = $model::SCENARIO_CREATE;
+		$model->scenario = SellersAR::SCENARIO_CREATE;
 		if (Yii::$app->request->post('ajax')) {
 			return $this->asJson($model->validateModelFromPost());
 		}
@@ -47,7 +49,7 @@ class SellersController extends DefaultController {
 		if (true === $posting) {
 			$model->uploadAttributes();
 			$model->createAccess();
-			if (!empty($post[Addresses::class])) {
+			if (!empty(array_filter(Yii::$app->request->post((new ReflectionClass(new Addresses()))->getShortName())))) {
 				$model->createUpdateAddress(Yii::$app->request->post());
 			}
 			return $this->redirect('index');
@@ -71,7 +73,9 @@ class SellersController extends DefaultController {
 			throw new NotFoundHttpException();
 		}
 
-		if ($address = $model->relAddress) {
+		$model->scenario = SellersAR::SCENARIO_EDIT;
+		$address = $model->relAddress;
+		if ($address) {
 			$address->scenario = AddressesAR::SCENARIO_EDIT_SELLER;
 		}
 
