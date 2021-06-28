@@ -21,7 +21,7 @@ class RefCountries extends CustomisableReference {
 	 */
 	public function rules():array {
 		return array_merge(parent::rules(), [
-			[['is_homeland'], 'bool']//теоретически, таких стран может быть много (например, упрощёнку введём для Беларуси).
+			[['is_homeland'], 'boolean']//теоретически, таких стран может быть много (например, упрощёнку введём для Беларуси).
 		]);
 	}
 
