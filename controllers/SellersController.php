@@ -4,6 +4,8 @@ declare(strict_types = 1);
 namespace app\controllers;
 
 use app\components\web\DefaultController;
+use app\models\addresses\active_record\AddressesAR;
+use app\models\addresses\Addresses;
 use app\models\seller\Sellers;
 use app\models\seller\SellersSearch;
 use Throwable;
@@ -45,7 +47,9 @@ class SellersController extends DefaultController {
 		if (true === $posting) {
 			$model->uploadAttributes();
 			$model->createAccess();
-			$model->createUpdateAddress(Yii::$app->request->post());
+			if (!empty($post[Addresses::class])) {
+				$model->createUpdateAddress(Yii::$app->request->post());
+			}
 			return $this->redirect('index');
 		}
 		/* Пришёл постинг, но есть ошибки */
@@ -65,6 +69,10 @@ class SellersController extends DefaultController {
 	public function actionEdit(int $id) {
 		if (null === $model = $this->model::findOne($id)) {
 			throw new NotFoundHttpException();
+		}
+
+		if ($address = $model->relAddress) {
+			$address->scenario = AddressesAR::SCENARIO_EDIT_SELLER;
 		}
 
 		if (Yii::$app->request->post('ajax')) {/* запрос на ajax-валидацию формы */
@@ -88,8 +96,8 @@ class SellersController extends DefaultController {
 
 		/* Постинга не было */
 		return (Yii::$app->request->isAjax)
-			?$this->renderAjax('modal/edit', ['model' => $model])
-			:$this->render('edit', ['model' => $model]);
+			?$this->renderAjax('modal/edit', compact('model', 'address'))
+			:$this->render('edit', compact('model', 'address'));
 	}
 
 	/**

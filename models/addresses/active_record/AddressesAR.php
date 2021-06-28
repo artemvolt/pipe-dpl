@@ -24,6 +24,8 @@ use yii\db\ActiveRecord;
  * @property RefRegions $refRegion Область (справочник)
  */
 class AddressesAR extends ActiveRecord {
+	public const SCENARIO_EDIT_SELLER = 'edit_default';
+
 	/**
 	 * {@inheritdoc}
 	 */
@@ -36,7 +38,7 @@ class AddressesAR extends ActiveRecord {
 	 */
 	public function rules():array {
 		return [
-			[['city', 'street', 'building'], 'required'],
+			[['city', 'street', 'building'], 'required', 'on' => self::SCENARIO_EDIT_SELLER],
 			['create_date', 'default', 'value' => DateHelper::lcDate()],
 			[['index', 'area', 'deleted'], 'integer'],
 			[['region', 'city', 'street', 'building'], 'string', 'max' => 255]

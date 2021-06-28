@@ -124,35 +124,35 @@ use app\models\regions\active_record\references\RefRegions;
 </div>
 <div class="row">
 	<div class="col-md-12">
-		<?= $form->field($model->relAddress??$model->addressesInstance, 'index')->textInput() ?>
+		<?= $form->field($address??$model->addressesInstance, 'index')->textInput() ?>
 	</div>
 </div>
 <div class="row">
 	<div class="col-md-12">
-		<?= $form->field($model->relAddress??$model->addressesInstance, 'area')->widget(ReferenceSelectWidget::class, [
+		<?= $form->field($address??$model->addressesInstance, 'area')->widget(ReferenceSelectWidget::class, [
 			'referenceClass' => RefRegions::class,
-			'options' => ['placeholder' => '']
+			'pluginOptions' => ['allowClear' => true, 'placeholder' => '']
 		]) ?>
 	</div>
 </div>
 <div class="row">
 	<div class="col-md-12">
-		<?= $form->field($model->relAddress??$model->addressesInstance, 'region')->textInput() ?>
+		<?= $form->field($address??$model->addressesInstance, 'region')->textInput() ?>
 	</div>
 </div>
 <div class="row">
 	<div class="col-md-12">
-		<?= $form->field($model->relAddress??$model->addressesInstance, 'city')->textInput() ?>
+		<?= $form->field($address??$model->addressesInstance, 'city')->textInput() ?>
 	</div>
 </div>
 <div class="row">
 	<div class="col-md-12">
-		<?= $form->field($model->relAddress??$model->addressesInstance, 'street')->textInput() ?>
+		<?= $form->field($address??$model->addressesInstance, 'street')->textInput() ?>
 	</div>
 </div>
 <div class="row">
 	<div class="col-md-12">
-		<?= $form->field($model->relAddress??$model->addressesInstance, 'building')->textInput() ?>
+		<?= $form->field($address??$model->addressesInstance, 'building')->textInput() ?>
 	</div>
 </div>
 <div class="row">
