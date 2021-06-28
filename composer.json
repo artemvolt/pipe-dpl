@@ -98,7 +98,8 @@
 		},
 		{
 			"type": "github",
-			"url": "https://github.com/cusodede/yii2-multi-select-widget.git"
+			"url": "https://github.com/cusodede/yii2-multi-select-widget.git",
+			"no-api": true
 		}
 	]
 }
