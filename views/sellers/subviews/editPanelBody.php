@@ -25,16 +25,14 @@ use yii\web\View;
 use app\models\regions\active_record\references\RefRegions;
 
 ?>
-<?php if (!$model->isNewRecord): ?>
-	<div class="row">
-		<div class="col-md-12">
-			<?= $form->field($model, 'currentStatusId')->dropDownList(
-				ArrayHelper::map($model->getAvailableStatuses(), 'id', 'name'),
-				['prompt' => '']
-			) ?>
-		</div>
+<div class="row">
+	<div class="col-md-12">
+		<?= $form->field($model, 'currentStatusId')->dropDownList(
+			ArrayHelper::map($model->getAvailableStatuses(), 'id', 'name'),
+			['prompt' => '']
+		) ?>
 	</div>
-<?php endif; ?>
+</div>
 <div class="row">
 	<div class="col-md-12">
 		<?= $form->field($model, 'gender')->dropDownList(ProjectConstants::GENDER, ['prompt' => '']) ?>
