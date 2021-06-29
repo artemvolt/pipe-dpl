@@ -66,7 +66,8 @@ RUN chown -R nobody.nobody /var/www/dpl && \
   chmod o+w /var/log/nginx && \
   chmod o+w /var/lib/nginx && \
   chown -R nobody.nobody /var/lib/nginx && \
-  chown -R nobody.nobody /var/log/nginx
+  chown -R nobody.nobody /var/log/nginx && \
+  chown nobody.nobody /etc/ssl/cacert.pem
 
 COPY --from=harbor.vimpelcom.ru/dockerhub/library/composer:latest /usr/bin/composer /usr/local/bin/composer
 #COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
