@@ -293,4 +293,11 @@ final class SellersSearch extends Sellers {
 			->distinct()
 			->active();
 	}
+
+	/**
+	 * @return Sellers[]
+	 */
+	public function findAllRows():array {
+		return Sellers::find()->all();
+	}
 }
