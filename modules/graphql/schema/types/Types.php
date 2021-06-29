@@ -31,6 +31,8 @@ class Types {
 	private static ?SellerType $seller = null;
 	private static ?SellerMutationType $sellerMutationType = null;
 
+	private static ?ProfileType $profile = null;
+
 	/**
 	 * Запрос
 	 * @return QueryType
@@ -111,5 +113,13 @@ class Types {
 	 */
 	public static function sellerMutation():SellerMutationType {
 		return static::$sellerMutationType?:static::$sellerMutationType = new SellerMutationType();
+	}
+
+	/**
+	 * Профиль пользователя
+	 * @return ProfileType
+	 */
+	public static function profile():ProfileType {
+		return static::$profile?:static::$profile = new ProfileType();
 	}
 }
