@@ -74,6 +74,7 @@ class SellersController extends DefaultController {
 		}
 
 		$model->scenario = SellersAR::SCENARIO_EDIT;
+		/** @var SellersAR $model */
 		$address = $model->relAddress;
 		if ($address) {
 			$address->scenario = AddressesAR::SCENARIO_EDIT_SELLER;
