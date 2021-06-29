@@ -2,7 +2,8 @@
 FROM harbor.vimpelcom.ru/dockerhub/library/alpine:3.14
 RUN apk --no-cache add \
   curl \
-  ssh \
+  openssh-client \
+  bash \
   git \
   net-tools \
   vim \
