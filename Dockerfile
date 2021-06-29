@@ -81,7 +81,7 @@ WORKDIR /var/www/dpl
 ENV COMPOSER_AUTH='{"github-oauth": {"github.com": "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"}}'
 
 #RUN git clone https://github.com/cusodede/dpl.git .
-RUN git clone ssh://git@git.vimpelcom.ru:1122/products/dsp/dpl-main.git .
+RUN git clone https://git.vimpelcom.ru/products/dsp/dpl-main.git .
 
 # Add local application configurations
 COPY docker-data/web-config /var/www/dpl/config/local/
