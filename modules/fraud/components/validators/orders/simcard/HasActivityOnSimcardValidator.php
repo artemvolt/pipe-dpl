@@ -1,4 +1,5 @@
 <?php
+/** @noinspection PhpUnusedParameterInspection todo: remove after implementation! */
 declare(strict_types = 1);
 
 namespace app\modules\fraud\components\validators\orders\simcard;
@@ -10,6 +11,7 @@ use app\modules\fraud\components\FraudValidator;
  * Class HasActivityOnSimcard
  * @package app\modules\fraud\components\validators\orders\simcard
  */
+
 class HasActivityOnSimcardValidator implements FraudValidator {
 
 	/**
