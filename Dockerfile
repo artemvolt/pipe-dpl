@@ -100,9 +100,10 @@ RUN php yii migrate --migrationPath=@vendor/pozitronik/yii2-users-options/migrat
   php yii migrate --migrationPath=@vendor/pozitronik/yii2-filestorage/migrations --interactive=0 && \
   php yii migrate --interactive=0
 
-RUN php yii service/init && \
-  php yii service/init-config-permissions && \
-  php yii service/init-controllers-permissions
+#Required only at first run!
+#RUN php yii service/init && \
+#  php yii service/init-config-permissions && \
+#  php yii service/init-controllers-permissions
 
 USER root
 
