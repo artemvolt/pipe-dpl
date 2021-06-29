@@ -72,6 +72,7 @@ class SellersAR extends ActiveRecord {
 
 	public const SCENARIO_CREATE = 'create';
 	public const SCENARIO_EDIT = 'edit';
+	public const SCENARIO_REGISTER_MINI = 'register_mini';
 
 	/**
 	 * @var null|Users $_updatedRelatedUser Используется для предвалидации пользователя при изменении
@@ -115,12 +116,27 @@ class SellersAR extends ActiveRecord {
 				'filter',
 				'filter' => 'trim'
 			],
-			[['inn', 'snils'], 'default', 'value' => null],
-			[['name', 'surname'], 'required'],
+			[
+				[
+					'inn', 'snils', 'passport_when', 'passport_whom', 'passport_number', 'passport_series',
+					'entry_date'
+				],
+				'default',
+				'value' => null
+			],
+			[['name', 'surname'], 'required', 'on' => [self::SCENARIO_CREATE, self::SCENARIO_EDIT]],
 			[
 				['passport_series', 'passport_number', 'passport_whom', 'passport_when', 'birthday', 'inn', 'citizen'],
 				'required',
 				'on' => self::SCENARIO_EDIT
+			],
+			[
+				[
+					'name', 'surname', 'passport_series', 'passport_number', 'passport_whom',
+					'passport_when', 'birthday', 'inn', 'citizen'
+				],
+				'required',
+				'on' => [self::SCENARIO_CREATE, self::SCENARIO_EDIT]
 			],
 			[['email', 'login',], 'required', 'on' => self::SCENARIO_CREATE],
 			['email', 'email', 'on' => self::SCENARIO_CREATE],
@@ -142,10 +158,10 @@ class SellersAR extends ActiveRecord {
 				},
 				'on' => self::SCENARIO_CREATE
 			],
-			['login', PhoneNumberValidator::class],
+			['login', PhoneNumberValidator::class, 'on' => [self::SCENARIO_CREATE, self::SCENARIO_EDIT]],
 			[['create_date', 'update_date', 'stores', 'dealers', 'currentStatusId'], 'safe'],
 			[['passport_when', 'birthday', 'entry_date'], 'date', 'format' => 'php:Y-m-d'],
-			['patronymic', 'default', 'value' => null],
+			[['patronymic'], 'default', 'value' => null],
 			[
 				'entry_date',
 				'required',
@@ -158,38 +174,59 @@ class SellersAR extends ActiveRecord {
 					implode(',', ArrayHelper::getColumn(RefCountries::getHomelandCountries(), 'id', [])).
 					"], document.getElementById('sellers-citizen').value)
 					}"),
+				'on' => [self::SCENARIO_CREATE, self::SCENARIO_EDIT]
 			],
 			[
 				[
 					'gender', 'is_wireman_shpd', 'deleted', 'user', 'inn', 'citizen',
 					'reg_address'
 				],
-				'integer'
+				'integer',
+				'on' => [self::SCENARIO_CREATE, self::SCENARIO_EDIT]
 			],
 			[['name', 'surname', 'patronymic'], 'string', 'max' => 128],
 			[['passport_series', 'passport_number', 'keyword', 'login'], 'string', 'max' => 64],
 			[['passport_whom', 'email', 'contract_signing_address'], 'string', 'max' => 255],
-			['inn', 'string', 'length' => 12],
+			['inn', 'string', 'length' => 12, 'on' => [self::SCENARIO_CREATE, self::SCENARIO_EDIT]],
 			[
 				'snils',
 				'match',
 				'pattern' => '/^(\d{3}\-\d{3}-\d{3} \d{2})$/',
-				'message' => 'Значение «СНИЛС» неверно. Формат: 000-000-000 00'
+				'message' => 'Значение «СНИЛС» неверно. Формат: 000-000-000 00',
+				'on' => [self::SCENARIO_CREATE, self::SCENARIO_EDIT]
 			],
-			[['inn', 'snils', 'user'], 'unique'],
+			[['inn', 'snils', 'user'], 'unique', 'on' => [self::SCENARIO_CREATE, self::SCENARIO_EDIT]],
 			[
 				['passport_series', 'passport_number'],
 				'unique',
-				'targetAttribute' => ['passport_series', 'passport_number']
+				'targetAttribute' => ['passport_series', 'passport_number'],
+				'on' => [self::SCENARIO_CREATE, self::SCENARIO_EDIT]
 			],
 			['relatedUser', function(string $attribute) {
 				/*не соображу, как доделать. Пока не критично, отложил*/
 				if (null !== $this->_updatedRelatedUser) {
 					$this->addError('relatedUser', 'Этот аккаунт уже привязан к другому продавцу');
 				}
+			}, 'on' => [self::SCENARIO_CREATE, self::SCENARIO_EDIT]],
 
-			}]
+			[['login', 'surname', 'name', 'email'], 'required', 'on' => self::SCENARIO_REGISTER_MINI],
+			['email', 'validateEmailOnExistentUser', 'on' => self::SCENARIO_REGISTER_MINI],
+			['email', 'email', 'on' => self::SCENARIO_REGISTER_MINI],
+			['login', PhoneNumberValidator::class, 'on' => self::SCENARIO_REGISTER_MINI],
+			['login', 'validateLoginOnExistentUser', 'on' => self::SCENARIO_REGISTER_MINI],
 		];
+	}
+
+	public function validateEmailOnExistentUser():void {
+		if (null !== Users::findByEmail($this->email)) {
+			$this->addError('email', 'Пользователь с таким почтовым адресом уже зарегистрирован');
+		}
+	}
+
+	public function validateLoginOnExistentUser():void {
+		if (null !== Users::findByLogin($this->login)) {
+			$this->addError('login', 'Такой логин уже занят');
+		}
 	}
 
 	/**
