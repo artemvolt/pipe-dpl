@@ -116,6 +116,7 @@ class SellersAR extends ActiveRecord {
 				'filter',
 				'filter' => 'trim'
 			],
+			['is_wireman_shpd', 'default', 'value' => 0],
 			[
 				[
 					'inn', 'snils', 'passport_when', 'passport_whom', 'passport_number', 'passport_series',
