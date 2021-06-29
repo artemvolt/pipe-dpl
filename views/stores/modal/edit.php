@@ -29,6 +29,7 @@ $modelName = $model->formName();
 	],
 	'options' => [
 		'class' => 'modal-dialog-large',
+		'tabindex' => false // for Kartik's Select2 widget in modals
 	]
 ]); ?>
 <?php $form = ActiveForm::begin(['id' => "{$modelName}-modal-edit", 'enableAjaxValidation' => true]) ?>

@@ -116,12 +116,11 @@ class SellersAR extends ActiveRecord {
 				'filter' => 'trim'
 			],
 			[['inn', 'snils'], 'default', 'value' => null],
+			[['name', 'surname'], 'required'],
 			[
-				[
-					'name', 'surname', 'passport_series', 'passport_number', 'passport_whom',
-					'passport_when', 'birthday', 'inn', 'citizen'
-				],
-				'required'
+				['passport_series', 'passport_number', 'passport_whom', 'passport_when', 'birthday', 'inn', 'citizen'],
+				'required',
+				'on' => self::SCENARIO_EDIT
 			],
 			[['email', 'login',], 'required', 'on' => self::SCENARIO_CREATE],
 			['email', 'email', 'on' => self::SCENARIO_CREATE],

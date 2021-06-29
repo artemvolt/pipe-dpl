@@ -81,12 +81,12 @@ trait StatusesTrait {
 
 	/**
 	 * @param int $status
-	 * @return bool
+	 * @return null|bool null если присвоение отложено
 	 * @throws Throwable
 	 *
 	 * Не совсем красиво, что присвоение статуса проксифицируется сюда (дублируются проверки), но пока не заморачиваюсь.
 	 */
-	public function setCurrentStatusId(int $status):bool {
+	public function setCurrentStatusId(int $status):?bool {
 		if (in_array($status, ArrayHelper::getColumn($this->availableStatuses, 'id'), true)) {
 			/** @var ActiveRecord $this */
 			$this->on(ActiveRecord::EVENT_AFTER_UPDATE, function($event) {//отложим связывание после сохранения
@@ -95,6 +95,7 @@ trait StatusesTrait {
 			$this->on(ActiveRecord::EVENT_AFTER_INSERT, function($event) {//отложим связывание после сохранения
 				return Status::setCurrentStatus($event->data[0], $event->data[1]);
 			}, [$this, $status]);
+			return null;
 		}
 		/** @var ActiveRecord $this */
 		$this->addError('currentStatusId', 'Нет права на изменение статуса.');
