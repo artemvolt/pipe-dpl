@@ -4,9 +4,11 @@ declare(strict_types = 1);
 /**
  * @var View $this
  * @var Sellers $model
+ * @var Addresses $address
  */
 
 use app\assets\ValidationAsset;
+use app\models\addresses\Addresses;
 use app\models\seller\Sellers;
 use yii\web\View;
 use yii\bootstrap4\ActiveForm;
@@ -20,7 +22,7 @@ ValidationAsset::register($this);
 	</div>
 	<div class="panel-container show">
 		<div class="panel-content">
-			<?= $this->render('subviews/editPanelBody', compact('model', 'form')) ?>
+			<?= $this->render('subviews/editPanelBody', compact('model', 'form', 'address')) ?>
 		</div>
 		<div class="panel-content">
 			<?= $this->render('subviews/editPanelFooter', compact('model', 'form')) ?>
