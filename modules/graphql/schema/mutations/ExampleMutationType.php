@@ -43,6 +43,7 @@ class ExampleMutationType extends ObjectType implements MutationInterface {
 					'description' => 'Создание',
 					'args' => $this->getArgs(),
 					'resolve' => function(array $fromMutationArgs, array $args = []) {
+						/** @noinspection PhpUnusedLocalVariableInspection Это пример кода, игнорим инспекцию */
 						$user = new Users([
 							'username' => $args['username']
 						]);

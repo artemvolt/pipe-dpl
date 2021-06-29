@@ -287,6 +287,7 @@ class DefaultController extends Controller {
 	 * результат CONCAT() для этих полей вместо поля параметра $column
 	 * @return string[][]
 	 * @throws ForbiddenHttpException
+	 * @throws Throwable
 	 */
 	public function actionAjaxSearch(?string $term, string $column = 'name', string $concatFields = null):array {
 		$out = [
