@@ -3,7 +3,6 @@ declare(strict_types = 1);
 
 namespace app\models\sales;
 
-use app\components\db\ActiveRecordTrait;
 use app\models\products\Products;
 use app\models\products\ProductsInterface;
 use app\models\reward\config\RewardsOperationsConfig;
@@ -21,8 +20,6 @@ use yii\web\ForbiddenHttpException;
  * @property null|ProductsInterface $relatedProducts Связанный проданный продукта
  */
 class Sales extends SalesAR {
-	use ActiveRecordTrait;
-
 	public const STATUS_REGISTERED = 0;
 
 	/**
