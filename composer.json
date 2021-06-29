@@ -62,8 +62,7 @@
 		"process-timeout": 1800,
 		"fxp-asset": {
 			"enabled": false
-		},
-		"use-github-api": false
+		}
 	},
 	"scripts": {
 		"post-install-cmd": [
@@ -99,8 +98,7 @@
 		},
 		{
 			"type": "github",
-			"url": "https://github.com/cusodede/yii2-multi-select-widget.git",
-			"no-api": true
+			"url": "https://github.com/cusodede/yii2-multi-select-widget.git"
 		}
 	]
 }
