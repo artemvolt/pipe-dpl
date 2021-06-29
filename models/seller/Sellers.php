@@ -173,7 +173,7 @@ class Sellers extends SellersAR {
 				'name' => 'Не активирован',
 				'initial' => true,
 				'finishing' => false,
-				'next' => [Sellers::SELLER_ACTIVE, Sellers::SELLER_LIMITED, Sellers::SELLER_BLOCKED, Sellers::SELLER_SUSPENDED],
+				'next' => [self::SELLER_ACTIVE, self::SELLER_LIMITED, self::SELLER_BLOCKED, self::SELLER_SUSPENDED],
 				'allowed' => false
 			],
 			self::SELLER_ACTIVE => [
