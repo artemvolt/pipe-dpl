@@ -4,6 +4,9 @@ declare(strict_types = 1);
 namespace app\models\countries\active_record\references;
 
 use pozitronik\references\models\CustomisableReference;
+use pozitronik\references\models\ReferenceLoader;
+use pozitronik\traits\traits\ModuleTrait;
+use Yii;
 
 /**
  * Class RefCountries
@@ -41,6 +44,13 @@ class RefCountries extends CustomisableReference {
 		$columns = parent::getColumns();
 		$columns[] = 'is_homeland:boolean';
 		return $columns;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getForm():string {
+		return '@app/views/countries/references/refcountries/_form.php';
 	}
 
 	/**
