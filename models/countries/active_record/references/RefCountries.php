@@ -25,10 +25,22 @@ class RefCountries extends CustomisableReference {
 		]);
 	}
 
+	/**
+	 * @inheritdoc
+	 */
 	public function attributeLabels():array {
 		return array_merge(parent::attributeLabels(), [
 			'is_homeland' => 'Упрощённые правила'
 		]);
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function getColumns():array {
+		$columns = parent::getColumns();
+		$columns[] = 'is_homeland:boolean';
+		return $columns;
 	}
 
 	/**
