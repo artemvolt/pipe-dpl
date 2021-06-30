@@ -9,5 +9,5 @@ use app\models\seller\Sellers;
 
 return [
 	Rewards::class => Rewards::class.'::status_config',
-	Sellers::class => Sellers::class.'::getStatusConfig'
+	Sellers::class => Sellers::class.'::status_config'
 ];

@@ -151,7 +151,7 @@ class Sellers extends SellersAR {
 	 * @return bool
 	 */
 	public function isExistStatus(int $status):bool {
-		return array_key_exists($status, array_keys(self::getStatusConfig()));
+		return array_key_exists($status, array_keys(self::status_config()));
 	}
 
 	/**
@@ -166,7 +166,7 @@ class Sellers extends SellersAR {
 		return $existentStatus === self::SELLER_NOT_ACTIVE;
 	}
 
-	public static function getStatusConfig():array {
+	public static function status_config():array {
 		return [
 			self::SELLER_NOT_ACTIVE => [
 				'id' => self::SELLER_NOT_ACTIVE,
@@ -188,7 +188,7 @@ class Sellers extends SellersAR {
 				'style' => 'background: #ffa700; color:black'//стили можно задавать напрямую
 			],
 			self::SELLER_LIMITED => [
-				'id' => Sellers::SELLER_LIMITED,
+				'id' => self::SELLER_LIMITED,
 				'name' => 'Ограничен',
 				'initial' => false,
 				'finishing' => true,
@@ -199,7 +199,7 @@ class Sellers extends SellersAR {
 				'color' => '#00ff00'
 			],
 			self::SELLER_BLOCKED => [
-				'id' => Sellers::SELLER_BLOCKED,
+				'id' => self::SELLER_BLOCKED,
 				'name' => 'Заблокирован',
 				'initial' => false,
 				'finishing' => true,
@@ -210,7 +210,7 @@ class Sellers extends SellersAR {
 				'color' => '#00ff00'
 			],
 			self::SELLER_SUSPENDED => [
-				'id' => Sellers::SELLER_SUSPENDED,
+				'id' => self::SELLER_SUSPENDED,
 				'name' => 'Suspend',
 				'initial' => false,
 				'finishing' => true,
