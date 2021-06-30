@@ -43,7 +43,8 @@
 		"kartik-v/yii2-widget-datepicker": "dev-master",
 		"moonlandsoft/yii2-phpexcel": "dev-master",
 		"giggsey/libphonenumber-for-php": "^8.12",
-		"yiisoft/yii2-queue": "^2.0"
+		"yiisoft/yii2-queue": "^2.0",
+		"cusodede/yii2-jwt": "dev-master"
 	},
 	"require-dev": {
 		"yiisoft/yii2-debug": "~2.0.0",
@@ -56,8 +57,7 @@
 		"codeception/module-yii2": "^1.1",
 		"codeception/module-db": "^1.1",
 		"codeception/module-filesystem": "^1.0",
-		"vlucas/phpdotenv": "^4",
-		"cusodede/yii2-jwt": "dev-master"
+		"vlucas/phpdotenv": "^4"
 	},
 	"config": {
 		"process-timeout": 1800,
