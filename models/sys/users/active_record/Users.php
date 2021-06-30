@@ -4,7 +4,6 @@ declare(strict_types = 1);
 namespace app\models\sys\users\active_record;
 
 use app\components\db\ActiveRecordTrait;
-use app\models\phones\active_record\PhonesAR;
 use app\models\phones\PhoneNumberValidator;
 use app\models\phones\Phones;
 use app\models\sys\users\active_record\relations\RelUsersToPhones;
@@ -34,7 +33,7 @@ use yii\helpers\ArrayHelper;
  *
  * @property-read UsersTokens[] $relatedUsersTokens Связанные с моделью пользователя модели токенов
  * @property RelUsersToPhones[] $relatedUsersToPhones Связь к промежуточной таблице к телефонным номерам
- * @property PhonesAR[] $relatedPhones Телефонные номера пользователя (таблица)
+ * @property Phones[] $relatedPhones Телефонные номера пользователя (таблица)
  * @property string[] $phones Виртуальный атрибут: телефонные номера в строковом массиве, используется для редактирования
  */
 class Users extends ActiveRecord {
@@ -124,7 +123,7 @@ class Users extends ActiveRecord {
 	 * @return ActiveQuery
 	 */
 	public function getRelatedPhones():ActiveQuery {
-		return $this->hasMany(PhonesAR::class, ['id' => 'phone_id'])->via('relatedUsersToPhones');
+		return $this->hasMany(Phones::class, ['id' => 'phone_id'])->via('relatedUsersToPhones');
 	}
 
 	/**
