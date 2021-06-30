@@ -8,6 +8,7 @@ declare(strict_types = 1);
  */
 
 use kartik\color\ColorInput;
+use kartik\switchinput\SwitchInput;
 use pozitronik\references\models\CustomisableReference;
 use yii\web\View;
 use yii\bootstrap4\Html;
@@ -31,7 +32,14 @@ use yii\bootstrap4\ActiveForm;
 					]) ?>
 				</div>
 				<div class="col-md-2">
-					<?= $form->field($model, 'is_homeland')->checkbox() ?>
+					<?= $form->field($model, 'is_homeland')->widget(SwitchInput::class, [
+						'tristate' => false,
+						'pluginOptions' => [
+							'size' => 'mini',
+							'onText' => '<i class="fa fa-check"></i>',
+							'offText' => null
+						],
+					]) ?>
 				</div>
 
 				<div class="col-md-3">
