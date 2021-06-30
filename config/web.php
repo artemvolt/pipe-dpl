@@ -32,6 +32,7 @@ use yii\log\FileTarget;
 use yii\rest\UrlRule;
 use yii\swiftmailer\Mailer;
 use yii\web\JsonParser;
+use cusodede\jwt\Jwt;
 
 $params = require __DIR__.'/params.php';
 $db = require __DIR__.'/db.php';
@@ -181,6 +182,11 @@ $config = [
 					]
 				]
 			]
+		],
+		'jwt' => [
+			'class' => Jwt::class,
+			'signer' => Jwt::HS256,
+			'signerKey' => 'testkey'
 		]
 	],
 	'params' => $params,

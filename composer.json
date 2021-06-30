@@ -56,7 +56,8 @@
 		"codeception/module-yii2": "^1.1",
 		"codeception/module-db": "^1.1",
 		"codeception/module-filesystem": "^1.0",
-		"vlucas/phpdotenv": "^4"
+		"vlucas/phpdotenv": "^4",
+		"cusodede/yii2-jwt": "dev-master"
 	},
 	"config": {
 		"process-timeout": 1800,
@@ -99,6 +100,10 @@
 		{
 			"type": "github",
 			"url": "https://github.com/cusodede/yii2-multi-select-widget.git"
+		},
+		{
+			"type": "github",
+			"url": "https://github.com/cusodede/yii2-jwt"
 		}
 	]
 }
