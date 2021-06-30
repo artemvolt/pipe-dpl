@@ -4,6 +4,7 @@ declare(strict_types = 1);
 namespace app\models\sys\permissions\traits;
 
 use app\models\sys\users\Users;
+use Throwable;
 use yii\web\ForbiddenHttpException;
 
 /**
@@ -17,6 +18,7 @@ trait ActiveQueryPermissionsTrait {
 	 * @param ?Users $user
 	 * @return $this
 	 * @throws ForbiddenHttpException
+	 * @throws Throwable
 	 */
 	public function scope(?string $modelObjectOrClass = null, ?Users $user = null):self {
 		$modelObjectOrClass = $modelObjectOrClass??$this->modelClass;

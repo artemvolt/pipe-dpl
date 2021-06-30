@@ -4,7 +4,9 @@ declare(strict_types = 1);
 namespace app\models\sys\users;
 
 use app\models\sys\users\active_record\Users as ActiveRecordUsers;
+use Throwable;
 use yii\data\ActiveDataProvider;
+use yii\web\ForbiddenHttpException;
 
 /**
  * Class UsersSearch
@@ -25,6 +27,8 @@ class UsersSearch extends ActiveRecordUsers {
 	 * @param array $params
 	 * @param int[] $allowedGroups
 	 * @return ActiveDataProvider
+	 * @throws Throwable
+	 * @throws ForbiddenHttpException
 	 */
 	public function search(array $params, array $allowedGroups = []):ActiveDataProvider {
 		$query = Users::find()->active()->scope();

@@ -7,7 +7,6 @@ use app\components\db\ActiveRecordTrait;
 use app\models\core\prototypes\EditableFieldAction;
 use app\models\sys\permissions\filters\PermissionFilter;
 use app\models\sys\permissions\traits\ControllerPermissionsTrait;
-use app\models\sys\users\Users;
 use app\modules\import\models\ImportAction;
 use app\modules\import\models\ProcessImportAction;
 use pozitronik\helpers\ControllerHelper;
@@ -287,6 +286,7 @@ class DefaultController extends Controller {
 	 * результат CONCAT() для этих полей вместо поля параметра $column
 	 * @return string[][]
 	 * @throws ForbiddenHttpException
+	 * @throws Throwable
 	 */
 	public function actionAjaxSearch(?string $term, string $column = 'name', string $concatFields = null):array {
 		$out = [
