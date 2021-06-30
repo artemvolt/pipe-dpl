@@ -5,6 +5,8 @@ namespace app\models\sys\users;
 
 use app\components\db\ActiveRecordTrait;
 use app\models\sys\users\active_record\UsersTokens as ActiveRecordUsersTokens;
+use app\modules\api\tokenizers\RefreshTokenType;
+use cusodede\jwt\JwtHttpBearerAuth;
 use Exception;
 use pozitronik\helpers\DateHelper;
 use yii\behaviors\TimestampBehavior;
@@ -25,7 +27,9 @@ class UsersTokens extends ActiveRecordUsersTokens {
 	 */
 	public const TOKEN_TYPES = [
 		HttpHeaderAuth::class => 1,
-		HttpBearerAuth::class => 2
+		HttpBearerAuth::class => 2,
+		JwtHttpBearerAuth::class => 3,
+		RefreshTokenType::class => 4
 	];
 
 	/**
