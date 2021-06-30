@@ -5,8 +5,10 @@ declare(strict_types = 1);
 if (file_exists($localConfig = __DIR__.DIRECTORY_SEPARATOR.'local'.DIRECTORY_SEPARATOR.basename(__FILE__))) return require $localConfig;
 
 use app\assets\SmartAdminThemeAssets;
+use app\models\sys\permissions\Permissions;
 use app\models\sys\users\Users;
 use app\models\sys\users\WebUser;
+use app\modules\api\ApiModule;
 use app\modules\fraud\FraudModule;
 use app\modules\graphql\GraphqlModule;
 use app\modules\history\HistoryModule;
@@ -32,6 +34,7 @@ use yii\log\FileTarget;
 use yii\rest\UrlRule;
 use yii\swiftmailer\Mailer;
 use yii\web\JsonParser;
+use cusodede\jwt\Jwt;
 
 $params = require __DIR__.'/params.php';
 $db = require __DIR__.'/db.php';
@@ -99,6 +102,9 @@ $config = [
 		],
 		'fraud' => [
 			'class' => FraudModule::class
+		],
+		'api' => [
+			'class' => ApiModule::class
 		]
 	],
 	'components' => [
@@ -182,6 +188,11 @@ $config = [
 					]
 				]
 			]
+		],
+		'jwt' => [
+			'class' => Jwt::class,
+			'signer' => Jwt::HS256,
+			'signerKey' => 'testkey'
 		]
 	],
 	'params' => $params,

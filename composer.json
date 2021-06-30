@@ -43,7 +43,8 @@
 		"kartik-v/yii2-widget-datepicker": "dev-master",
 		"moonlandsoft/yii2-phpexcel": "dev-master",
 		"giggsey/libphonenumber-for-php": "^8.12",
-		"yiisoft/yii2-queue": "^2.0"
+		"yiisoft/yii2-queue": "^2.0",
+		"cusodede/yii2-jwt": "dev-master"
 	},
 	"require-dev": {
 		"yiisoft/yii2-debug": "~2.0.0",
@@ -101,6 +102,10 @@
 			"type": "github",
 			"url": "https://github.com/cusodede/yii2-multi-select-widget.git",
 			"no-api": true
+		},
+		{
+			"type": "github",
+			"url": "https://github.com/cusodede/yii2-jwt"
 		}
 	]
 }
