@@ -202,6 +202,20 @@ use app\models\regions\active_record\references\RefRegions;
 </div>
 <div class="row">
 	<div class="col-md-12">
+		<?= $form->field($model, 'passportScan')->widget(FileInputWidget::class, [
+			'allowVersions' => false
+		]) ?>
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-12">
+		<?= $form->field($model, 'passportSelfie')->widget(FileInputWidget::class, [
+			'allowVersions' => false
+		]) ?>
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-12">
 		<?= $form->field($model, 'passportTranslation')->widget(FileInputWidget::class, [
 			'allowVersions' => false
 		]) ?>

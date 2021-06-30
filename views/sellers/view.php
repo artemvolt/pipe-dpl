@@ -109,8 +109,8 @@ use app\models\seller\active_record\SellersAR;
 				return FileListWidget::widget([
 					'model' => $model,
 					'tags' => [
-						'passportTranslation', 'migrationCard', 'placeOfStay', 'patent', 'residence',
-						'temporaryResidence', 'visa'
+						'passportScan', 'passportSelfie', 'passportTranslation', 'migrationCard', 'placeOfStay',
+						'patent', 'residence', 'temporaryResidence', 'visa'
 					],
 					'allowVersions' => false
 				]);
