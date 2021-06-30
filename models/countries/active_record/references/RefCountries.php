@@ -4,9 +4,6 @@ declare(strict_types = 1);
 namespace app\models\countries\active_record\references;
 
 use pozitronik\references\models\CustomisableReference;
-use pozitronik\references\models\ReferenceLoader;
-use pozitronik\traits\traits\ModuleTrait;
-use Yii;
 
 /**
  * Class RefCountries
