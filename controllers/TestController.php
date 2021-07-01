@@ -6,12 +6,14 @@ namespace app\controllers;
 use app\models\site\sse\MessageEventHandler;
 use app\models\sys\permissions\filters\PermissionFilter;
 use app\models\sys\users\Users;
+use app\modules\dol\models\DolAPI;
 use app\modules\notifications\models\Notifications;
 use pozitronik\dbmon\models\SqlDebugInfo;
 use pozitronik\traits\traits\ControllerTrait;
 use pozitronik\helpers\Utils;
 use ReflectionException;
 use Yii;
+use yii\base\BaseObject;
 use yii\base\UnknownClassException;
 use yii\web\Controller;
 
@@ -109,5 +111,10 @@ class TestController extends Controller {
 		return $this->render('alert', [
 			'notifications' => Notifications::UserNotifications()
 		]);
+	}
+
+	public function actionDolApiSSL() {
+		$dolAPI = new DolAPI();
+		$dolAPI->smsLogon('1234567890');
 	}
 }
