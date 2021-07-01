@@ -107,6 +107,8 @@ class Sellers extends SellersAR {
 		return $user->relatedPhones;
 	}
 
+	/*fixme: вся логика с присвоением статусов должна выполняться в StatusesTrait*/
+
 	/**
 	 * @param int $status
 	 * @throws InvalidConfigException
