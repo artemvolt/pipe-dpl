@@ -32,8 +32,9 @@ class RegisterMiniSeller extends Model {
 
 	/**
 	 * @inheritDoc
+	 * @return array
 	 */
-	public function rules() {
+	public function rules():array {
 		return [
 			[['phone_number', 'surname', 'name', 'email'], 'required'],
 			[['phone_number', 'surname', 'name', 'patronymic'], 'string'],
@@ -55,7 +56,7 @@ class RegisterMiniSeller extends Model {
 	}
 
 	/**
-	 * @return $this
+	 * @return Sellers
 	 * @throws ValidateException
 	 * @throws Throwable
 	 * @throws InvalidConfigException
