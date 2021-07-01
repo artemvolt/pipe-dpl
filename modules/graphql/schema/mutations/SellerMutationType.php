@@ -3,8 +3,8 @@ declare(strict_types = 1);
 
 namespace app\modules\graphql\schema\mutations;
 
-use app\models\seller\Sellers;
-use app\models\sys\ValidateException;
+use app\components\exceptions\ValidateException;
+use app\models\seller\RegisterMiniSeller;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
 use app\modules\graphql\schema\types\Types;
@@ -35,14 +35,8 @@ class SellerMutationType extends ObjectType implements MutationInterface {
 					'resolve' => function(array $fromMutationArgs, array $args = []) {
 						try {
 							Yii::$app->db->transaction(function() use ($args) {
-								$seller = new Sellers();
-								return $seller->registerMini(
-									$args['surname']??"",
-									$args['name']??"",
-									$args["patronymic"]??"",
-									$args["phone_number"]??"",
-									$args["email"]??""
-								);
+								$miniSeller = new RegisterMiniSeller($args);
+								$miniSeller->register();
 							});
 						} catch (ValidateException $e) {
 							return $this->getResult(false, $e->getErrors(), self::MESSAGES);
