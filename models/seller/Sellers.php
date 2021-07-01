@@ -11,12 +11,13 @@ use app\models\phones\Phones;
 use app\models\seller\active_record\SellersAR;
 use app\models\common\traits\CreateAccessTrait;
 use app\models\sys\users\Users;
-use app\models\sys\ValidateException;
 use app\modules\status\models\Status;
 use DomainException;
 use InvalidArgumentException;
 use pozitronik\filestorage\traits\FileStorageTrait;
+use Throwable;
 use yii\base\InvalidConfigException;
+use yii\db\StaleObjectException;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -101,41 +102,11 @@ class Sellers extends SellersAR {
 	}
 
 	/**
-	 * @param string $surname
-	 * @param string $name
-	 * @param string $patronymic
-	 * @param string $phoneNumber
-	 * @param string $email
-	 * @return Sellers
-	 * @throws ValidateException
+	 * @param int $status
+	 * @throws InvalidConfigException
+	 * @throws Throwable
+	 * @throws StaleObjectException
 	 */
-	public function registerMini(
-		string $surname,
-		string $name,
-		string $patronymic,
-		string $phoneNumber,
-		string $email
-	):self {
-		$self = new self();
-		$self->scenario = self::SCENARIO_REGISTER_MINI;
-		$self->login = $phoneNumber;
-		$self->surname = $surname;
-		$self->name = $name;
-		$self->patronymic = $patronymic;
-		$self->email = $email;
-		if (!$self->save()) {
-			throw new ValidateException($self->getErrors());
-		}
-
-		$self->createAccess();
-		if ([] !== $self->registrationErrors) {
-			throw new DomainException("Не получилось создать пользователя");
-		}
-
-		$self->changeStatus(self::SELLER_NOT_ACTIVE);
-		return $self;
-	}
-
 	public function changeStatus(int $status):void {
 		if (!$this->isExistStatus($status)) {
 			throw new InvalidArgumentException("Неизвестный статус");
@@ -166,6 +137,9 @@ class Sellers extends SellersAR {
 		return $existentStatus === self::SELLER_NOT_ACTIVE;
 	}
 
+	/**
+	 * @return array[]
+	 */
 	public static function status_config():array {
 		return [
 			self::SELLER_NOT_ACTIVE => [

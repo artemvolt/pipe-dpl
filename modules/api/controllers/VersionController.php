@@ -45,7 +45,7 @@ class VersionController extends YiiRestController {
 	/**
 	 * @return string[]
 	 */
-	public function actionIndex() {
+	public function actionIndex():array {
 		return [
 			'version' => "1.0"
 		];

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types = 1);
 
-namespace app\models\sys;
+namespace app\components\exceptions;
 
 use Exception;
 use InvalidArgumentException;
@@ -22,7 +22,7 @@ class ValidateException extends Exception {
 	 * @param null|Throwable $previous [optional] The previous throwable used for the exception chaining.
 	 */
 	public function __construct(array $errors, $message = "", $code = 0, Throwable $previous = null) {
-		if (empty($errors)) {
+		if ([] === $errors) {
 			throw new InvalidArgumentException("Список ошибок не может быть пустым");
 		}
 		$this->errors = $errors;
