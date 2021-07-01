@@ -36,14 +36,13 @@ class SellerMutationType extends ObjectType implements MutationInterface {
 						try {
 							Yii::$app->db->transaction(function() use ($args) {
 								$seller = new Sellers();
-								$savedSeller = $seller->registerMini(
+								return $seller->registerMini(
 									$args['surname']??"",
 									$args['name']??"",
 									$args["patronymic"]??"",
 									$args["phone_number"]??"",
 									$args["email"]??""
 								);
-								return $savedSeller;
 							});
 						} catch (ValidateException $e) {
 							return $this->getResult(false, $e->getErrors(), self::MESSAGES);
