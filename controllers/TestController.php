@@ -15,6 +15,8 @@ use ReflectionException;
 use Yii;
 use yii\base\BaseObject;
 use yii\base\UnknownClassException;
+use yii\httpclient\Client;
+use yii\httpclient\CurlTransport;
 use yii\web\Controller;
 
 /**
@@ -113,8 +115,4 @@ class TestController extends Controller {
 		]);
 	}
 
-	public function actionDolApiSSL() {
-		$dolAPI = new DolAPI();
-		$dolAPI->smsLogon('1234567890');
-	}
 }
