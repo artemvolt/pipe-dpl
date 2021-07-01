@@ -5,7 +5,6 @@ declare(strict_types = 1);
 if (file_exists($localConfig = __DIR__.DIRECTORY_SEPARATOR.'local'.DIRECTORY_SEPARATOR.basename(__FILE__))) return require $localConfig;
 
 use app\assets\SmartAdminThemeAssets;
-use app\models\sys\permissions\Permissions;
 use app\models\sys\users\Users;
 use app\models\sys\users\WebUser;
 use app\modules\api\ApiModule;
