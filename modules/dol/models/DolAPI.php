@@ -21,6 +21,7 @@ use yii\httpclient\Response;
 class DolAPI extends ActiveRecord {
 	public string $baseUrl = "https://dolfront.beelinetst.ru/api/";
 
+
 	public const METHOD_SMS_LOGON = 'v2/auth/sms-logon';
 	public const METHOD_CONFIRM_SMS_LOGON = 'v2/auth/confirm-sms-logon';
 	public const METHOD_REFRESH = 'v2/auth/refresh';
@@ -41,11 +42,17 @@ class DolAPI extends ActiveRecord {
 	private array $_debugPhones = [];
 
 	/**
+	 * @var null|string|false
+	 */
+	private $_sslCertificate; //null - default, string - file, false - disabled
+
+	/**
 	 * @inheritDoc
 	 */
 	public function init():void {
 		$this->baseUrl = ArrayHelper::getValue(Yii::$app->components, "dolApi.baseUrl", $this->baseUrl);
 		$this->_debugPhones = ArrayHelper::getValue(Yii::$app->components, "dolApi.debugPhones", $this->_debugPhones);
+		$this->_sslCertificate = ArrayHelper::getValue(Yii::$app->components, "dolApi.sslCertificate", $this->_sslCertificate);
 	}
 
 	/**
@@ -55,12 +62,22 @@ class DolAPI extends ActiveRecord {
 	 * @throws HttpClientException
 	 * @throws InvalidConfigException
 	 */
-	private static function doRequest(string $url, array $data):Response {
+	private function doRequest(string $url, array $data):Response {
 		$client = new Client([
 			'transport' => CurlTransport::class
 		]);
 		$request = $client->createRequest();
 		$request->method = 'POST';
+		if (false === $this->_sslCertificate) {
+			$request->addOptions([
+				'sslVerifyPeer' => false
+			]);
+		} elseif (is_string($this->_sslCertificate)) {
+			$request->addOptions([
+				'sslCafile' => $this->_sslCertificate
+			]);
+		}
+
 		$request->headers = [
 			'accept' => 'application/json',
 			'Content-Type' => 'application/json'
@@ -99,7 +116,7 @@ class DolAPI extends ActiveRecord {
 				"success" => true
 			];
 		}
-		$response = self::doRequest($this->baseUrl.self::METHOD_SMS_LOGON, [
+		$response = $this->doRequest($this->baseUrl.self::METHOD_SMS_LOGON, [
 			'phoneAsLogin' => $phoneAsLogin
 		]);
 		return $this->parseAnswer($response->content);
@@ -119,7 +136,7 @@ class DolAPI extends ActiveRecord {
 				"success" => true
 			];
 		}
-		$response = self::doRequest($this->baseUrl.self::METHOD_CONFIRM_SMS_LOGON, compact('phoneAsLogin', 'code'));
+		$response = $this->doRequest($this->baseUrl.self::METHOD_CONFIRM_SMS_LOGON, compact('phoneAsLogin', 'code'));
 		return $this->parseAnswer($response->content);
 	}
 
