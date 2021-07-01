@@ -55,7 +55,7 @@ class RegisterMiniSeller extends Model {
 	}
 
 	/**
-	 * @return $this
+	 * @return Sellers
 	 * @throws ValidateException
 	 * @throws Throwable
 	 * @throws InvalidConfigException
