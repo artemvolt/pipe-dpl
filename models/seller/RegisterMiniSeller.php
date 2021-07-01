@@ -33,19 +33,19 @@ class RegisterMiniSeller extends Model {
 	/**
 	 * @inheritDoc
 	 */
-	public function validate($attributeNames = null, $clearErrors = true) {
+	public function rules() {
 		return [
 			[['phone_number', 'surname', 'name', 'email'], 'required'],
 			[['phone_number', 'surname', 'name', 'patronymic'], 'string'],
 			[['phone_number', 'surname', 'name', 'patronymic'], 'trim'],
 			['email', 'email'],
-			['email', static function() {
+			['email', function() {
 				if (null !== Users::findByEmail($this->email)) {
 					$this->addError('email', 'Пользователь с таким почтовым адресом уже зарегистрирован');
 				}
 			}],
 			['phone_number', PhoneNumberValidator::class],
-			['phone_number', static function() {
+			['phone_number', function() {
 				if (null !== Users::findByLogin($this->phone_number)) {
 					$this->addError('login', 'Такой логин уже занят');
 				}
