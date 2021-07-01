@@ -1,7 +1,7 @@
 <?php
 declare(strict_types = 1);
 
-namespace app\models\sys;
+namespace app\components\exceptions;
 
 use Exception;
 use InvalidArgumentException;
