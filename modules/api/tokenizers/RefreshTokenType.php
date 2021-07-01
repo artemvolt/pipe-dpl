@@ -9,4 +9,12 @@ namespace app\modules\api\tokenizers;
  */
 class RefreshTokenType {
 
+	/**
+	 * Чтобы инспектор не ругался на прототип
+	 * todo
+	 */
+	public function dummy_stub():void {
+
+	}
+
 }

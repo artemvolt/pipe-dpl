@@ -5,6 +5,8 @@ namespace app\modules\api\tokenizers\grant_types;
 
 use app\models\sys\users\UsersTokens;
 use app\modules\api\exceptions\InvalidScopeException;
+use pozitronik\sys_options\models\SysOptions;
+use Throwable;
 use yii\web\Request;
 
 /**
@@ -12,6 +14,7 @@ use yii\web\Request;
  * @package app\modules\api\tokenizers\grant_types
  */
 class GrantTypeIssue implements GrantTypeInterface {
+
 	/**
 	 * {@inheritdoc}
 	 */
@@ -28,8 +31,10 @@ class GrantTypeIssue implements GrantTypeInterface {
 	/**
 	 * {@inheritdoc}
 	 * @throws InvalidScopeException
+	 * @throws Throwable
 	 */
 	public function validate(UsersTokens $authToken, ?UsersTokens $refreshToken):void {
+		if (SysOptions::getStatic('GRANT_TYPE_ISSUE_IGNORE_TOKEN_VALIDATION', false)) return;
 		if ($authToken->isNewRecord) {
 			$statusIsOk = true;
 		} else {
