@@ -227,6 +227,7 @@ class SiteController extends Controller {
 		return $this->render('options', [
 			'boolOptions' => [
 				'ASSETS_PUBLISHOPTIONS_FORCECOPY' => SysOptions::getStatic('ASSETS_PUBLISHOPTIONS_FORCECOPY', Options::ASSETS_PUBLISHOPTIONS_FORCECOPY),
+				'GRANT_TYPE_ISSUE_IGNORE_TOKEN_VALIDATION' => SysOptions::getStatic('GRANT_TYPE_ISSUE_IGNORE_TOKEN_VALIDATION', Options::GRANT_TYPE_ISSUE_IGNORE_TOKEN_VALIDATION),
 			],
 			'optionsLabels' => Options::OPTIONS_LABELS
 		]);
