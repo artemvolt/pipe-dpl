@@ -72,7 +72,6 @@ class SellersAR extends ActiveRecord {
 
 	public const SCENARIO_CREATE = 'create';
 	public const SCENARIO_EDIT = 'edit';
-	public const SCENARIO_REGISTER_MINI = 'register_mini';
 
 	/**
 	 * @var null|Users $_updatedRelatedUser Используется для предвалидации пользователя при изменении
@@ -209,25 +208,7 @@ class SellersAR extends ActiveRecord {
 					$this->addError('relatedUser', 'Этот аккаунт уже привязан к другому продавцу');
 				}
 			}, 'on' => [self::SCENARIO_CREATE, self::SCENARIO_EDIT]],
-
-			[['login', 'surname', 'name', 'email'], 'required', 'on' => self::SCENARIO_REGISTER_MINI],
-			['email', 'validateEmailOnExistentUser', 'on' => self::SCENARIO_REGISTER_MINI],
-			['email', 'email', 'on' => self::SCENARIO_REGISTER_MINI],
-			['login', PhoneNumberValidator::class, 'on' => self::SCENARIO_REGISTER_MINI],
-			['login', 'validateLoginOnExistentUser', 'on' => self::SCENARIO_REGISTER_MINI],
 		];
-	}
-
-	public function validateEmailOnExistentUser():void {
-		if (null !== Users::findByEmail($this->email)) {
-			$this->addError('email', 'Пользователь с таким почтовым адресом уже зарегистрирован');
-		}
-	}
-
-	public function validateLoginOnExistentUser():void {
-		if (null !== Users::findByLogin($this->login)) {
-			$this->addError('login', 'Такой логин уже занят');
-		}
 	}
 
 	/**
