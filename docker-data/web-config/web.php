@@ -168,6 +168,7 @@ $config = [
 		'dolApi' => [
 			'class' => DolAPI::class,
 			'baseUrl' => 'https://dolfront.beelinetst.ru/api/',
+			'sslCertificate' => '@app/docker-data/cert/cacert.pem',//path for file, null for default, false for disable ssl
 			'debugPhones' => [
 				/* fake phone  =>  sms code */
 				'9250000000' => '0000'
