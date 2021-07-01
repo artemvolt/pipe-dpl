@@ -7,6 +7,7 @@ use app\components\db\ActiveRecordTrait;
 use app\models\sys\users\Users;
 use ReflectionClass;
 use Throwable;
+use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\ActiveRecord;
 use yii\db\StaleObjectException;
@@ -102,7 +103,7 @@ class Status extends ActiveRecord {
 			$currentStatus->load($attributes, '');
 		}
 		$currentStatus->status = $status;
-		$currentStatus->daddy = Users::Current()->id;
+		$currentStatus->daddy = !Yii::$app->user->isGuest?Users::Current()->id:null;
 		/* не используется, осталось из TWS, может быть появится и у нас такой
 		 * $currentStatus->delegate = (false === $delegateId = Yii::$app->cache->get(Delegation::RELOGIN_PREFIX.Yii::$app->user->id))?null:$delegateId;*/
 		return ($currentStatus->isNewRecord)?$currentStatus->save():(1 === $currentStatus->update());

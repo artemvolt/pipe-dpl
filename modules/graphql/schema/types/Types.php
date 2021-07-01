@@ -4,6 +4,7 @@ declare(strict_types = 1);
 namespace app\modules\graphql\schema\types;
 
 use app\modules\graphql\schema\mutations\ExampleMutationType;
+use app\modules\graphql\schema\mutations\SellerMutationType;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\UnionType;
 
@@ -26,6 +27,11 @@ class Types {
 	// Типы для наших сущностей
 	private static ?ExampleType $example = null;
 	private static ?ExampleMutationType $exampleMutationType = null;
+
+	private static ?SellerType $seller = null;
+	private static ?SellerMutationType $sellerMutationType = null;
+
+	private static ?ProfileType $profile = null;
 
 	/**
 	 * Запрос
@@ -91,5 +97,29 @@ class Types {
 	 */
 	public static function exampleMutation():ExampleMutationType {
 		return static::$exampleMutationType?:static::$exampleMutationType = new ExampleMutationType();
+	}
+
+	/**
+	 * Продавец
+	 * @return SellerType
+	 */
+	public static function seller():SellerType {
+		return static::$seller?:static::$seller = new SellerType();
+	}
+
+	/**
+	 * Мутации продавца
+	 * @return SellerMutationType
+	 */
+	public static function sellerMutation():SellerMutationType {
+		return static::$sellerMutationType?:static::$sellerMutationType = new SellerMutationType();
+	}
+
+	/**
+	 * Профиль пользователя
+	 * @return ProfileType
+	 */
+	public static function profile():ProfileType {
+		return static::$profile?:static::$profile = new ProfileType();
 	}
 }

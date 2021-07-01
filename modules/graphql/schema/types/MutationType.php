@@ -41,6 +41,12 @@ class MutationType extends ObjectType {
 						return $args;
 					},
 				],
+				'seller' => [
+					'type' => Types::sellerMutation(),
+					'resolve' => function($root, $args) {
+						return $args;
+					}
+				]
 			]
 		]);
 	}

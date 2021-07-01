@@ -76,7 +76,7 @@ trait CreateAccessTrait {
 			'login' => $this->login,
 			'username' => $this->fio,
 			'password' => Users::DEFAULT_PASSWORD,
-			'comment' => "Пользователь создан автоматически для модели".static::class,
+			'comment' => "Пользователь создан автоматически для модели ".static::class,
 			'email' => $this->email,
 			'phones' => $this->login
 		]);
