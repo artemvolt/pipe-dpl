@@ -87,19 +87,23 @@ class SiteController extends Controller {
 	public function actionLoginSms() {
 		$model = new LoginSMSForm();
 		if ($model->load(Yii::$app->request->post())) {
-			if (null === $model->smsCode && $model->doSmsLogon()) {/*Проверяем пользователя, отправляем код*/
+			if (null === $model->smsCode) {/*не было постинга кода*/
+				if ($model->doSmsLogon()) {/*но был постинг корректного логина, разрешаем ввести код*/
+					return $this->render('login-sms', [
+						'login' => $model,
+						'firstStep' => false
+					]);
+				}
+			} else {/*был постинг кода*/
+				if ($model->doConfirmSmsLogon()) {/*Пытаемся авторизовать*/
+					return $this->redirect(Yii::$app->homeUrl);
+				}
+				/*код неверный, повторить*/
 				return $this->render('login-sms', [
 					'login' => $model,
 					'firstStep' => false
 				]);
 			}
-			if (null !== $model->smsCode && $model->doConfirmSmsLogon()) {/*Пытаемся авторизовать*/
-				return $this->redirect(Yii::$app->homeUrl);
-			}
-			return $this->render('login-sms', [
-				'login' => $model,
-				'firstStep' => false
-			]);
 		}
 		return $this->render('login-sms', [
 			'login' => $model,
@@ -110,7 +114,8 @@ class SiteController extends Controller {
 	/**
 	 * logout
 	 */
-	public function actionLogout():void {
+	public
+	function actionLogout():void {
 		Yii::$app->user->logout();
 		$this->redirect('index');
 	}
@@ -125,7 +130,8 @@ class SiteController extends Controller {
 	 * @return string|Response
 	 * @throws UnauthorizedHttpException
 	 */
-	public function actionUpdatePassword() {
+	public
+	function actionUpdatePassword() {
 		/** @var Users|null $loggedUser */
 		if (null === $loggedUser = Yii::$app->user->identity) {
 			throw new UnauthorizedHttpException('Пользователь не авторизован');
@@ -144,7 +150,8 @@ class SiteController extends Controller {
 	 * Запрос на восстановление пароля, доступно только неавторизованному пользователю или пользюку,
 	 * у которого протух пароль. Протухшим разрешаем потому, что они тоже могут забыть пароль.
 	 */
-	public function actionRestorePassword():string {
+	public
+	function actionRestorePassword():string {
 		if (!(Yii::$app->user->isGuest || true === ArrayHelper::getValue(Yii::$app->user->identity, 'is_pwd_outdated'))) {
 			throw new ForbiddenHttpException('Восстановление пароля недоступно после авторизации');
 		}
@@ -164,7 +171,8 @@ class SiteController extends Controller {
 	 * @param string|null $code
 	 * @return string|Response
 	 */
-	public function actionResetPassword(?string $code = null) {
+	public
+	function actionResetPassword(?string $code = null) {
 		if (null === $code) return $this->redirect('restore-password');
 
 		/*Проверка наличия пользователя с указанным кодом восстановления*/
@@ -187,14 +195,16 @@ class SiteController extends Controller {
 	 * @return Response
 	 * @throws Throwable
 	 */
-	public function actionIndex():Response {
+	public
+	function actionIndex():Response {
 		return (Yii::$app->user->isGuest || ArrayHelper::getValue(Yii::$app->user->identity, 'is_pwd_outdated', false))?$this->redirect(ArrayHelper::getValue(Yii::$app->params, 'user.loginpage', ['site/login'])):$this->redirect(Yii::$app->homeUrl);
 	}
 
 	/**
 	 * @return string
 	 */
-	public function actionError():string {
+	public
+	function actionError():string {
 		$exception = Yii::$app->errorHandler->exception;
 
 		if (null !== $exception) {
@@ -208,7 +218,8 @@ class SiteController extends Controller {
 	/**
 	 * @return string|Response
 	 */
-	public function actionRegister() {
+	public
+	function actionRegister() {
 		$registrationForm = new RegistrationForm();
 		if ($registrationForm->load(Yii::$app->request->post()) && $registrationForm->doRegister()) {
 			return $this->redirect(['site/login', 'from' => 'register']);
@@ -222,7 +233,8 @@ class SiteController extends Controller {
 	 * @return string
 	 * @throws Throwable
 	 */
-	public function actionOptions():string {
+	public
+	function actionOptions():string {
 		$this->layout = 'main';
 		return $this->render('options', [
 			'boolOptions' => [
