@@ -33,28 +33,24 @@ class RecogDolAPI {
 	 * @throws Exception
 	 */
 	public function __construct() {
-		$module = Yii::$app->getModule('recogdol');
-		if ($module) {
-			$host = ArrayHelper::getValue($module->params, 'connection.host', false);
+		$host = ArrayHelper::getValue(Yii::$app->getModule('recogdol')->params, 'connection.host', false);
 
-			if ($host) {
-				$this->client = new Client([
-					'baseUrl' => $host,
-					'transport' => CurlTransport::class,
-					'requestConfig' => [
-						'format' => Client::FORMAT_JSON,
-						'headers' => [
-							'accept' => 'application/json',
-							'Content-Type' => 'application/json',
-							'Authorization' => 'Token a37f262bfe1418a681c3bfdf1c468d9e55e02031'
-						]
+		if ($host) {
+			$this->client = new Client([
+				'baseUrl' => $host,
+				'transport' => CurlTransport::class,
+				'requestConfig' => [
+					'format' => Client::FORMAT_JSON,
+					'headers' => [
+						'accept' => 'application/json',
+						'Content-Type' => 'application/json',
+						'Authorization' => 'Token a37f262bfe1418a681c3bfdf1c468d9e55e02031'
 					]
-				]);
-			}
+				]
+			]);
 		}
 
 		throw new ConfigVariableNotFoundException('connection.host variable not found in config.php');
-
 	}
 
 	/**
