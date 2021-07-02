@@ -79,11 +79,12 @@ class DolAPI extends ActiveRecord {
 		}
 
 		$request->headers = [
-			'accept' => 'application/json',
+			'accept' => 'text/plain',
 			'Content-Type' => 'application/json'
 		];
+		$request->format = Client::FORMAT_JSON;
 		$request->fullUrl = $url;
-		$request->data = json_encode($data);
+		$request->data = $data;//json_encode($data);
 		return $request->send();
 	}
 
