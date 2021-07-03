@@ -134,7 +134,7 @@ class Users extends ActiveRecordUsers implements IdentityInterface {
 
 	/**
 	 * @param null|string $password
-	 * @return string
+	 * @return string|null
 	 */
 	private function doSalt(?string $password):?string {
 		return null === $password?null:sha1($password.$this->salt);

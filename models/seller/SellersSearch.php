@@ -250,7 +250,7 @@ final class SellersSearch extends Sellers {
 
 	/**
 	 * Searching passport field consists of series and number. This getter returns us series.
-	 * @return false|string[]
+	 * @return mixed|false|string[]
 	 */
 	public function getPassportExplodedSeries() {
 		$passportArray = explode(' ', $this->passport);
