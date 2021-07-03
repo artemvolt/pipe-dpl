@@ -20,7 +20,7 @@ trait ActiveQueryPermissionsTrait {
 	 * @throws ForbiddenHttpException
 	 * @throws Throwable
 	 */
-	public function scope(?string $modelObjectOrClass = null, ?Users $user = null):self {
+	public function scope($modelObjectOrClass = null, ?Users $user = null):self {
 		$modelObjectOrClass = $modelObjectOrClass??$this->modelClass;
 		if (method_exists($modelObjectOrClass, 'scope')) {
 			$user = $user??Users::Current();
