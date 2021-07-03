@@ -99,14 +99,14 @@ class Notifications extends ActiveRecord {
 	/**
 	 * @return ActiveQuery
 	 */
-	public function getRelatedReceiver():?ActiveQuery {
+	public function getRelatedReceiver():ActiveQuery {
 		return $this->hasOne(Users::class, ['id' => 'receiver']);
 	}
 
 	/**
 	 * @return ActiveQuery
 	 */
-	public function getRelatedInitiator():?ActiveQuery {
+	public function getRelatedInitiator():ActiveQuery {
 		return $this->hasOne(Users::class, ['id' => 'initiator']);
 	}
 
