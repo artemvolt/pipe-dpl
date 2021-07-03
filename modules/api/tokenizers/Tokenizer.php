@@ -14,7 +14,7 @@ interface Tokenizer {
 	public function getAuthToken():string;
 
 	/**
-	 * @return string ключ для обновления связки ключей.
+	 * @return null|string ключ для обновления связки ключей.
 	 */
 	public function getRefreshToken():?string;
 
