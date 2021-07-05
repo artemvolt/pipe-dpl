@@ -69,6 +69,7 @@ class RecogDolAPI {
 	private function sendRequest(string $url, array $file = [], array $data = []):Response {
 		$request = $this->_client->createRequest();
 		$request->method = 'POST';
+		$request->url = implode('?', [$url, http_build_query($data)]);
 
 		if (false === $this->_sslCertificate) {
 			$request->addOptions([
@@ -79,9 +80,6 @@ class RecogDolAPI {
 				'sslCafile' => $this->_sslCertificate
 			]);
 		}
-
-		$request->url = $url;
-		$request->data = $data;
 
 		if (!empty($file)) {
 			$request->addFile($file['fieldName'], $file['filePath']);
