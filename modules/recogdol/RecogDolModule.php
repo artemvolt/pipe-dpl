@@ -25,6 +25,8 @@ class RecogDolModule extends YiiModule {
 
 		try {
 			if (file_exists($config)) {
+				/** @noinspection PhpIncludeInspection */
+				/** @noinspection UsingInclusionReturnValueInspection */
 				Yii::configure($this, require $config);
 				if (Yii::$app instanceof Application) {
 					$this->controllerNamespace = 'app\modules\recogdol\commands';

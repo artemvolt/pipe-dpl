@@ -15,6 +15,6 @@ class ConfigVariableNotFoundException extends Exception {
 	 * @param string $message
 	 */
 	public function __construct(string $message = 'Some config variable not found') {
-		parent::__construct($message, 0, null);
+		parent::__construct($message);
 	}
 }

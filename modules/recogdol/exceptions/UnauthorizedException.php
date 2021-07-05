@@ -15,6 +15,6 @@ class UnauthorizedException extends Exception {
 	 * @param string $message
 	 */
 	public function __construct(string $message = 'Authorization in RecogDol not passed') {
-		parent::__construct($message, 0, null);
+		parent::__construct($message);
 	}
 }

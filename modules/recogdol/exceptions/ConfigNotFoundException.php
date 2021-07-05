@@ -15,6 +15,6 @@ class ConfigNotFoundException extends Exception {
 	 * @param string $message
 	 */
 	public function __construct(string $message = 'Not found config file for module recogdol in modules/recogdol/config/') {
-		parent::__construct($message, 0, null);
+		parent::__construct($message);
 	}
 }

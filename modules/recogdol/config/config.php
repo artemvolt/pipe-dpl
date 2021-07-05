@@ -1,4 +1,6 @@
 <?php
+/** @noinspection PhpIncludeInspection */
+/** @noinspection UsingInclusionReturnValueInspection */
 declare(strict_types = 1);
 
 /*При наличии одноимённого файла в подкаталоге /local конфигурация будет взята оттуда*/
