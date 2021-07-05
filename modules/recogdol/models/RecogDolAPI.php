@@ -27,6 +27,8 @@ class RecogDolAPI {
 
 	/** @var Client $client */
 	private $client;
+	/** @var null|string|false $_sslCertificate */
+	private $sslCertificate; //null - default, string - file, false - disabled
 
 	/**
 	 * RecogDolAPI constructor.
@@ -34,6 +36,7 @@ class RecogDolAPI {
 	 */
 	public function __construct() {
 		$host = ArrayHelper::getValue(Yii::$app->getModule('recogdol')->params, 'connection.host', false);
+		$this->sslCertificate = ArrayHelper::getValue(Yii::$app->getModule('recogdol')->params, 'connection.sslCertificate');
 
 		if ($host) {
 			$this->client = new Client([
@@ -62,6 +65,17 @@ class RecogDolAPI {
 	private function sendRequest(string $url, array $file = []):Response {
 		$request = $this->client->createRequest();
 		$request->method = 'POST';
+
+		if (false === $this->sslCertificate) {
+			$request->addOptions([
+				'sslVerifyPeer' => false
+			]);
+		} elseif (is_string($this->sslCertificate)) {
+			$request->addOptions([
+				'sslCafile' => $this->sslCertificate
+			]);
+		}
+
 		$request->url = $url;
 
 		if (!empty($file)) {
