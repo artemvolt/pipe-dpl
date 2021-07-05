@@ -61,15 +61,15 @@ class RecogDolAPI {
 	/**
 	 * @param string $url
 	 * @param array $file
-	 * @param array $data
+	 * @param array $query_params
 	 * @return Response
 	 * @throws HttpClientException
 	 * @throws InvalidConfigException
 	 */
-	private function sendRequest(string $url, array $file = [], array $data = []):Response {
+	private function sendRequest(string $url, array $file = [], array $query_params = []):Response {
 		$request = $this->_client->createRequest();
 		$request->method = 'POST';
-		$request->url = implode('?', [$url, http_build_query($data)]);
+		$request->url = implode('?', [$url, http_build_query($query_params)]);
 
 		if (false === $this->_sslCertificate) {
 			$request->addOptions([
@@ -107,13 +107,13 @@ class RecogDolAPI {
 	/**
 	 * @param $recognitionType
 	 * @param array $file
-	 * @param array $data
+	 * @param array $query_params
 	 * @return array
 	 * @throws HttpClientException
 	 * @throws InvalidConfigException
 	 */
-	public function recognize($recognitionType, array $file, array $data):array {
-		return $this->parseAnswer($this->sendRequest(self::METHOD_RECOGNIZE_METHODS[$recognitionType], $file, $data));
+	public function recognize($recognitionType, array $file, array $query_params):array {
+		return $this->parseAnswer($this->sendRequest(self::METHOD_RECOGNIZE_METHODS[$recognitionType], $file, $query_params));
 	}
 
 }
