@@ -25,10 +25,10 @@ class RecogDolAPI {
 		self::METHOD_RECOGNIZE_SHORT => 'api/v1/recognize/short'
 	];
 
-	/** @var Client $client */
-	private $client;
+	/** @var Client $_client */
+	private $_client;
 	/** @var null|string|false $_sslCertificate */
-	private $sslCertificate; //null - default, string - file, false - disabled
+	private $_sslCertificate; //null - default, string - file, false - disabled
 
 	/**
 	 * RecogDolAPI constructor.
@@ -36,10 +36,10 @@ class RecogDolAPI {
 	 */
 	public function __construct() {
 		$host = ArrayHelper::getValue(Yii::$app->getModule('recogdol')->params, 'connection.host', false);
-		$this->sslCertificate = ArrayHelper::getValue(Yii::$app->getModule('recogdol')->params, 'connection.sslCertificate');
+		$this->_sslCertificate = ArrayHelper::getValue(Yii::$app->getModule('recogdol')->params, 'connection.sslCertificate');
 
 		if ($host) {
-			$this->client = new Client([
+			$this->_client = new Client([
 				'baseUrl' => $host,
 				'transport' => CurlTransport::class,
 				'requestConfig' => [
@@ -63,16 +63,16 @@ class RecogDolAPI {
 	 * @throws InvalidConfigException
 	 */
 	private function sendRequest(string $url, array $file = []):Response {
-		$request = $this->client->createRequest();
+		$request = $this->_client->createRequest();
 		$request->method = 'POST';
 
-		if (false === $this->sslCertificate) {
+		if (false === $this->_sslCertificate) {
 			$request->addOptions([
 				'sslVerifyPeer' => false
 			]);
-		} elseif (is_string($this->sslCertificate)) {
+		} elseif (is_string($this->_sslCertificate)) {
 			$request->addOptions([
-				'sslCafile' => $this->sslCertificate
+				'sslCafile' => $this->_sslCertificate
 			]);
 		}
 
