@@ -8,7 +8,7 @@ use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
 
 /**
- * Class ExampleType
+ * Class ProfileType
  * @package app\modules\graphql\schema\types
  */
 class ProfileType extends ObjectType {

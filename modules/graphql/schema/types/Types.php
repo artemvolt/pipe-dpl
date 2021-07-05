@@ -3,7 +3,6 @@ declare(strict_types = 1);
 
 namespace app\modules\graphql\schema\types;
 
-use app\modules\graphql\schema\mutations\ExampleMutationType;
 use app\modules\graphql\schema\mutations\SellerMutationType;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\UnionType;
@@ -25,8 +24,6 @@ class Types {
 	private static array $validationTypes = [];
 
 	// Типы для наших сущностей
-	private static ?ExampleType $example = null;
-	private static ?ExampleMutationType $exampleMutationType = null;
 
 	private static ?SellerType $seller = null;
 	private static ?SellerMutationType $sellerMutationType = null;
@@ -81,22 +78,6 @@ class Types {
 				'types' => [$type, static::response()],
 				'resolveType' => fn($value) => static::response()
 			]);
-	}
-
-	/**
-	 * Запросы партнера
-	 * @return ExampleType
-	 */
-	public static function example():ExampleType {
-		return static::$example?:static::$example = new ExampleType();
-	}
-
-	/**
-	 * Мутации партнера
-	 * @return ExampleMutationType
-	 */
-	public static function exampleMutation():ExampleMutationType {
-		return static::$exampleMutationType?:static::$exampleMutationType = new ExampleMutationType();
 	}
 
 	/**
