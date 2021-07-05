@@ -41,11 +41,17 @@ class DolAPI extends ActiveRecord {
 	private array $_debugPhones = [];
 
 	/**
+	 * @var null|string|false
+	 */
+	private $_sslCertificate; //null - default, string - file, false - disabled
+
+	/**
 	 * @inheritDoc
 	 */
 	public function init():void {
 		$this->baseUrl = ArrayHelper::getValue(Yii::$app->components, "dolApi.baseUrl", $this->baseUrl);
 		$this->_debugPhones = ArrayHelper::getValue(Yii::$app->components, "dolApi.debugPhones", $this->_debugPhones);
+		$this->_sslCertificate = ArrayHelper::getValue(Yii::$app->components, "dolApi.sslCertificate", $this->_sslCertificate);
 	}
 
 	/**
@@ -55,18 +61,29 @@ class DolAPI extends ActiveRecord {
 	 * @throws HttpClientException
 	 * @throws InvalidConfigException
 	 */
-	private static function doRequest(string $url, array $data):Response {
+	private function doRequest(string $url, array $data):Response {
 		$client = new Client([
 			'transport' => CurlTransport::class
 		]);
 		$request = $client->createRequest();
 		$request->method = 'POST';
+		if (false === $this->_sslCertificate) {
+			$request->addOptions([
+				'sslVerifyPeer' => false
+			]);
+		} elseif (is_string($this->_sslCertificate)) {
+			$request->addOptions([
+				'sslCafile' => $this->_sslCertificate
+			]);
+		}
+
 		$request->headers = [
-			'accept' => 'application/json',
+			'accept' => 'text/plain',
 			'Content-Type' => 'application/json'
 		];
+		$request->format = Client::FORMAT_JSON;
 		$request->fullUrl = $url;
-		$request->data = json_encode($data);
+		$request->data = $data;//json_encode($data);
 		return $request->send();
 	}
 
@@ -78,11 +95,13 @@ class DolAPI extends ActiveRecord {
 	private function parseAnswer(string $answer):array {
 		$this->success = false;
 		if (null === $result = json_decode($answer, true, 512, JSON_OBJECT_AS_ARRAY)) {
-			$this->errorMessage = 'Ошибка запроса к DOL API';
+			$this->errorMessage = 'Ошибка парсинга ответа DOL API';
 			return [];
 		}
-		$this->success = ArrayHelper::getValue($result, 'success', $this->success);
-		$this->errorMessage = ArrayHelper::getValue($result, 'errorMessage', $this->success);
+		if ($this->success = ArrayHelper::getValue($result, 'success', $this->success)) {
+			return $result;
+		}
+		$this->errorMessage = 'Ошибка запроса DOL API';
 		return $result;
 	}
 
@@ -99,7 +118,7 @@ class DolAPI extends ActiveRecord {
 				"success" => true
 			];
 		}
-		$response = self::doRequest($this->baseUrl.self::METHOD_SMS_LOGON, [
+		$response = $this->doRequest($this->baseUrl.self::METHOD_SMS_LOGON, [
 			'phoneAsLogin' => $phoneAsLogin
 		]);
 		return $this->parseAnswer($response->content);
@@ -119,7 +138,7 @@ class DolAPI extends ActiveRecord {
 				"success" => true
 			];
 		}
-		$response = self::doRequest($this->baseUrl.self::METHOD_CONFIRM_SMS_LOGON, compact('phoneAsLogin', 'code'));
+		$response = $this->doRequest($this->baseUrl.self::METHOD_CONFIRM_SMS_LOGON, compact('phoneAsLogin', 'code'));
 		return $this->parseAnswer($response->content);
 	}
 

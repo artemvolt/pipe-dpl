@@ -110,4 +110,5 @@ class TestController extends Controller {
 			'notifications' => Notifications::UserNotifications()
 		]);
 	}
+
 }

@@ -58,7 +58,7 @@ trait ActiveRecordTrait {
 	}
 
 	/**
-	 * @param null|array $errors Возвращаемый список ошибок. null, чтобы не инициализировать на входе.
+	 * @param array $errors Возвращаемый список ошибок. null, чтобы не инициализировать на входе.
 	 * @param null|bool $AJAXErrorsFormat Формат возврата ошибок: true: для ajax-валидации, false - as is, null (default) - в зависимости от типа запроса
 	 * @param array $relationAttributes Массив с перечисление relational-моделей, приходящих отдельной формой
 	 * @return null|bool true: модель сохранена, false: модель не сохранена, null: постинга не было
@@ -118,7 +118,7 @@ trait ActiveRecordTrait {
 	}
 
 	/**
-	 * @param null|array $errors Возвращаемый список ошибок. null, чтобы не инициализировать на входе.
+	 * @param array $errors Возвращаемый список ошибок. null, чтобы не инициализировать на входе.
 	 * @param null|bool $AJAXErrorsFormat Формат возврата ошибок: true: для ajax-валидации, false - as is, null (default) - в зависимости от типа запроса
 	 * @param array $relationAttributes Массив с перечисление relational-моделей, приходящих отдельной формой
 	 * @return null|bool true: модель сохранена, false: модель не сохранена, null: постинга не было

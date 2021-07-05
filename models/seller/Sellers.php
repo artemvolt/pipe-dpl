@@ -23,6 +23,8 @@ use yii\helpers\ArrayHelper;
 /**
  * Class Sellers
  * Конкретный продавец
+ * @property mixed $passportScan Скан паспорта или его фото
+ * @property mixed $passportSelfie Селфи с паспортом
  * @property mixed $passportTranslation Скан нотариально заверенного перевода (в случае если нет транскрипции на
  * кириллицу)
  * @property mixed $migrationCard Миграционная карта (всем, кроме граждан Беларуси)
@@ -45,6 +47,8 @@ class Sellers extends SellersAR {
 	public const SELLER_BLOCKED = 4;
 	public const SELLER_SUSPENDED = 5;
 
+	public $passportScan;
+	public $passportSelfie;
 	public $passportTranslation;
 	public $migrationCard;
 	public $placeOfStay;
@@ -58,6 +62,8 @@ class Sellers extends SellersAR {
 	 */
 	public function attributeLabels():array {
 		return ArrayHelper::merge(parent::attributeLabels(), [
+			'passportScan' => 'Скан паспорта',
+			'passportSelfie' => 'Селфи с паспортом',
 			'sellerDocs' => 'Сканы',
 			'passportTranslation' => 'Скан нотариально заверенного перевода',
 			'migrationCard' => 'Миграционная карта',
@@ -100,6 +106,8 @@ class Sellers extends SellersAR {
 
 		return $user->relatedPhones;
 	}
+
+	/*fixme: вся логика с присвоением статусов должна выполняться в StatusesTrait*/
 
 	/**
 	 * @param int $status

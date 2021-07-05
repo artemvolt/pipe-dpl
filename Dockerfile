@@ -79,7 +79,7 @@ USER nobody
 WORKDIR /var/www/dpl
 
 # Set github oauth keys for composer
-ENV COMPOSER_AUTH='{"github-oauth": {"github.com": "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"}}'
+ENV COMPOSER_AUTH='{"github-oauth": {"github.com": "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"}}'
 
 RUN git clone https://github.com/cusodede/dpl.git .
 #RUN git clone ssh://git@git.vimpelcom.ru:1122/products/dsp/dpl-main.git .
