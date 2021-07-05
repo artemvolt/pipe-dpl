@@ -60,17 +60,17 @@ class RestorePasswordForm extends Model {
 	 */
 	public static function sendRestoreMail($view, $user, $subject):void {
 		Yii::$app->mailer->compose($view, [
-				'user' => $user,
+			'user' => $user,
 			'restoreUrl' => SiteController::to(
 				'reset-password',
 				['code' => $user->restore_code],
 				true
 			)
-			])
-				->setFrom('todo@config.param')/*todo*/
-				->setTo($user->email)
+		])
+			->setFrom('todo@config.param')/*todo*/
+			->setTo($user->email)
 			->setSubject($subject)
-				->send();
-		}
+			->send();
+	}
 
 }
