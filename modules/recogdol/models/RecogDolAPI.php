@@ -37,6 +37,8 @@ class RecogDolAPI {
 	public function __construct() {
 		$host = ArrayHelper::getValue(Yii::$app->getModule('recogdol')->params, 'connection.host', false);
 		$this->_sslCertificate = ArrayHelper::getValue(Yii::$app->getModule('recogdol')->params, 'connection.sslCertificate');
+		$user = ArrayHelper::getValue(Yii::$app->getModule('recogdol')->params, 'connection.user');
+		$password = ArrayHelper::getValue(Yii::$app->getModule('recogdol')->params, 'connection.password');
 
 		if ($host) {
 			$this->_client = new Client([
@@ -46,7 +48,8 @@ class RecogDolAPI {
 					'format' => Client::FORMAT_JSON,
 					'headers' => [
 						'accept' => 'application/json',
-						'Content-Type' => 'application/json'
+						'Content-Type' => 'application/json',
+						'Authorization' => 'Basic '.base64_encode($user.':'.$password),
 					]
 				]
 			]);
@@ -58,11 +61,12 @@ class RecogDolAPI {
 	/**
 	 * @param string $url
 	 * @param array $file
+	 * @param array $data
 	 * @return Response
 	 * @throws HttpClientException
 	 * @throws InvalidConfigException
 	 */
-	private function sendRequest(string $url, array $file = []):Response {
+	private function sendRequest(string $url, array $file = [], array $data = []):Response {
 		$request = $this->_client->createRequest();
 		$request->method = 'POST';
 
@@ -77,9 +81,10 @@ class RecogDolAPI {
 		}
 
 		$request->url = $url;
+		$request->data = $data;
 
 		if (!empty($file)) {
-			$request->addFile($file['fileName'], $file['filePath']);
+			$request->addFile($file['fieldName'], $file['filePath']);
 		}
 
 		return $request->send();
@@ -104,12 +109,13 @@ class RecogDolAPI {
 	/**
 	 * @param $recognitionType
 	 * @param array $file
+	 * @param array $data
 	 * @return array
 	 * @throws HttpClientException
 	 * @throws InvalidConfigException
 	 */
-	public function recognize($recognitionType, array $file):array {
-		return $this->parseAnswer($this->sendRequest(self::METHOD_RECOGNIZE_METHODS[$recognitionType], $file));
+	public function recognize($recognitionType, array $file, array $data):array {
+		return $this->parseAnswer($this->sendRequest(self::METHOD_RECOGNIZE_METHODS[$recognitionType], $file, $data));
 	}
 
 }

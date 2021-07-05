@@ -12,7 +12,9 @@ return [
 	'params' => [
 		'connection' => [
 			'host' => '',
-			'sslCertificate' => false
+			'sslCertificate' => false,
+			'user' => '',
+			'password' => ''
 		]
 	]
 ];
