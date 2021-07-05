@@ -3,7 +3,6 @@ declare(strict_types = 1);
 
 namespace app\models\seller\active_record;
 
-use app\components\db\ActiveRecordTrait;
 use app\models\store\Stores;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
@@ -15,13 +14,12 @@ use yii\db\ActiveRecord;
  * @property int $store_id
  * @property int $phone_number
  * @property string $email
+ * @property string $token
  * @property string $expired_at
  *
  * @property Stores $store
  */
 class SellerInviteLinkAr extends ActiveRecord {
-	use ActiveRecordTrait;
-
 	/**
 	 * {@inheritdoc}
 	 */
@@ -35,8 +33,9 @@ class SellerInviteLinkAr extends ActiveRecord {
 	public function rules():array {
 		return [
 			[['store_id', 'phone_number'], 'integer'],
+			[['token'], 'required'],
 			[['expired_at'], 'safe'],
-			[['email'], 'string', 'max' => 255],
+			[['email', 'token'], 'string', 'max' => 255],
 			[['store_id', 'phone_number', 'email'], 'unique', 'targetAttribute' => ['store_id', 'phone_number', 'email']],
 			[['store_id'], 'exist', 'skipOnError' => true, 'targetClass' => Stores::class, 'targetAttribute' => ['store_id' => 'id']],
 		];
@@ -51,6 +50,7 @@ class SellerInviteLinkAr extends ActiveRecord {
 			'store_id' => 'Store ID',
 			'phone_number' => 'Phone Number',
 			'email' => 'Email',
+			'token' => 'Token',
 			'expired_at' => 'Expired At',
 		];
 	}

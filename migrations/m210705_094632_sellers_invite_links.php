@@ -14,7 +14,8 @@ class m210705_094632_sellers_invite_links extends Migration {
 			'id' => $this->primaryKey(),
 			'store_id' => $this->integer()->null(),
 			'phone_number' => $this->integer()->null(),
-			'email' => $this->string(),
+			'email' => $this->string()->null(),
+			'token' => $this->string()->notNull(),
 			'expired_at' => $this->dateTime()
 		]);
 		$this->createIndex('idx_store_phone_email', 'sellers_invite_links', [
