@@ -55,7 +55,7 @@ $config = [
 				[
 					'class' => FileTarget::class,
 					'categories' => ['recogdol.api'],
-					'levels' => ['error'],
+					'levels' => ['info', 'error'],
 					'logFile' => '@runtime/logs/recogdol/api.log',
 					'maxFileSize' => 10240
 				],

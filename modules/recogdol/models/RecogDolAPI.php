@@ -43,14 +43,13 @@ class RecogDolAPI {
 					'format' => Client::FORMAT_JSON,
 					'headers' => [
 						'accept' => 'application/json',
-						'Content-Type' => 'application/json',
-						'Authorization' => 'Token a37f262bfe1418a681c3bfdf1c468d9e55e02031'
+						'Content-Type' => 'application/json'
 					]
 				]
 			]);
+		} else {
+			throw new ConfigVariableNotFoundException('connection.host variable not found in config.php');
 		}
-
-		throw new ConfigVariableNotFoundException('connection.host variable not found in config.php');
 	}
 
 	/**
