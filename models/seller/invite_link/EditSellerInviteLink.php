@@ -97,7 +97,7 @@ class EditSellerInviteLink extends Model {
 			throw new ValidateException($this->getErrors());
 		}
 
-		$existentLink = (new SellerInviteLinkSearch())->getById($this->existentIdLink);
+		$existentLink = (new SellerInviteLinkSearch())->getById((int)$this->existentIdLink);
 		$existentLink->edit($this->phone_number, $this->email);
 		if (!$existentLink->save()) {
 			throw new DomainException(

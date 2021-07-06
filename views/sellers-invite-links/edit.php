@@ -15,7 +15,7 @@ use yii\bootstrap4\ActiveForm;
 
 ?>
 
-<?php $form = ActiveForm::begin(); ?>
+<?php $form = ActiveForm::begin(['id' => 'edit-seller-invite-link']); ?>
 <div class="panel">
 	<div class="panel-hdr">
 	</div>
