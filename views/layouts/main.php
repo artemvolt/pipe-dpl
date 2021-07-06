@@ -10,6 +10,8 @@ use app\assets\AppAsset;
 use app\assets\ModalHelperAsset;
 use app\controllers\SiteController;
 use app\controllers\UsersController;
+use app\modules\notifications\models\Notifications;
+use app\modules\notifications\widgets\notification_alert\NotificationAlertWidget;
 use app\widgets\search\SearchWidget;
 use pozitronik\helpers\Utils;
 use yii\bootstrap4\Html;
@@ -97,6 +99,12 @@ ModalHelperAsset::register($this);
 				</div>
 			</header>
 			<main id="js-page-content" class="page-content" role="main">
+				<?php foreach (Notifications::UserNotifications() as $notification): ?>
+					<?= NotificationAlertWidget::widget([
+						'type' => NotificationAlertWidget::TYPE_SUCCESS,
+						'notification' => $notification,
+					]) ?>
+				<?php endforeach; ?>
 				<?= $content ?>
 			</main>
 			<div class="page-content-overlay" data-action="toggle" data-class="mobile-nav-on"></div>
