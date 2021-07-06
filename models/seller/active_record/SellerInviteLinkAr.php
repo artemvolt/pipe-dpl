@@ -3,7 +3,11 @@ declare(strict_types = 1);
 
 namespace app\models\seller\active_record;
 
+use app\components\db\ActiveRecordTrait;
+use app\models\phones\PhoneNumberValidator;
 use app\models\store\Stores;
+use app\models\sys\permissions\traits\ActiveRecordPermissionsTrait;
+use app\modules\history\behaviors\HistoryBehavior;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 
@@ -12,7 +16,7 @@ use yii\db\ActiveRecord;
  *
  * @property int $id
  * @property int $store_id
- * @property int $phone_number
+ * @property string $phone_number
  * @property string $email
  * @property string $token
  * @property string $expired_at
@@ -20,6 +24,20 @@ use yii\db\ActiveRecord;
  * @property Stores $store
  */
 class SellerInviteLinkAr extends ActiveRecord {
+	use ActiveRecordTrait;
+	use ActiveRecordPermissionsTrait;
+
+	/**
+	 * @inheritDoc
+	 */
+	public function behaviors():array {
+		return [
+			'history' => [
+				'class' => HistoryBehavior::class
+			]
+		];
+	}
+
 	/**
 	 * {@inheritdoc}
 	 */
@@ -32,10 +50,11 @@ class SellerInviteLinkAr extends ActiveRecord {
 	 */
 	public function rules():array {
 		return [
-			[['store_id', 'phone_number'], 'integer'],
-			[['token'], 'required'],
+			[['store_id'], 'integer'],
+			[['store_id', 'token'], 'required'],
 			[['expired_at'], 'safe'],
-			[['email', 'token'], 'string', 'max' => 255],
+			['phone_number', PhoneNumberValidator::class],
+			[['phone_number', 'email', 'token'], 'string', 'max' => 255],
 			[['store_id', 'phone_number', 'email'], 'unique', 'targetAttribute' => ['store_id', 'phone_number', 'email']],
 			[['store_id'], 'exist', 'skipOnError' => true, 'targetClass' => Stores::class, 'targetAttribute' => ['store_id' => 'id']],
 		];
@@ -47,11 +66,11 @@ class SellerInviteLinkAr extends ActiveRecord {
 	public function attributeLabels():array {
 		return [
 			'id' => 'ID',
-			'store_id' => 'Store ID',
-			'phone_number' => 'Phone Number',
+			'store_id' => 'ID Магазина',
+			'phone_number' => 'Номер телефона',
 			'email' => 'Email',
-			'token' => 'Token',
-			'expired_at' => 'Expired At',
+			'token' => 'Токен',
+			'expired_at' => 'Действует до',
 		];
 	}
 

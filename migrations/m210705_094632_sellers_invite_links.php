@@ -13,7 +13,7 @@ class m210705_094632_sellers_invite_links extends Migration {
 		$this->createTable("sellers_invite_links", [
 			'id' => $this->primaryKey(),
 			'store_id' => $this->integer()->null(),
-			'phone_number' => $this->integer()->null(),
+			'phone_number' => $this->string()->null(),
 			'email' => $this->string()->null(),
 			'token' => $this->string()->notNull(),
 			'expired_at' => $this->dateTime()
