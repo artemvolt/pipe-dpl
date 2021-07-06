@@ -17,6 +17,7 @@ use yii\httpclient\Response;
  * Class DolAPI
  * @property-read null|bool $success Last operation response status
  * @property-read string $errorMessage Last operation error message
+ * @property-read DolAuthToken $authToken Объект токена, используемый для подписи запросов
  */
 class DolAPI extends ActiveRecord {
 	public string $baseUrl = "https://dolfront.beelinetst.ru/api/";
@@ -44,6 +45,11 @@ class DolAPI extends ActiveRecord {
 	 * @var null|string|false
 	 */
 	private $_sslCertificate; //null - default, string - file, false - disabled
+
+	/**
+	 * @var DolAuthToken|null
+	 */
+	private ?DolAuthToken $_authToken = null;
 
 	/**
 	 * @inheritDoc
@@ -140,6 +146,14 @@ class DolAPI extends ActiveRecord {
 		}
 		$response = $this->doRequest($this->baseUrl.self::METHOD_CONFIRM_SMS_LOGON, compact('phoneAsLogin', 'code'));
 		return $this->parseAnswer($response->content);
+	}
+
+	/**
+	 * @return DolAuthToken
+	 */
+	public function getAuthToken():DolAuthToken {
+		if (null === $this->_authToken) $this->_authToken = new DolAuthToken();
+		return $this->_authToken;
 	}
 
 }
