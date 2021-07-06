@@ -17,5 +17,4 @@ class Dealers extends DealersAR {
 	public function dummy_todo_function():void {
 
 	}
-
 }

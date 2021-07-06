@@ -4,6 +4,7 @@ declare(strict_types = 1);
 namespace app\models\sys\users\active_record;
 
 use app\components\db\ActiveRecordTrait;
+use app\models\managers\Managers;
 use app\models\phones\PhoneNumberValidator;
 use app\models\phones\Phones;
 use app\models\sys\users\active_record\relations\RelUsersToPhones;
@@ -35,6 +36,7 @@ use yii\helpers\ArrayHelper;
  * @property RelUsersToPhones[] $relatedUsersToPhones Связь к промежуточной таблице к телефонным номерам
  * @property Phones[] $relatedPhones Телефонные номера пользователя (таблица)
  * @property string[] $phones Виртуальный атрибут: телефонные номера в строковом массиве, используется для редактирования
+ * @property Managers $manager
  */
 class Users extends ActiveRecord {
 	use ActiveRecordTrait;
@@ -166,4 +168,10 @@ class Users extends ActiveRecord {
 		return $saved;
 	}
 
+	/**
+	 * @return ActiveQuery
+	 */
+	public function getManager():ActiveQuery {
+		return $this->hasOne(Managers::class, ['user_id' => 'id']);
+	}
 }

@@ -219,4 +219,12 @@ class Users extends ActiveRecordUsers implements IdentityInterface {
 			:PathHelper::PathToUrl(PathHelper::RelativePath($fileAvatar->path, "@webroot"));
 	}
 
+	/**
+	 * @return bool
+	 */
+	public function isManager():bool {
+		$manager = $this->manager;
+		return null !== $manager;
+	}
+
 }

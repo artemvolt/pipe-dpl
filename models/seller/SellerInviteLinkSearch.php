@@ -3,11 +3,9 @@ declare(strict_types = 1);
 
 namespace app\models\seller;
 
-use app\models\seller\SellerInviteLink;
 use DomainException;
-use Throwable;
+use InvalidArgumentException;
 use yii\data\ActiveDataProvider;
-use yii\web\ForbiddenHttpException;
 
 /**
  * Class SellerInviteLinkSearch
@@ -27,10 +25,7 @@ class SellerInviteLinkSearch extends SellerInviteLink {
 
 	/**
 	 * @param array $params
-	 * @param int[] $allowedGroups
 	 * @return ActiveDataProvider
-	 * @throws Throwable
-	 * @throws ForbiddenHttpException
 	 */
 	public function search(array $params):ActiveDataProvider {
 		$query = SellerInviteLink::find();
@@ -71,7 +66,7 @@ class SellerInviteLinkSearch extends SellerInviteLink {
 
 	/**
 	 * @param int $id
-	 * @return \app\models\seller\SellerInviteLink
+	 * @return SellerInviteLink
 	 */
 	public function getById(int $id):SellerInviteLink {
 		if ($find = SellerInviteLink::findOne($id)) {
@@ -82,7 +77,7 @@ class SellerInviteLinkSearch extends SellerInviteLink {
 
 	/**
 	 * @param string $phoneNumber
-	 * @return \app\models\seller\SellerInviteLink|null
+	 * @return SellerInviteLink|null
 	 */
 	public function findByPhone(string $phoneNumber):?SellerInviteLink {
 		return SellerInviteLink::find()->where(['phone_number' => $phoneNumber])->one();
@@ -90,9 +85,28 @@ class SellerInviteLinkSearch extends SellerInviteLink {
 
 	/**
 	 * @param $email
-	 * @return \app\models\seller\SellerInviteLink|null
+	 * @return SellerInviteLink|null
 	 */
 	public function findByEmail($email):?SellerInviteLink {
 		return SellerInviteLink::find()->where(['email' => $email])->one();
+	}
+
+	/**
+	 * @param string|null $email
+	 * @param string|null $phone
+	 * @return SellerInviteLink|null
+	 */
+	public function findExistentWithEmailOrPhone(?string $email = "", ?string $phone = ""):?SellerInviteLink {
+		if (empty($email) || empty($phone)) {
+			throw new InvalidArgumentException("Должен быть хотя бы указан либо email либо телефон");
+		}
+		$query = SellerInviteLink::find();
+		if ($email) {
+			$query->orWhere(['email' => $email]);
+		}
+		if ($phone) {
+			$query->orWhere(['phone' => $phone]);
+		}
+		return $query->limit(1)->all();
 	}
 }

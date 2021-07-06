@@ -24,6 +24,18 @@ class RelStoresToSellers extends ActiveRecord {
 	}
 
 	/**
+	 * @param int $storeId
+	 * @param int $sellerId
+	 * @return static
+	 */
+	public static function assign(int $storeId, int $sellerId):self {
+		$self = new self();
+		$self->store_id = $storeId;
+		$self->seller_id = $sellerId;
+		return $self;
+	}
+
+	/**
 	 * {@inheritdoc}
 	 */
 	public function rules():array {
