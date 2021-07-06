@@ -5,6 +5,7 @@ use app\controllers\ManagersController;
 use app\controllers\PermissionsCollectionsController;
 use app\controllers\PermissionsController;
 use app\controllers\SellersController;
+use app\controllers\SellersInviteLinksController;
 use app\controllers\SiteController;
 use app\controllers\StoresController;
 use app\controllers\UsersController;
@@ -47,7 +48,6 @@ use app\controllers\DealersController;
 			'url' => [ManagersController::to('index')],
 			'iconClass' => 'fa fa-user-tie',
 			'visible' => ManagersController::hasPermission('index')
-
 		],
 		[
 			'label' => StoresController::Title(),
@@ -57,9 +57,22 @@ use app\controllers\DealersController;
 		],
 		[
 			'label' => SellersController::Title(),
-			'url' => [SellersController::to('index')],
+			'url' => '#',
 			'iconClass' => 'fa-smile-beam',
-			'visible' => SellersController::hasPermission('index')
+			'visible' => SellersController::hasPermission('index'),
+			'items' => [
+				[
+					'label' => "Управление",
+					'url' => [SellersController::to('index')],
+					'visible' => SellersController::hasPermission('index')
+				],
+				[
+					'label' => 'Приглашения',
+					'url' => [SellersInviteLinksController::to("index")],
+					'visible' => SellersInviteLinksController::hasPermission('index')
+				],
+			],
+
 		],
 		[
 			'label' => 'Фродмониторинг',
