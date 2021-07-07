@@ -309,10 +309,25 @@ final class SellersSearch extends Sellers {
 	 */
 	public function findMiniSellerWithPhone($phone):?Sellers {
 		$query = Sellers::find()->alias('s');
-		$query->innerJoin(RelUsersToPhones::tableName().'u_to_p', 'u_to_p.user_id = s.user');
+		$query->innerJoin(RelUsersToPhones::tableName().' u_to_p', 'u_to_p.user_id = s.user');
 		$query->innerJoin(Phones::tableName().' phones', 'phones.id = u_to_p.phone_id');
 		$query->andWhere(['phones.phone' => Phones::defaultFormat($phone)]);
 		return $query->limit(1)->one();
+	}
+
+	/**
+	 * @param string|null $phone
+	 * @param string|null $email
+	 * @return Sellers|null
+	 */
+	public function findMiniSellerWithPhoneOrEmail(?string $phone, ?string $email):?Sellers {
+		if ($phone) {
+			return $this->findMiniSellerWithPhone($phone);
+		}
+		if ($email) {
+			return $this->findMiniSellerWithEmail($email);
+		}
+		return null;
 	}
 
 	/**

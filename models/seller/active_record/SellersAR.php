@@ -18,6 +18,7 @@ use app\models\sys\users\Users;
 use app\modules\history\behaviors\HistoryBehavior;
 use app\modules\status\models\traits\StatusesTrait;
 use pozitronik\helpers\DateHelper;
+use pozitronik\relations\traits\RelationsTrait;
 use Throwable;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
@@ -63,6 +64,7 @@ use yii\web\JsExpression;
  * @property RefRegions $refRegion
  */
 class SellersAR extends ActiveRecord {
+	use RelationsTrait;
 	use ActiveRecordTrait;
 	use StatusesTrait;
 	use ActiveRecordPermissionsTrait;
