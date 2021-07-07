@@ -19,6 +19,9 @@ class QueryType extends ObjectType {
 			'fields' => [
 				'profile' => [
 					'type' => Types::profile(),
+					/**
+					 * @TODO сделать реализацию метода. Возвращать на основе Yii::$app->user->identity
+					 */
 					'resolve' => function() {
 						return new Sellers();
 					}

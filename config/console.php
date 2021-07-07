@@ -5,6 +5,7 @@ declare(strict_types = 1);
 if (file_exists($localConfig = __DIR__.DIRECTORY_SEPARATOR.'local'.DIRECTORY_SEPARATOR.basename(__FILE__))) return require $localConfig;
 
 use app\modules\fraud\FraudModule;
+use app\modules\recogdol\RecogDolModule;
 use yii\console\controllers\MigrateController;
 use pozitronik\filestorage\FSModule;
 use yii\caching\FileCache;
@@ -28,6 +29,17 @@ $config = [
 		'fraud' => [
 			'class' => FraudModule::class
 		],
+		'recogdol' => [
+			'class' => RecogDolModule::class,
+			'params' => [
+				'connection' => [
+					'host' => '',
+					'sslCertificate' => false,
+					'user' => '',
+					'password' => ''
+				]
+			]
+		],
 		'filestorage' => [
 			'class' => FSModule::class,
 			'defaultRoute' => 'index',
@@ -49,6 +61,13 @@ $config = [
 				[
 					'class' => FileTarget::class,
 					'levels' => ['error', 'warning'],
+				],
+				[
+					'class' => FileTarget::class,
+					'categories' => ['recogdol.api'],
+					'levels' => ['info', 'error'],
+					'logFile' => '@runtime/logs/recogdol/api.log',
+					'maxFileSize' => 10240
 				],
 			],
 		],

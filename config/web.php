@@ -12,6 +12,7 @@ use app\modules\fraud\FraudModule;
 use app\modules\graphql\GraphqlModule;
 use app\modules\history\HistoryModule;
 use app\modules\notifications\NotificationsModule;
+use app\modules\recogdol\RecogDolModule;
 use app\modules\status\StatusModule;
 use kartik\dialog\DialogBootstrapAsset;
 use kartik\editable\EditableAsset;
@@ -101,6 +102,17 @@ $config = [
 		],
 		'fraud' => [
 			'class' => FraudModule::class
+		],
+		'recogdol' => [
+			'class' => RecogDolModule::class,
+			'params' => [
+				'connection' => [
+					'host' => '',
+					'sslCertificate' => false,
+					'user' => '',
+					'password' => ''
+				]
+			]
 		],
 		'api' => [
 			'class' => ApiModule::class

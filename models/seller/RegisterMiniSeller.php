@@ -32,6 +32,7 @@ class RegisterMiniSeller extends Model {
 
 	/**
 	 * @inheritDoc
+	 * @return array
 	 */
 	public function rules():array {
 		return [

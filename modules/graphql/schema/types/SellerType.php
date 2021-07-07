@@ -8,7 +8,7 @@ use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
 
 /**
- * Class ExampleType
+ * Class SellerType
  * @package app\modules\graphql\schema\types
  */
 class SellerType extends ObjectType {
