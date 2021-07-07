@@ -17,9 +17,11 @@ use yii\httpclient\Exception as HttpException;
 /**
  * Авторизация по SMS
  *
- * @property Users|null $user
  * @property string $login Логин в системе
  * @property string $smsCode Код подтверждения
+ * @property bool $rememberMe
+ * @property bool $restore
+ *
  * @property-read DolAPI $dolAPI Объект API
  */
 class LoginSMSForm extends LoginForm {
@@ -51,10 +53,10 @@ class LoginSMSForm extends LoginForm {
 			[['smsCode'], 'string', 'max' => 4],
 			['rememberMe', 'boolean'],
 			[['login'], function(string $attribute):void {
-				if (null === $this->user) {
+				if (null === $this->_user) {
 					$this->addError($attribute, 'Пользователь не найден');
 				}
-				if (!$this->hasErrors() && $this->user->deleted) {
+				if (!$this->hasErrors() && $this->_user->deleted) {
 					$this->addError($attribute, 'Пользователь заблокирован');
 				}
 			}],
@@ -77,11 +79,13 @@ class LoginSMSForm extends LoginForm {
 	}
 
 	/**
-	 * @return Users|null
+	 * @param array $data
+	 * @param null $formName
+	 * @return bool
 	 * @throws Exception
 	 */
-	public function getUser():?Users {
-		if (null === $this->_user) {
+	public function load($data, $formName = null):bool {
+		if (parent::load($data, $formName)) {
 			if (null === $this->_user = Users::findByLogin($this->login)) {
 				// _user может быть null, но _phoneNumber по сути всегда есть
 				$this->_user = Users::findByPhoneNumber($this->login);
@@ -89,8 +93,9 @@ class LoginSMSForm extends LoginForm {
 			} else {
 				$this->_phoneNumber = Phones::nationalFormat(ArrayHelper::getValue($this->_user->phones, '0'));
 			}
+			return true;
 		}
-		return $this->_user;
+		return false;
 	}
 
 	/**
@@ -100,7 +105,7 @@ class LoginSMSForm extends LoginForm {
 	 */
 	public function doSmsLogon():bool {
 //		if (!$this->validate()) return false; <== больше не нужно, т.к. валидацией мы отсекали проверку пользователей, отсутствующих в системе.
-		if (null === $this->user) {/*подходящей учётки пользователя нет в системе, надо спросить у DOL*/
+		if (null === $this->_user) {/*подходящей учётки пользователя нет в системе, надо спросить у DOL*/
 			if (!$this->DolLogon()) {
 				/*DOL об этом чуваке не в курсе*/
 				$this->addError($this->login, $this->dolAPI->errorMessage);
@@ -147,11 +152,10 @@ class LoginSMSForm extends LoginForm {
 	 * @throws HttpException
 	 */
 	public function doConfirmSmsLogon():bool {
-		$user = $this->user;
 		//if (!$this->validate()) return false; <== больше не нужно, т.к. валидацией мы отсекали проверку пользователей, отсутствующих в системе.
 		$response = $this->dolAPI->confirmSmsLogon($this->_phoneNumber, $this->smsCode);
 		if ($this->dolAPI->success) {
-			if (null === $user) {/*мы авторизовали в DOL пользователя, которого нет в системе.*/
+			if (null === $this->_user) {/*мы авторизовали в DOL пользователя, которого нет в системе.*/
 				/** Теперь нам с этим токеном надо получить данные этого юзера, и перенести их к нам.*/
 				$this->dolAPI->authToken->loadFromResponseArray($response);
 				$responseData = $this->dolAPI->getUserProfile();
@@ -160,11 +164,11 @@ class LoginSMSForm extends LoginForm {
 					return false;
 				}
 				if (!$this->createUserFromDol($responseData)) {/*сразу генерим себе пользователя*/
-					$this->addError('login', TemporaryHelper::Errors2String($this->user->errors));
+					$this->addError('login', TemporaryHelper::Errors2String($this->_user->errors));
 					return false;
 				}
 			}
-			return Yii::$app->user->login($this->user, $this->rememberMe?DateHelper::SECONDS_IN_MONTH:0);
+			return Yii::$app->user->login($this->_user, $this->rememberMe?DateHelper::SECONDS_IN_MONTH:0);
 		}
 		$this->addError('smsCode', $this->dolAPI->errorMessage);
 		return false;
