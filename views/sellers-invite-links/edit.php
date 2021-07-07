@@ -12,7 +12,6 @@ use app\models\seller\SellerInviteLink;
 use yii\helpers\Html;
 use yii\web\View;
 use yii\bootstrap4\ActiveForm;
-
 ?>
 
 <?php $form = ActiveForm::begin(['id' => 'edit-seller-invite-link']); ?>
@@ -23,7 +22,10 @@ use yii\bootstrap4\ActiveForm;
 		<div class="panel-content">
 			<div class="row">
 				<div class="col-md-12">
-					<?= Html::textInput("store_id", $existentModel->store->name, ['disabled' => true]) ?>
+					<div class="form-group">
+						<label>Магазин</label>
+						<?= Html::textInput("store_id", $existentModel->store->name, ['disabled' => true, 'class' => 'form-control']) ?>
+					</div>
 				</div>
 			</div>
 			<div class="row">
