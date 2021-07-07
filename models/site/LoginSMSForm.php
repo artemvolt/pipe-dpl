@@ -83,9 +83,9 @@ class LoginSMSForm extends LoginForm {
 	public function getUser():?Users {
 		if (null === $this->_user) {
 			if (null === $this->_user = Users::findByLogin($this->login)) {
-				if (null !== $this->_user = Users::findByPhoneNumber($this->login)) {
-					$this->_phoneNumber = Phones::nationalFormat($this->login);
-				}
+				// _user может быть null, но _phoneNumber по сути всегда есть
+				$this->_user = Users::findByPhoneNumber($this->login);
+				$this->_phoneNumber = Phones::nationalFormat($this->login);
 			} else {
 				$this->_phoneNumber = Phones::nationalFormat(ArrayHelper::getValue($this->_user->phones, '0'));
 			}
@@ -147,21 +147,20 @@ class LoginSMSForm extends LoginForm {
 	 * @throws HttpException
 	 */
 	public function doConfirmSmsLogon():bool {
+		$user = $this->user;
 		//if (!$this->validate()) return false; <== больше не нужно, т.к. валидацией мы отсекали проверку пользователей, отсутствующих в системе.
 		$response = $this->dolAPI->confirmSmsLogon($this->_phoneNumber, $this->smsCode);
 		if ($this->dolAPI->success) {
-			if (null === $this->user) {/*мы авторизовали в DOL пользователя, которого нет в системе.*/
-				/**
-				 * Теперь нам с этим токеном надо получить данные этого юзера, и перенести их к нам.
-				 */
+			if (null === $user) {/*мы авторизовали в DOL пользователя, которого нет в системе.*/
+				/** Теперь нам с этим токеном надо получить данные этого юзера, и перенести их к нам.*/
 				$this->dolAPI->authToken->loadFromResponseArray($response);
-				$responseData = $this->dolAPI->getUserProfile(/*todo*/);
-				if (!$this->dolAPI->success) {
-					$this->addError($this->smsCode, $this->dolAPI->errorMessage);
+				$responseData = $this->dolAPI->getUserProfile();
+				if (null === $responseData) {
+					$this->addError('smsCode', $this->dolAPI->errorMessage);
 					return false;
 				}
 				if (!$this->createUserFromDol($responseData)) {/*сразу генерим себе пользователя*/
-					$this->addError($this->login, TemporaryHelper::Errors2String($this->user->errors)/*например*/);
+					$this->addError('login', TemporaryHelper::Errors2String($this->user->errors));
 					return false;
 				}
 			}
@@ -177,18 +176,15 @@ class LoginSMSForm extends LoginForm {
 	 * @return bool
 	 */
 	private function createUserFromDol(array $dolData):bool {
-		/*todo*/
-		$this->user = new Users([
+		$this->_user = new Users([
 			'login' => $this->_phoneNumber,
-			'username' => $this->_phoneNumber,
+			'username' => $dolData['name']??null,
 			'password' => Users::DEFAULT_PASSWORD,
 			'comment' => "Пользователь создан при сквозной авторизации в DOL ",
-			'email' => $this->email,
+			'email' => $dolData['email']??null,
 			'phones' => $this->_phoneNumber
 		]);
-//		if (!$user->save()) return false;
-//		$this->relatedUser = $user;
-		return true;
+		return $this->_user->save();
 	}
 
 	/**
