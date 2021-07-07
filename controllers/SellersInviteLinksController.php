@@ -46,41 +46,27 @@ class SellersInviteLinksController extends DefaultController {
 	 * @throws ForbiddenHttpException
 	 */
 	public function actionCreate() {
-		$model = new SellerInviteLink();
+		$createForm = new CreateSellerInviteLinkForm();
 
 		$request = Yii::$app->request;
-		if ($request->post('ajax')) {/* запрос на ajax-валидацию формы */
-			return $this->asJson($model->validateModelFromPost());
-		}
-		if ($model->load($request->post())) {
-			try {
-				$form = new CreateSellerInviteLinkForm([
-					'phone_number' => $model->phone_number,
-					'email' => $model->email,
-					'store_id' => $model->store_id
-				]);
-				$savedLink = $form->create();
-				if ($savedLink->email) {
-					Notifications::message("Ссылка успешно отправлена на почту.");
+		if ($createForm->load($request->post())) {
+			if ($createForm->validate()) {
+				try {
+					$savedLink = $createForm->create();
+					if ($savedLink->email) {
+						Notifications::message("Ссылка успешно отправлена на почту.");
+					}
+					if ($savedLink->phone_number) {
+						Notifications::message("Ссылка успешно отправлена на номер моб.телефона.");
+					}
+					return $this->redirect('index');
+				} catch (DomainException $exception) {
+					Notifications::message($exception->getMessage());
 				}
-				if ($savedLink->phone_number) {
-					Notifications::message("Ссылка успешно отправлена на номер моб.телефона.");
-				}
-				return $this->redirect('index');
-			} catch (ValidateException $exception) {
-				if ($request->isAjax) {
-					return $this->asJson($exception->getErrors());
-				}
-
-				$model->addErrors($exception->getErrors());
-			} catch (DomainException $exception) {
-				Notifications::message($exception->getMessage());
 			}
 		}
 		/* Постинга не было */
-		return (Yii::$app->request->isAjax)
-			?$this->renderAjax('modal/create', ['model' => $model])
-			:$this->render('create', ['model' => $model]);
+		return $this->render('create', ['createForm' => $createForm]);
 	}
 
 	/**
@@ -115,6 +101,7 @@ class SellersInviteLinksController extends DefaultController {
 					if ($editForm->repeatPhoneNotify) {
 						Notifications::message("SMS успешно отправлено");
 					}
+					Notifications::message("Запись успешно обновлена");
 					return $this->refresh();
 				} catch (DomainException $e) {
 					Notifications::message($e->getMessage());

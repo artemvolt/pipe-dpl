@@ -3,10 +3,14 @@ declare(strict_types = 1);
 
 /**
  * @var View $this
- * @var CreateSellerInviteLinkForm $model
+ * @var CreateSellerInviteLinkForm $createForm
  */
 
+use app\controllers\StoresController;
 use app\models\seller\invite_link\CreateSellerInviteLinkForm;
+use app\models\store\Stores;
+use app\widgets\selectmodelwidget\SelectModelWidget;
+use yii\helpers\Html;
 use yii\web\View;
 use yii\bootstrap4\ActiveForm;
 
@@ -18,10 +22,33 @@ use yii\bootstrap4\ActiveForm;
 	</div>
 	<div class="panel-container show">
 		<div class="panel-content">
-			<?= $this->render('subviews/editPanelBody', compact('model', 'form')) ?>
+			<div class="row">
+				<div class="col-md-12">
+					<?= $form->field($createForm, 'store_id')->widget(SelectModelWidget::class, [
+						'multiple' => false,
+						'loadingMode' => SelectModelWidget::DATA_MODE_AJAX,
+						'selectModelClass' => Stores::class,
+						'options' => ['placeholder' => ''],
+						'ajaxSearchUrl' => StoresController::to('ajax-search')
+					]) ?>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<?= $form->field($createForm, 'phone_number')->textInput(['placeholder' => '9123456789']) ?>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<?= $form->field($createForm, 'email')->textInput() ?>
+				</div>
+			</div>
 		</div>
 		<div class="panel-content">
-			<?= $this->render('subviews/editPanelFooter', compact('model', 'form')) ?>
+			<?= Html::submitButton('Пригласить', [
+					'class' => 'btn btn-primary float-right'
+				]
+			) ?>
 			<div class="clearfix"></div>
 		</div>
 	</div>
