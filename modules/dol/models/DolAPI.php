@@ -25,6 +25,7 @@ class DolAPI extends ActiveRecord {
 	public const METHOD_SMS_LOGON = 'v2/auth/sms-logon';
 	public const METHOD_CONFIRM_SMS_LOGON = 'v2/auth/confirm-sms-logon';
 	public const METHOD_REFRESH = 'v2/auth/refresh';
+	public const METHOD_USER = 'v2/auth/user';
 
 	/**
 	 * @var bool|null
@@ -63,16 +64,18 @@ class DolAPI extends ActiveRecord {
 	/**
 	 * @param string $url
 	 * @param array $data
+	 * @param string $method
 	 * @return Response
 	 * @throws HttpClientException
 	 * @throws InvalidConfigException
 	 */
-	private function doRequest(string $url, array $data):Response {
+	private function doRequest(string $url, array $data = [], string $method = 'POST'):Response {
 		$client = new Client([
 			'transport' => CurlTransport::class
 		]);
 		$request = $client->createRequest();
-		$request->method = 'POST';
+		$request->method = $method;
+
 		if (false === $this->_sslCertificate) {
 			$request->addOptions([
 				'sslVerifyPeer' => false
@@ -87,9 +90,14 @@ class DolAPI extends ActiveRecord {
 			'accept' => 'text/plain',
 			'Content-Type' => 'application/json'
 		];
+		if ($this->authToken->value) {
+			$request->headers['Authorization'] = 'Bearer '.$this->authToken->value;
+		}
 		$request->format = Client::FORMAT_JSON;
 		$request->fullUrl = $url;
-		$request->data = $data;//json_encode($data);
+		if ($data) {
+			$request->data = $data;
+		}
 		return $request->send();
 	}
 
@@ -156,4 +164,25 @@ class DolAPI extends ActiveRecord {
 		return $this->_authToken;
 	}
 
+	/**
+	 * @return array
+	 * @throws HttpClientException
+	 * @throws InvalidConfigException
+	 */
+	public function getUserProfile():array {
+		$response = $this->doRequest($this->baseUrl.self::METHOD_USER, [], 'GET');
+		return $this->parseGetAnswer($response->content);
+	}
+
+	/**
+	 * @param string $answer
+	 * @return array
+	 * @throws Exception
+	 */
+	private function parseGetAnswer(string $answer):array {
+		if (null === $result = json_decode($answer, true, 512, JSON_OBJECT_AS_ARRAY)) {
+			$this->errorMessage = 'Ошибка парсинга ответа DOL API';
+		}
+		return $result;
+	}
 }
