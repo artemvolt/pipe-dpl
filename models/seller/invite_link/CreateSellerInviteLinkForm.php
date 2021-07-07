@@ -24,32 +24,6 @@ class CreateSellerInviteLinkForm extends Model {
 	public $email;
 	public $store_id;
 
-	/**
-	 * @var DolAPI $smsTransport
-	 */
-	protected $smsTransport;
-	/**
-	 * @var MuteManager $mute
-	 */
-	protected $mute;
-
-	/**
-	 * @var EmailNotification $emailTransport
-	 */
-	protected $emailTransport;
-
-	/**
-	 * CreateSellerInviteLinkForm constructor.
-	 * @param array $config
-	 * @throws InvalidConfigException
-	 * @throws NotInstantiableException
-	 */
-	public function __construct($config = []) {
-		parent::__construct($config);
-		$this->smsTransport = Yii::$container->get(DolAPI::class);
-		$this->emailTransport = new EmailNotification();
-		$this->mute = new MuteManager();
-	}
 
 	public function rules():array {
 		return [
