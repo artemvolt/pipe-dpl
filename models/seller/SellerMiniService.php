@@ -7,6 +7,7 @@ use app\components\exceptions\MuteManager;
 use app\components\exceptions\ValidateException;
 use app\models\phones\Phones;
 use app\models\seller\invite_link\CreateSellerInviteLinkForm;
+use app\models\seller\invite_link\EditSellerInviteLink;
 use app\models\seller\invite_link\notification\EmailNotification;
 use app\models\seller\invite_link\notification\SmsNotification;
 use app\models\store\active_record\relations\RelStoresToSellers;
@@ -110,6 +111,34 @@ class SellerMiniService {
 		}
 
 		return $link;
+	}
+
+	/**
+	 * @param EditSellerInviteLink $form
+	 * @return SellerInviteLink
+	 * @throws Throwable
+	 * @throws ValidateException
+	 */
+	public function editInviteLink(EditSellerInviteLink $form):SellerInviteLink {
+		if (!$form->validate()) {
+			throw new ValidateException($form->getErrors());
+		}
+
+		$existentLink = (new SellerInviteLinkSearch())->getById((int)$form->existentIdLink);
+		$existentLink->edit($form->phone_number, $form->email);
+		if (!$existentLink->save()) {
+			throw new DomainException(
+				"Не получилось обновить ссылку.".
+				implode(". ", $existentLink->getFirstErrors())
+			);
+		}
+		if ($form->repeatPhoneNotify && $form->phone_number) {
+			$this->sendSms($existentLink->phone_number, $existentLink->inviteUrl());
+		}
+		if ($form->repeatEmailNotify && $form->email) {
+			$this->sendEmail($existentLink->email, $existentLink->inviteUrl());
+		}
+		return $existentLink;
 	}
 
 	/**

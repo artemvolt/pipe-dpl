@@ -76,6 +76,7 @@ class SellersInviteLinksController extends DefaultController {
 	 * @throws ValidateException
 	 * @throws Exception
 	 * @throws ForbiddenHttpException
+	 * @throws Throwable
 	 */
 	public function actionEdit(int $id) {
 		/**
@@ -93,7 +94,8 @@ class SellersInviteLinksController extends DefaultController {
 		]);
 		if ($editForm->load($request->post()) && $editForm->validate()) {
 			try {
-				$editForm->edit();
+				$service = new SellerMiniService();
+				$service->editInviteLink($editForm);
 				if ($editForm->repeatEmailNotify) {
 					Notifications::message("Письмо успешно отправлено");
 				}
