@@ -71,3 +71,4 @@ ValidationAsset::register($this);
 		]
 	])
 ]) ?>
+
