@@ -6,6 +6,7 @@ namespace app\models\seller;
 use DomainException;
 use InvalidArgumentException;
 use yii\data\ActiveDataProvider;
+use yii\db\Expression;
 
 /**
  * Class SellerInviteLinkSearch
@@ -108,5 +109,16 @@ class SellerInviteLinkSearch extends SellerInviteLink {
 			$query->orWhere(['phone' => $phone]);
 		}
 		return $query->limit(1)->all();
+	}
+
+	/**
+	 * @param string $token
+	 * @return SellerInviteLink|null
+	 */
+	public function findByValidToken(string $token):?SellerInviteLink {
+		return SellerInviteLink::find()->where(['token' => $token])
+			->andWhere(['>=', 'expired_at', new Expression("NOW()")])
+			->limit(1)
+			->one();
 	}
 }

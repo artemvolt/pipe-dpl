@@ -25,7 +25,13 @@ class QueryType extends ObjectType {
 					'resolve' => function() {
 						return new Sellers();
 					}
-				]
+				],
+				'seller' => [
+					'type' => Types::seller(),
+					'resolve' => function($root, $args) {
+						return $args;
+					}
+				],
 			],
 		]);
 	}
