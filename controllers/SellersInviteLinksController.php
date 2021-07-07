@@ -92,6 +92,9 @@ class SellersInviteLinksController extends DefaultController {
 	 * @throws ForbiddenHttpException
 	 */
 	public function actionEdit(int $id) {
+		/**
+		 * @var SellerInviteLink $existentModel
+		 */
 		if (null === $existentModel = $this->model::findOne($id)) {
 			throw new NotFoundHttpException();
 		}
@@ -120,7 +123,7 @@ class SellersInviteLinksController extends DefaultController {
 		}
 
 		/* Постинга не было */
-		return $this->render('edit', ['editForm' => $editForm, 'existentModel' => $existentModel]);
+		return $this->render('edit', compact('editForm', 'existentModel'));
 	}
 
 }

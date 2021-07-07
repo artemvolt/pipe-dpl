@@ -25,7 +25,7 @@ class EmailNotification {
 	 * @param string $url
 	 * @throws Exception
 	 */
-	public function notify(string $email, string $url) {
+	public function notify(string $email, string $url):void {
 		$from = ArrayHelper::getValue(Yii::$app->params, 'emailRobot.from');
 		if (empty($email)) {
 			throw new RuntimeException("Не настроена почта в конфигурации");

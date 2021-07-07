@@ -51,9 +51,10 @@ class SellerInviteLink extends SellerInviteLinkAr {
 
 	/**
 	 * @param int $storeId
-	 * @param string $phoneNumber
-	 * @param string $email
+	 * @param string|null $phoneNumber
+	 * @param string|null $email
 	 * @return $this
+	 * @throws Exception
 	 */
 	public static function createLink(int $storeId, ?string $phoneNumber, ?string $email):self {
 		$link = new SellerInviteLink([
@@ -61,7 +62,7 @@ class SellerInviteLink extends SellerInviteLinkAr {
 			'store_id' => $storeId,
 			'email' => $email
 		]);
-		$link->expiredCountDays(SellerInviteLink::TOKEN_EXPIRED_AFTER_COUNT_DAYS);
+		$link->expiredCountDays(self::TOKEN_EXPIRED_AFTER_COUNT_DAYS);
 		$link->generateToken();
 		return $link;
 	}
