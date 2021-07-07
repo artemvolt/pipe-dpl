@@ -3,14 +3,20 @@ declare(strict_types = 1);
 
 namespace app\models\seller;
 
+use app\components\exceptions\MuteManager;
 use app\components\exceptions\ValidateException;
 use app\models\phones\Phones;
+use app\models\seller\invite_link\CreateSellerInviteLinkForm;
+use app\models\seller\invite_link\notification\EmailNotification;
+use app\models\seller\invite_link\notification\SmsNotification;
 use app\models\store\active_record\relations\RelStoresToSellers;
 use app\models\sys\users\Users;
 use DomainException;
 use Throwable;
 use Yii;
+use yii\base\Exception;
 use yii\helpers\ArrayHelper;
+use yii\mail\MailerInterface;
 
 /**
  * Class SellerMiniService
@@ -22,13 +28,27 @@ class SellerMiniService {
 	 * @var Users|null
 	 */
 	private ?Users $currentUser;
+	/**
+	 * @var SmsNotification $smsNotification
+	 */
+	protected $smsNotification;
+	/**
+	 * @var MuteManager $muteManager
+	 */
+	protected $mute;
+	/**
+	 * @var MailerInterface $emailNotification
+	 */
+	protected $emailNotification;
 
 	/**
 	 * SellerMiniService constructor.
-	 * @param Users|null $currentUser
 	 */
-	public function __construct(?Users $currentUser = null) {
-		$this->currentUser = $currentUser?:Yii::$app->user->identity;
+	public function __construct() {
+		$this->currentUser = Yii::$app->user->identity;
+		$this->smsNotification = new SmsNotification();
+		$this->emailNotification = new EmailNotification();
+		$this->mute = new MuteManager();
 	}
 
 	/**
@@ -61,5 +81,56 @@ class SellerMiniService {
 		RelStoresToSellers::linkModel($selectedStore, $existentMiniSeller);
 
 		return $existentMiniSeller;
+	}
+
+	/**
+	 * @param CreateSellerInviteLinkForm $form
+	 * @return SellerInviteLink
+	 * @throws Throwable
+	 * @throws ValidateException
+	 * @throws Exception
+	 */
+	public function createInviteLink(CreateSellerInviteLinkForm $form):SellerInviteLink {
+		if (!$form->validate()) {
+			throw new ValidateException($form->getErrors());
+		}
+
+		$link = SellerInviteLink::createLink((int)$form->store_id, $form->phone_number, $form->email);
+
+		if (!$link->save()) {
+			throw new DomainException("Ошибка создания записи. ".implode(". ", $link->getFirstErrors()));
+		}
+
+		if (!empty($link->phone_number)) {
+			$this->sendSms($link->phone_number, $link->inviteUrl());
+		}
+
+		if (!empty($link->email)) {
+			$this->sendEmail($link->email, $link->inviteUrl());
+		}
+
+		return $link;
+	}
+
+	/**
+	 * @param string $email
+	 * @param string $url
+	 * @throws Throwable
+	 */
+	protected function sendEmail(string $email, string $url):void {
+		$this->mute->mute(function() use ($email, $url) {
+			$this->emailNotification->notify($email, $url);
+		});
+	}
+
+	/**
+	 * @param string $phone
+	 * @param string $url
+	 * @throws Throwable
+	 */
+	protected function sendSms(string $phone, string $url):void {
+		$this->mute->mute(function() use ($phone, $url) {
+			$this->smsNotification->notify($phone, $url);
+		});
 	}
 }

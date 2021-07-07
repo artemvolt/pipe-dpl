@@ -9,6 +9,7 @@ use app\models\seller\invite_link\CreateSellerInviteLinkForm;
 use app\models\seller\invite_link\EditSellerInviteLink;
 use app\models\seller\SellerInviteLink;
 use app\models\seller\SellerInviteLinkSearch;
+use app\models\seller\SellerMiniService;
 use app\modules\notifications\models\Notifications;
 use DomainException;
 use Throwable;
@@ -49,20 +50,19 @@ class SellersInviteLinksController extends DefaultController {
 		$createForm = new CreateSellerInviteLinkForm();
 
 		$request = Yii::$app->request;
-		if ($createForm->load($request->post())) {
-			if ($createForm->validate()) {
-				try {
-					$savedLink = $createForm->create();
-					if ($savedLink->email) {
-						Notifications::message("Ссылка успешно отправлена на почту.");
-					}
-					if ($savedLink->phone_number) {
-						Notifications::message("Ссылка успешно отправлена на номер моб.телефона.");
-					}
-					return $this->redirect('index');
-				} catch (DomainException $exception) {
-					Notifications::message($exception->getMessage());
+		if ($createForm->load($request->post()) && $createForm->validate()) {
+			try {
+				$service = new SellerMiniService();
+				$savedLink = $service->createInviteLink($createForm);
+				if ($savedLink->email) {
+					Notifications::message("Ссылка успешно отправлена на почту.");
 				}
+				if ($savedLink->phone_number) {
+					Notifications::message("Ссылка успешно отправлена на номер моб.телефона.");
+				}
+				return $this->redirect('index');
+			} catch (DomainException $exception) {
+				Notifications::message($exception->getMessage());
 			}
 		}
 		/* Постинга не было */
@@ -91,21 +91,19 @@ class SellersInviteLinksController extends DefaultController {
 			'phone_number' => $existentModel->phone_number,
 			'email' => $existentModel->email
 		]);
-		if ($editForm->load($request->post())) {
-			if ($editForm->validate()) {
-				try {
-					$editForm->edit();
-					if ($editForm->repeatEmailNotify) {
-						Notifications::message("Письмо успешно отправлено");
-					}
-					if ($editForm->repeatPhoneNotify) {
-						Notifications::message("SMS успешно отправлено");
-					}
-					Notifications::message("Запись успешно обновлена");
-					return $this->refresh();
-				} catch (DomainException $e) {
-					Notifications::message($e->getMessage());
+		if ($editForm->load($request->post()) && $editForm->validate()) {
+			try {
+				$editForm->edit();
+				if ($editForm->repeatEmailNotify) {
+					Notifications::message("Письмо успешно отправлено");
 				}
+				if ($editForm->repeatPhoneNotify) {
+					Notifications::message("SMS успешно отправлено");
+				}
+				Notifications::message("Запись успешно обновлена");
+				return $this->refresh();
+			} catch (DomainException $e) {
+				Notifications::message($e->getMessage());
 			}
 		}
 
