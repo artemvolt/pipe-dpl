@@ -149,9 +149,7 @@ class SelectModelWidget extends Select2 {
 		}
 
 		$this->options['id'] = isset($this->options['id'])?$this->options['id']:Html::getInputId($this->model, $this->attribute);
-		if (property_exists($this->model, 'primaryKey')) {
-			$this->options['id'] .= $this->model->primaryKey;
-		}
+		$this->options['id'] .= property_exists($this->model, 'primaryKey')?$this->model->primaryKey:random_int(0, 1000);
 
 		/*В зависимости от режима работы AJAX/LOAD настраиваем виджет и генерируем выводимый список*/
 		switch ($this->loadingMode) {
