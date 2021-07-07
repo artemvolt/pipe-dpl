@@ -5,6 +5,7 @@ namespace app\modules\dol\models;
 
 use yii\base\Model;
 use yii\helpers\ArrayHelper;
+use Exception;
 
 /**
  * Class DolAuthToken
@@ -23,6 +24,7 @@ class DolAuthToken extends Model {
 
 	/**
 	 * @param array $responseArray
+	 * @throws Exception
 	 */
 	public function loadFromResponseArray(array $responseArray):void {
 		$this->value = ArrayHelper::getValue($responseArray, 'authToken.value');

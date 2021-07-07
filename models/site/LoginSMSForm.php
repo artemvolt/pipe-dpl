@@ -105,29 +105,21 @@ class LoginSMSForm extends LoginForm {
 	 */
 	public function doSmsLogon():bool {
 //		if (!$this->validate()) return false; <== больше не нужно, т.к. валидацией мы отсекали проверку пользователей, отсутствующих в системе.
-		if (null === $this->_user) {/*подходящей учётки пользователя нет в системе, надо спросить у DOL*/
-			if (!$this->DolLogon()) {
-				/*DOL об этом чуваке не в курсе*/
-				$this->addError($this->login, $this->dolAPI->errorMessage);
-				return false;
-			}
-
-		} else {/*пользователь с таким логином в системе есть*/
-			if (null === $this->_phoneNumber) {/*но к этому логину не привязан телефон*/
-				$this->addError($this->login, 'У пользователя не указан телефон');
-				return false;
-			}
-			/*авторизуем в DOL (только для смс-авторизации)*/
-			if (!$this->DolLogon()) {
-				/*DOL об этом чуваке не в курсе*/
-				$this->addError($this->login, $this->dolAPI->errorMessage);
-				return false;
-			}
+		/*пользователь с таким логином в системе есть*/
+		if ((null !== $this->_user) && null === $this->_phoneNumber) {/*но к этому логину не привязан телефон*/
+			$this->addError($this->login, 'У пользователя не указан телефон');
+			return false;
+		}
+		if (!$this->DolLogon()) {
+			/*DOL об этом чуваке не в курсе*/
+			$this->addError($this->login, $this->dolAPI->errorMessage);
+			return false;
 		}
 		/**
-		 * Учётка есть в системе. Разрешаем ему войти, через смс-подтверждение в DOL.
+		 * Учётка есть в системе. Разрешаем ему войти к нам, через смс-подтверждение в DOL.
 		 * либо
-		 * Учётка есть в DOL. Разрешаем ему войти, проксируя авторизацию в DOL (с последующим стягиванием данных)
+		 * Учётка есть в DOL, но не у нас. Разрешаем ему войти, проксируя авторизацию в DOL (с последующим стягиванием
+		 * данных)
 		 */
 		return true;
 	}
