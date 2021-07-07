@@ -57,23 +57,18 @@ class CreateSellerInviteLinkForm extends Model {
 
 	public function rules():array {
 		return [
+			[['phone_number', 'email'], 'filter', 'filter' => 'trim'],
 			['store_id', 'required'],
 			[['store_id'], 'exist', 'skipOnError' => true, 'targetClass' => Stores::class, 'targetAttribute' => ['store_id' => 'id']],
-			[['phone_number', 'email'], function() {
-				if (empty($this->email) && empty($this->phone_number)) {
-					$this->addError('email', $message = "Email или телефон должны быть заполнены ");
-					$this->addError('phone_number', $message);
-				}
-			}],
 			[['phone_number'], PhoneNumberValidator::class],
 			['email', 'email'],
 			[['phone_number'], function() {
-				if ((new SellerInviteLinkSearch())->findByPhone(Phones::defaultFormat($this->phone_number))) {
+				if ($this->phone_number && (new SellerInviteLinkSearch())->findByPhone(Phones::defaultFormat($this->phone_number))) {
 					$this->addError('phone_number', 'Номер уже существует');
 				}
 			}],
 			[['email'], function() {
-				if ((new SellerInviteLinkSearch())->findByEmail($this->email)) {
+				if ($this->email && (new SellerInviteLinkSearch())->findByEmail($this->email)) {
 					$this->addError('email', 'Email уже существует');
 				}
 			}],
@@ -81,7 +76,20 @@ class CreateSellerInviteLinkForm extends Model {
 	}
 
 	/**
+	 * @return bool
+	 */
+	public function beforeValidate():bool {
+		if (empty($this->phone_number) && empty($this->email)) {
+			$this->addError('email', $message = "Email или телефон должны быть заполнены ");
+			$this->addError('phone_number', $message);
+			return false;
+		}
+		return parent::beforeValidate();
+	}
+
+	/**
 	 * @return SellerInviteLink
+	 * @throws Throwable
 	 * @throws ValidateException
 	 */
 	public function create():SellerInviteLink {
@@ -110,9 +118,8 @@ class CreateSellerInviteLinkForm extends Model {
 	 * @param string $email
 	 * @param string $url
 	 * @throws Throwable
-	 * @throws Throwable
 	 */
-	protected function sendEmail(string $email, string $url) {
+	protected function sendEmail(string $email, string $url):void {
 		$this->mute->mute(function() use ($email, $url) {
 			$this->emailTransport->notify($email, $url);
 		});
@@ -121,7 +128,6 @@ class CreateSellerInviteLinkForm extends Model {
 	/**
 	 * @param string $phone
 	 * @param string $url
-	 * @throws Throwable
 	 * @throws Throwable
 	 */
 	protected function sendSms(string $phone, string $url):void {

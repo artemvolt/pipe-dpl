@@ -19,7 +19,6 @@ use pozitronik\traits\traits\ControllerTrait;
 use yii\data\ActiveDataProvider;
 use yii\grid\ActionColumn;
 use yii\bootstrap4\Html;
-use yii\web\JsExpression;
 use yii\web\View;
 use app\assets\ValidationAsset;
 
@@ -35,13 +34,11 @@ ValidationAsset::register($this);
 			'heading' => $this->title.(($dataProvider->totalCount > 0)?" (".Utils::pluralForm($dataProvider->totalCount, ['запись', 'записи', 'записей']).")":" (нет записей)"),
 		],
 		'summary' => null !== $searchModel?Html::a('Создать приглашение', $controller::to('create'), [
-			'class' => 'btn btn-success',
-			'onclick' => new JsExpression("AjaxModal('".$controller::to('create')."', '{$modelName}-modal-create-new');event.preventDefault();")
+			'class' => 'btn btn-success'
 		]):null,
 		'showOnEmpty' => true,
 		'emptyText' => Html::a('Новая запись', $controller::to('create'), [
-			'class' => 'btn btn-success',
-			'onclick' => new JsExpression("AjaxModal('".$controller::to('create')."', '{$modelName}-modal-create-new');event.preventDefault();")
+			'class' => 'btn btn-success'
 		]),
 		'export' => false,
 		'resizableColumns' => true,
@@ -51,10 +48,10 @@ ValidationAsset::register($this);
 				'class' => ActionColumn::class,
 				'template' => '{edit}{view}',
 				'buttons' => [
-					'edit' => static function(string $url, SellerInviteLink $model) use ($modelName):string {
+					'edit' => static function(string $url, SellerInviteLink $model):string {
 						return Html::a('<i class="fa fa-edit"></i>', $url);
 					},
-					'view' => static function(string $url, SellerInviteLink $model) use ($modelName):string {
+					'view' => static function(string $url, SellerInviteLink $model):string {
 						return Html::a('<i class="fa fa-eye"></i>', $url);
 					}
 				],
@@ -66,7 +63,7 @@ ValidationAsset::register($this);
 			[
 				'header' => 'Ссылка',
 				'format' => 'raw',
-				'value' => function(SellerInviteLink $link) {
+				'value' => static function(SellerInviteLink $link) {
 					return Html::a("Ссылка", $link->inviteUrl());
 				}
 			],

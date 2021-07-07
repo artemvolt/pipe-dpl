@@ -41,7 +41,7 @@ class EditSellerInviteLink extends Model {
 	 */
 	protected $smsTransport;
 
-	public function init() {
+	public function init():void {
 		parent::init();
 		$this->emailNotify = new EmailNotification();
 		$this->mute = new MuteManager();
@@ -51,7 +51,7 @@ class EditSellerInviteLink extends Model {
 	/**
 	 * @return string[]
 	 */
-	public function attributeLabels() {
+	public function attributeLabels():array {
 		return [
 			'phone_number' => 'Телефон',
 			'email' => 'Email',
@@ -63,33 +63,40 @@ class EditSellerInviteLink extends Model {
 	/**
 	 * @return array
 	 */
-	public function rules() {
+	public function rules():array {
 		return [
-			[['phone_number', 'email'], function() {
-				if (empty($this->email) && empty($this->phone_number)) {
-					$this->addError('email', $message = "Email или телефон должны быть заполнены ");
-					$this->addError('phone_number', $message);
-				}
-			}],
+			[['phone_number', 'email'], 'filter', 'filter' => 'trim'],
 			['phone_number', PhoneNumberValidator::class],
 			['email', 'email'],
 			[['existentIdLink'], 'exist', 'skipOnError' => false, 'targetClass' => SellerInviteLink::class, 'targetAttribute' => 'id'],
 			[['repeatPhoneNotify', 'repeatEmailNotify'], 'boolean'],
 			[['phone_number'], function() {
-				if ($find = (new SellerInviteLinkSearch())->findByPhone(Phones::defaultFormat($this->phone_number))) {
+				if (!empty($this->phone_number) && $find = (new SellerInviteLinkSearch())->findByPhone(Phones::defaultFormat($this->phone_number))) {
 					if ($find->id !== $this->existentIdLink) {
 						$this->addError('phone_number', 'Номер уже существует');
 					}
 				}
 			}],
 			[['email'], function() {
-				if ($find = (new SellerInviteLinkSearch())->findByEmail($this->email)) {
+				if (!empty($this->email) && $find = (new SellerInviteLinkSearch())->findByEmail($this->email)) {
 					if ($find->id !== $this->existentIdLink) {
 						$this->addError('email', 'Email уже существует');
 					}
 				}
 			}],
 		];
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function beforeValidate():bool {
+		if (empty($this->phone_number) && empty($this->email)) {
+			$this->addError('email', $message = "Email или телефон должны быть заполнены ");
+			$this->addError('phone_number', $message);
+			return false;
+		}
+		return parent::beforeValidate();
 	}
 
 	public function edit():SellerInviteLink {
@@ -119,7 +126,7 @@ class EditSellerInviteLink extends Model {
 	 * @param string $url
 	 * @throws Throwable
 	 */
-	protected function sendSms(string $phoneNumber, string $url) {
+	protected function sendSms(string $phoneNumber, string $url):void {
 		$this->mute->mute(function() use ($phoneNumber, $url) {
 			$this->smsTransport->sendSms($phoneNumber, "Ваша ссылка: ".$url);
 		});
@@ -130,7 +137,7 @@ class EditSellerInviteLink extends Model {
 	 * @param string $url
 	 * @throws Throwable
 	 */
-	protected function sendEmail(string $email, string $url) {
+	protected function sendEmail(string $email, string $url):void {
 		$this->mute->mute(function() use ($email, $url) {
 			$this->emailNotify->notify($email, $url);
 		});
