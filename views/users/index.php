@@ -85,6 +85,7 @@ ModalHelperAsset::register($this);
 			[
 				'class' => DataColumn::class,
 				'attribute' => 'relatedPhones',
+				'label' => 'Телефоны',
 				'format' => 'raw',
 				'value' => static function(Users $user) {
 					return BadgeWidget::widget([
@@ -96,6 +97,7 @@ ModalHelperAsset::register($this);
 			[
 				'class' => DataColumn::class,
 				'attribute' => 'allUserPermission',
+				'label' => 'Доступы',
 				'format' => 'raw',
 				'value' => static function(Users $user) {
 					return BadgeWidget::widget([
