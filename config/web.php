@@ -8,6 +8,7 @@ use app\assets\SmartAdminThemeAssets;
 use app\models\sys\users\Users;
 use app\models\sys\users\WebUser;
 use app\modules\api\ApiModule;
+use app\modules\dol\models\DolAPI;
 use app\modules\fraud\FraudModule;
 use app\modules\graphql\GraphqlModule;
 use app\modules\history\HistoryModule;
@@ -194,7 +195,15 @@ $config = [
 			'class' => Jwt::class,
 			'signer' => Jwt::HS256,
 			'signerKey' => 'testkey'
-		]
+		],
+		'dolApi' => [
+			'class' => DolAPI::class,
+			'baseUrl' => 'https://dolfront.beelinetst.ru/api/',
+			'debugPhones' => [
+				/* fake phone  =>  sms code */
+				'9137418671' => '5555'
+			]
+		],
 	],
 	'params' => $params,
 ];
