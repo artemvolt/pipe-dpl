@@ -54,4 +54,19 @@ class HistoryEventAction extends Model {
 	public function getTypeName():?string {
 		return ArrayHelper::getValue(self::ATTRIBUTE_TYPE_NAMES, $this->type);
 	}
+
+	/**
+	 * @param mixed $attributeNewValue
+	 * @return mixed
+	 */
+	public static function convertAttributeNewValue($attributeNewValue) {
+		if (is_array($attributeNewValue)) {
+			return json_encode($attributeNewValue, JSON_PRETTY_PRINT);
+		}
+
+		if (is_bool($attributeNewValue)) {
+			return $attributeNewValue?'true':'false';
+		}
+		return $attributeNewValue;
+	}
 }
