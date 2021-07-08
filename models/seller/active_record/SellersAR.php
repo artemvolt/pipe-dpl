@@ -64,6 +64,8 @@ use yii\web\JsExpression;
  * @property Users $relatedUser Пользователь связанный с продавцом
  * @property Addresses $relAddress Адрес регистрации/проживания связанный с продавцом
  * @property RefRegions $refRegion
+ * @property RelUsersToPhones[] $relatedUsersToPhones
+ * @property Phones[] $relatedPhones
  */
 class SellersAR extends ActiveRecord {
 	use RelationsTrait;

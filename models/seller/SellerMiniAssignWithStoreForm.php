@@ -13,9 +13,9 @@ use yii\base\Model;
  * @package app\models\seller
  */
 class SellerMiniAssignWithStoreForm extends Model {
-	public $phone_number;
-	public $email;
-	public $store_id;
+	public ?string $phone_number = null;
+	public ?string $email = null;
+	public ?int $store_id = 0;
 
 	/**
 	 * @return string[]

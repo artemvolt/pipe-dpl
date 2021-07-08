@@ -303,10 +303,10 @@ final class SellersSearch extends Sellers {
 	}
 
 	/**
-	 * @param $phone
+	 * @param string $phone
 	 * @return Sellers|null
 	 */
-	public function findMiniSellerWithPhone($phone):?Sellers {
+	public function findMiniSellerWithPhone(string $phone):?Sellers {
 		$query = Sellers::find()->alias('s');
 		$query->innerJoinWith('relatedPhones');
 		$query->andWhere(['phones.phone' => Phones::defaultFormat($phone)]);
@@ -329,10 +329,10 @@ final class SellersSearch extends Sellers {
 	}
 
 	/**
-	 * @param $email
+	 * @param string $email
 	 * @return Sellers|null
 	 */
-	public function findMiniSellerWithEmail($email):?Sellers {
+	public function findMiniSellerWithEmail(string $email):?Sellers {
 		$query = Sellers::find()->alias('s');
 		$query->innerJoinWith('relatedUser');
 		$query->andWhere(['sys_users.email' => $email]);

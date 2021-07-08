@@ -85,10 +85,10 @@ class SellerInviteLinkSearch extends SellerInviteLink {
 	}
 
 	/**
-	 * @param $email
+	 * @param string $email
 	 * @return SellerInviteLink|null
 	 */
-	public function findByEmail($email):?SellerInviteLink {
+	public function findByEmail(string $email):?SellerInviteLink {
 		return SellerInviteLink::find()->where(['email' => $email])->one();
 	}
 

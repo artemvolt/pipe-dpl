@@ -167,10 +167,10 @@ final class StoresSearch extends StoresAR {
 	}
 
 	/**
-	 * @param $storeId
+	 * @param int $storeId
 	 * @return Stores
 	 */
-	public function getById($storeId):Stores {
+	public function getById(int $storeId):Stores {
 		if ($find = Stores::findOne($storeId)) {
 			return $find;
 		}

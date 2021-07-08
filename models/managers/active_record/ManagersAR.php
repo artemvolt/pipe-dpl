@@ -18,6 +18,7 @@ use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
 use yii\db\ActiveQueryInterface;
 use yii\db\ActiveRecord;
+use yii\web\IdentityInterface;
 
 /**
  * This is the model class for table "managers".
@@ -215,7 +216,10 @@ class ManagersAR extends ActiveRecord {
 	/**
 	 * @inheritDoc
 	 */
-	public static function scope(ActiveQueryInterface $query, Users $user):ActiveQueryInterface {
+	public static function scope(ActiveQueryInterface $query, IdentityInterface $user):ActiveQueryInterface {
+		/**
+		 * @var Users $user
+		 */
 		if ($user->isAllPermissionsGranted()) return $query;
 		if ($user->hasPermission(['show_all_managers'])) return $query;
 
