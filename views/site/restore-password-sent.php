@@ -18,7 +18,7 @@ $this->title = 'Восстановление пароля';
 		<div class="card p-4 rounded-plus bg-faded">
 			На указанный адрес выслано письмо с инструкциями по восстановлению пароля.
 			<div class="text-right mt-1">
-				<?= Html::a('Назад', Yii::$app->homeUrl, ['class' => 'btn-link']) ?>
+				<?= Html::a('Назад', '/', ['class' => 'btn-link']) ?>
 			</div>
 		</div>
 	</div>

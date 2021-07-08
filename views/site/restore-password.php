@@ -28,7 +28,7 @@ $this->title = 'Восстановление пароля';
 			<?php ActiveForm::end(); ?>
 
 			<div class="text-right mt-1">
-				<?= Html::a('Назад', Yii::$app->homeUrl, ['class' => 'btn-link']) ?>
+				<?= Html::a('Назад', '/', ['class' => 'btn-link']) ?>
 			</div>
 		</div>
 	</div>
