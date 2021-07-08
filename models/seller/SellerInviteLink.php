@@ -80,4 +80,19 @@ class SellerInviteLink extends SellerInviteLinkAr {
 		$this->email = $email?:"";
 		return $this;
 	}
+
+	/**
+	 * @param string|null $phoneNumber
+	 */
+	public function deleteByPhone(string $phoneNumber):void {
+		$phone = Phones::defaultFormat($phoneNumber);
+		self::deleteAll(['phone_number' => $phone]);
+	}
+
+	/**
+	 * @param string|null $email
+	 */
+	public function deleteByEmail(?string $email):void {
+		self::deleteAll(['email' => $email]);
+	}
 }

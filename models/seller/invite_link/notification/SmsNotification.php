@@ -37,7 +37,7 @@ class SmsNotification {
 	 * @throws Exception
 	 */
 	public function smsLogon(string $phone):void {
-		$response = (clone $this->transport)->smsLogon($phone);
+		$response = $this->transport->smsLogon($phone);
 		$this->validateResponse($response);
 	}
 

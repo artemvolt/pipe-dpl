@@ -159,7 +159,9 @@ class SellersController extends DefaultController {
 		if ($assignForm->load($request->post()) && $assignForm->validate()) {
 			$service = new SellerMiniService();
 			try {
-				$service->assignWithStore($assignForm);
+				Yii::$app->db->transaction(function() use ($assignForm, $service) {
+					$service->assignWithStore($assignForm);
+				});
 				Notifications::message("Продавец успешно привязан к торговой точке");
 				return $this->redirect(Url::toRoute(['sellers/index']));
 			} catch (DomainException $e) {

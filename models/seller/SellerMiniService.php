@@ -84,6 +84,14 @@ class SellerMiniService {
 		$selectedStore = $storesKey[$form->store_id];
 		RelStoresToSellers::linkModel($selectedStore, $existentMiniSeller);
 
+		$inviteLink = new SellerInviteLink();
+		if ($form->phone_number) {
+			$inviteLink->deleteByPhone($form->phone_number);
+		}
+		if ($form->email) {
+			$inviteLink->deleteByEmail($form->email);
+		}
+
 		return $existentMiniSeller;
 	}
 
