@@ -22,6 +22,6 @@ class SmsNotification {
 	 * @param string $url
 	 */
 	public function notify(string $phone, string $url):void {
-		$this->transport->sendSms($phone, "Ваша ссылка: ".$url);
+		$this->transport->sendSms($phone, $url);
 	}
 }

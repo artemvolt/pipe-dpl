@@ -42,6 +42,7 @@ use yii\helpers\ArrayHelper;
  * @property Managers $relatedManager
  * @property Sellers $relatedSeller
  * @property Stores[] $relatedStores
+ * @property RelStoresToUsers[] $relatedUsersToStores
  */
 class Users extends ActiveRecord {
 	use ActiveRecordTrait;

@@ -14,10 +14,9 @@ use yii\base\Model;
  * @package app\models\seller\invite_link
  */
 class CreateSellerInviteLinkForm extends Model {
-	public $phone_number;
-	public $email;
-	public $store_id;
-
+	public ?string $phone_number = null;
+	public ?string $email = null;
+	public ?int $store_id = null;
 
 	public function rules():array {
 		return [

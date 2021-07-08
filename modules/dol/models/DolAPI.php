@@ -143,9 +143,11 @@ class DolAPI extends ActiveRecord {
 		return $this->parseAnswer($response->content);
 	}
 
-	public function sendSms(string $phone, string $message):void {
-		if (YII_DEBUG || YII_ENV_TEST) return;
+	/**
+	 * @return bool[]
+	 */
+	public function sendSms(string $phone, string $message):array {
+		if (YII_DEBUG || YII_ENV_TEST) return ["success" => true, 'phone' => $phone, 'message' => $message];
 		throw new RuntimeException("Realize this method");
 	}
-
 }

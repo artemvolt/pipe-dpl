@@ -69,7 +69,7 @@ class SellerInviteLink extends SellerInviteLinkAr {
 
 	/**
 	 * @param string|null $phone
-	 * @param null $email
+	 * @param string|null $email
 	 * @return $this
 	 */
 	public function edit(?string $phone = "", ?string $email = ""):self {

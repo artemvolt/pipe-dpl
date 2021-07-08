@@ -14,11 +14,11 @@ use yii\base\Model;
  * @package app\models\seller\invite_link
  */
 class EditSellerInviteLink extends Model {
-	public $phone_number;
-	public $email;
-	public $existentIdLink;
-	public $repeatPhoneNotify;
-	public $repeatEmailNotify;
+	public ?string $phone_number = null;
+	public ?string $email = null;
+	public ?int $existentIdLink = null;
+	public ?bool $repeatPhoneNotify = false;
+	public ?bool $repeatEmailNotify = false;
 
 	/**
 	 * @return string[]
@@ -43,15 +43,17 @@ class EditSellerInviteLink extends Model {
 			[['existentIdLink'], 'exist', 'skipOnError' => false, 'targetClass' => SellerInviteLink::class, 'targetAttribute' => 'id'],
 			[['repeatPhoneNotify', 'repeatEmailNotify'], 'boolean'],
 			[['phone_number'], function() {
-				if (!empty($this->phone_number) && $find = (new SellerInviteLinkSearch())->findByPhone(Phones::defaultFormat($this->phone_number))) {
-					if ($find->id !== $this->existentIdLink) {
+				if (!empty($this->phone_number)) {
+					$find = (new SellerInviteLinkSearch())->findByPhone(Phones::defaultFormat($this->phone_number));
+					if ($find && $find->id !== $this->existentIdLink) {
 						$this->addError('phone_number', 'Номер уже существует');
 					}
 				}
 			}],
 			[['email'], function() {
-				if (!empty($this->email) && $find = (new SellerInviteLinkSearch())->findByEmail($this->email)) {
-					if ($find->id !== $this->existentIdLink) {
+				if (!empty($this->email)) {
+					$find = (new SellerInviteLinkSearch())->findByEmail($this->email);
+					if ($find && $find->id !== $this->existentIdLink) {
 						$this->addError('email', 'Email уже существует');
 					}
 				}
