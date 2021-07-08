@@ -4,6 +4,7 @@ declare(strict_types = 1);
 namespace app\models\sys\users;
 
 use app\models\phones\Phones;
+use app\models\seller\Sellers;
 use app\models\store\Stores;
 use app\models\sys\permissions\traits\UsersPermissionsTrait;
 use app\models\sys\users\active_record\Users as ActiveRecordUsers;
@@ -131,6 +132,41 @@ class Users extends ActiveRecordUsers implements IdentityInterface {
 	 */
 	public static function generateSalt():string {
 		return sha1(uniqid((string)mt_rand(), true));
+	}
+
+	/**
+	 * При создании менеджера, продавца и т.д
+	 * может потребоваться создание
+	 * связанной учетной записи пользователя
+	 * @param string $login
+	 * @param string $username
+	 * @param string $comment
+	 * @param string $email
+	 * @return static
+	 */
+	public static function createAdditionalAccount(string $login, string $username, string $comment, string $email):self {
+		$user = new Users([
+			'login' => $login,
+			'username' => $username,
+			'password' => self::DEFAULT_PASSWORD,
+			'comment' => $comment,
+			'email' => $email,
+			'phones' => $login
+		]);
+		$user->scenario = self::SCENARIO_ADDITIONAL_ACCOUNT;
+		return $user;
+	}
+
+	public static function createAdditionalAccountForMiniSeller(string $login):self {
+		$user = self::createAdditionalAccount(
+			$login,
+			$login,
+			"Пользователь создан автоматически для модели ".Sellers::class,
+			""
+		);
+		$user->email = null;
+		$user->scenario = self::SCENARIO_ADDITIONAL_ACCOUNT_FOR_SELLER_MINI;
+		return $user;
 	}
 
 	/**

@@ -46,6 +46,9 @@ use yii\helpers\ArrayHelper;
 class Users extends ActiveRecord {
 	use ActiveRecordTrait;
 
+	public const SCENARIO_ADDITIONAL_ACCOUNT = 1;
+	public const SCENARIO_ADDITIONAL_ACCOUNT_FOR_SELLER_MINI = 2;
+
 	private ?array $_phones = null;
 
 	/**
@@ -71,7 +74,7 @@ class Users extends ActiveRecord {
 	 */
 	public function rules():array {
 		return [
-			[['username', 'login', 'password', 'email'], 'required'],//Не ставим create_date как required, поле заполнится default-валидатором (а если нет - отвалится при инсерте в базу)
+			[['username', 'login', 'password'], 'required'],//Не ставим create_date как required, поле заполнится default-валидатором (а если нет - отвалится при инсерте в базу)
 			[['comment'], 'string'],
 			[['create_date'], 'safe'],
 			[['daddy'], 'integer'],
@@ -87,7 +90,10 @@ class Users extends ActiveRecord {
 			['phones', PhoneNumberValidator::class, 'when' => function() {
 				[] !== array_filter($this->phones);
 			}],
-			['relatedPhones', 'safe']
+			['relatedPhones', 'safe'],
+
+			[['login', 'username', 'password', 'comment', 'emails', 'phones'], 'required', 'on' => self::SCENARIO_ADDITIONAL_ACCOUNT],
+			[['login', 'username', 'password', 'comment', 'phones'], 'required', 'on' => self::SCENARIO_ADDITIONAL_ACCOUNT_FOR_SELLER_MINI],
 		];
 	}
 

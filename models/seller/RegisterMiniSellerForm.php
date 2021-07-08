@@ -18,11 +18,7 @@ use yii\base\Model;
  */
 class RegisterMiniSellerForm extends Model {
 
-	public ?string $surname = null;
-	public ?string $name = null;
-	public ?string $patronymic = null;
 	public ?string $phone_number = null;
-	public ?string $email = null;
 	public bool $accept_agreement = false;
 
 	/**
@@ -31,22 +27,16 @@ class RegisterMiniSellerForm extends Model {
 	 */
 	public function rules():array {
 		return [
-			[['phone_number', 'surname', 'name', 'email'], 'required'],
-			[['phone_number', 'surname', 'name', 'patronymic'], 'string'],
-			[['phone_number', 'surname', 'name', 'patronymic'], 'trim'],
-			['email', 'email'],
-			['email', function() {
-				if (null !== Users::findByEmail($this->email)) {
-					$this->addError('email', 'Пользователь с таким почтовым адресом уже зарегистрирован');
-				}
-			}],
+			[['phone_number'], 'filter', 'filter' => 'trim'],
+			[['phone_number', 'accept_agreement'], 'required'],
+			['accept_agreement', 'boolean'],
+			[['phone_number'], 'string'],
 			['phone_number', PhoneNumberValidator::class],
 			['phone_number', function() {
 				if (null !== Users::findByLogin($this->phone_number)) {
-					$this->addError('login', 'Такой логин уже занят');
+					$this->addError('login', 'Такой номер телефона уже существует');
 				}
-			}],
-			['accept_agreement', 'boolean']
+			}]
 		];
 	}
 }

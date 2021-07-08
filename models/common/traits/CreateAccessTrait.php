@@ -72,14 +72,12 @@ trait CreateAccessTrait {
 	 * @return bool
 	 */
 	public function createUser():bool {
-		$user = new Users([
-			'login' => $this->login,
-			'username' => $this->fio,
-			'password' => Users::DEFAULT_PASSWORD,
-			'comment' => "Пользователь создан автоматически для модели ".static::class,
-			'email' => $this->email,
-			'phones' => $this->login
-		]);
+		$user = Users::createAdditionalAccount(
+			$this->login,
+			$this->fio,
+			"Пользователь создан автоматически для модели ".static::class,
+			$this->email
+		);
 		if (!$user->save()) return false;
 		$this->relatedUser = $user;
 		return true;

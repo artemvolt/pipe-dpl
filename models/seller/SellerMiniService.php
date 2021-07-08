@@ -154,20 +154,22 @@ class SellerMiniService {
 	public function register(RegisterMiniSellerForm $form):Sellers {
 		if (!$form->validate()) throw new ValidateException($form->errors);
 
+		if (!$form->accept_agreement) {
+			throw new DomainException("К сожалению, мы не можем вас зарегистрировать");
+		}
+
 		$seller = new Sellers();
 
-		if (!($seller->load([
-				'login' => $form->phone_number,
-				'surname' => $form->surname,
-				'name' => $form->name,
-				'patronymic' => $form->patronymic,
-				'email' => $form->email
-			], '') && $seller->save())) {
+		if (!($seller->load(['login' => $form->phone_number], '') && $seller->save())) {
 			throw new ValidateException($seller->errors);
 		}
 
-		$seller->createAccess();
-		if ([] !== $seller->registrationErrors) {
+		$additional = Users::createAdditionalAccountForMiniSeller($form->phone_number);
+		if (!$additional->save()) {
+			throw new DomainException(implode(".", $additional->getFirstErrors()));
+		}
+		$seller->relatedUser = $additional;
+		if (!$seller->save()) {
 			throw new DomainException("Не получилось создать пользователя");
 		}
 

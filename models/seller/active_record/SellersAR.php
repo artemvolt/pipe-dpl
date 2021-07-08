@@ -165,7 +165,7 @@ class SellersAR extends ActiveRecord {
 			['login', PhoneNumberValidator::class, 'on' => [self::SCENARIO_CREATE, self::SCENARIO_EDIT]],
 			[['create_date', 'update_date', 'stores', 'dealers', 'currentStatusId'], 'safe'],
 			[['passport_when', 'birthday', 'entry_date'], 'date', 'format' => 'php:Y-m-d'],
-			[['patronymic'], 'default', 'value' => null],
+			[['name', 'surname', 'patronymic'], 'default', 'value' => null],
 			[
 				'entry_date',
 				'required',

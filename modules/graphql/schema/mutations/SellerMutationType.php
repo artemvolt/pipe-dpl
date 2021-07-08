@@ -55,25 +55,9 @@ class SellerMutationType extends ObjectType implements MutationInterface {
 	 */
 	public function getArgs():array {
 		return [
-			'surname' => [
-				'type' => Type::nonNull(Type::string()),
-				'description' => 'Фамилия',
-			],
-			'name' => [
-				'type' => Type::nonNull(Type::string()),
-				'description' => 'Имя',
-			],
-			'patronymic' => [
-				'type' => Type::string(),
-				'description' => 'Отчество',
-			],
 			'phone_number' => [
 				'type' => Type::nonNull(Type::string()),
 				'description' => 'Номер телефона',
-			],
-			'email' => [
-				'type' => Type::nonNull(Type::string()),
-				'description' => 'Электронная почта',
 			],
 			'accept_agreement' => [
 				'type' => Type::boolean(),
