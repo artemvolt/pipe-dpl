@@ -12,6 +12,7 @@ use app\models\seller\Sellers;
 use app\models\store\active_record\references\RefSellingChannels;
 use app\models\store\active_record\references\RefStoresTypes;
 use app\models\store\active_record\StoresAR;
+use DomainException;
 use yii\data\ActiveDataProvider;
 use yii\helpers\ArrayHelper;
 use Throwable;
@@ -165,4 +166,14 @@ final class StoresSearch extends StoresAR {
 		);
 	}
 
+	/**
+	 * @param int $storeId
+	 * @return Stores
+	 */
+	public function getById(int $storeId):Stores {
+		if ($find = Stores::findOne($storeId)) {
+			return $find;
+		}
+		throw new DomainException("Не удалось найти торговую точку по id");
+	}
 }

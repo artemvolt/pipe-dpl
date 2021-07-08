@@ -4,8 +4,12 @@ declare(strict_types = 1);
 namespace app\models\sys\users\active_record;
 
 use app\components\db\ActiveRecordTrait;
+use app\models\managers\Managers;
 use app\models\phones\PhoneNumberValidator;
 use app\models\phones\Phones;
+use app\models\seller\Sellers;
+use app\models\store\active_record\relations\RelStoresToUsers;
+use app\models\store\Stores;
 use app\models\sys\users\active_record\relations\RelUsersToPhones;
 use app\modules\history\behaviors\HistoryBehavior;
 use pozitronik\helpers\DateHelper;
@@ -35,6 +39,10 @@ use yii\helpers\ArrayHelper;
  * @property RelUsersToPhones[] $relatedUsersToPhones Связь к промежуточной таблице к телефонным номерам
  * @property Phones[] $relatedPhones Телефонные номера пользователя (таблица)
  * @property string[] $phones Виртуальный атрибут: телефонные номера в строковом массиве, используется для редактирования
+ * @property Managers $relatedManager
+ * @property Sellers $relatedSeller
+ * @property Stores[] $relatedStores
+ * @property RelStoresToUsers[] $relatedUsersToStores
  */
 class Users extends ActiveRecord {
 	use ActiveRecordTrait;
@@ -166,4 +174,31 @@ class Users extends ActiveRecord {
 		return $saved;
 	}
 
+	/**
+	 * @return ActiveQuery
+	 */
+	public function getRelatedManager():ActiveQuery {
+		return $this->hasOne(Managers::class, ['user' => 'id']);
+	}
+
+	/**
+	 * @return ActiveQuery
+	 */
+	public function getRelatedSeller():ActiveQuery {
+		return $this->hasOne(Sellers::class, ['user' => 'id']);
+	}
+
+	/**
+	 * @return ActiveQuery
+	 */
+	public function getRelatedUsersToStores():ActiveQuery {
+		return $this->hasMany(RelStoresToUsers::class, ['user_id' => 'id']);
+	}
+
+	/**
+	 * @return ActiveQuery
+	 */
+	public function getRelatedStores():ActiveQuery {
+		return $this->hasMany(Stores::class, ['id' => 'store_id'])->via('relatedUsersToStores');
+	}
 }

@@ -7,6 +7,7 @@ use app\models\addresses\Addresses;
 use app\models\countries\active_record\references\RefCountries;
 use app\components\db\ActiveQuery;
 use app\models\dealers\Dealers;
+use app\models\phones\Phones;
 use app\models\regions\active_record\references\RefRegions;
 use app\models\store\Stores;
 use app\models\sys\users\Users;
@@ -299,5 +300,42 @@ final class SellersSearch extends Sellers {
 	 */
 	public function findAllRows():array {
 		return Sellers::find()->all();
+	}
+
+	/**
+	 * @param string $phone
+	 * @return Sellers|null
+	 */
+	public function findMiniSellerWithPhone(string $phone):?Sellers {
+		$query = Sellers::find()->alias('s');
+		$query->innerJoinWith('relatedPhones');
+		$query->andWhere(['phones.phone' => Phones::defaultFormat($phone)]);
+		return $query->limit(1)->one();
+	}
+
+	/**
+	 * @param string|null $phone
+	 * @param string|null $email
+	 * @return Sellers|null
+	 */
+	public function findMiniSellerWithPhoneOrEmail(?string $phone, ?string $email):?Sellers {
+		if ($phone) {
+			return $this->findMiniSellerWithPhone($phone);
+		}
+		if ($email) {
+			return $this->findMiniSellerWithEmail($email);
+		}
+		return null;
+	}
+
+	/**
+	 * @param string $email
+	 * @return Sellers|null
+	 */
+	public function findMiniSellerWithEmail(string $email):?Sellers {
+		$query = Sellers::find()->alias('s');
+		$query->innerJoinWith('relatedUser');
+		$query->andWhere(['sys_users.email' => $email]);
+		return $query->limit(1)->one();
 	}
 }

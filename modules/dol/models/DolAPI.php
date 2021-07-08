@@ -4,6 +4,7 @@ declare(strict_types = 1);
 namespace app\modules\dol\models;
 
 use Exception;
+use RuntimeException;
 use simialbi\yii2\rest\ActiveRecord;
 use Yii;
 use yii\base\InvalidConfigException;
@@ -142,4 +143,11 @@ class DolAPI extends ActiveRecord {
 		return $this->parseAnswer($response->content);
 	}
 
+	/**
+	 * @return bool[]
+	 */
+	public function sendSms(string $phone, string $message):array {
+		if (YII_DEBUG || YII_ENV_TEST) return ["success" => true, 'phone' => $phone, 'message' => $message];
+		throw new RuntimeException("Realize this method");
+	}
 }

@@ -217,6 +217,7 @@ class Notifications extends ActiveRecord {
 	 * @throws ForbiddenHttpException
 	 */
 	public static function UserNotifications(?int $receiver = null):array {
+		if (Yii::$app->user->isGuest) return [];
 		if (null === $receiver) $receiver = Users::Current()->id;
 		return self::find()->where(['receiver' => $receiver, 'type' => self::TYPE_DEFAULT])->all();
 	}

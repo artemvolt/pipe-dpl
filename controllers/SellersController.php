@@ -3,16 +3,23 @@ declare(strict_types = 1);
 
 namespace app\controllers;
 
+use app\components\exceptions\ValidateException;
 use app\components\web\DefaultController;
 use app\models\addresses\active_record\AddressesAR;
 use app\models\addresses\Addresses;
 use app\models\seller\active_record\SellersAR;
+use app\models\seller\SellerMiniAssignWithStoreForm;
+use app\models\seller\SellerMiniService;
 use app\models\seller\Sellers;
 use app\models\seller\SellersSearch;
+use app\modules\notifications\models\Notifications;
+use DomainException;
 use Throwable;
 use Yii;
 use ReflectionClass;
 use yii\db\Exception;
+use yii\helpers\Url;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
@@ -135,6 +142,31 @@ class SellersController extends DefaultController {
 		return (Yii::$app->request->isAjax)
 			?$this->renderAjax('modal/edit-user', ['model' => $model])
 			:$this->render('edit-user', ['model' => $model]);
+	}
+
+	/**
+	 * @return Response|string
+	 * @throws Exception
+	 * @throws ForbiddenHttpException
+	 * @throws Throwable
+	 * @throws ValidateException
+	 */
+	public function actionAssignMiniWithStore() {
+		$request = Yii::$app->request;
+		$assignForm = new SellerMiniAssignWithStoreForm();
+		$currentUserStores = Yii::$app->user->identity->getStoresViaRole();
+
+		if ($assignForm->load($request->post()) && $assignForm->validate()) {
+			$service = new SellerMiniService();
+			try {
+				$service->assignWithStore($assignForm);
+				Notifications::message("Продавец успешно привязан к торговой точке");
+				return $this->redirect(Url::toRoute(['sellers/index']));
+			} catch (DomainException $e) {
+				Notifications::message($e->getMessage());
+			}
+		}
+		return $this->render('assign_mini_with_store', compact('assignForm', 'currentUserStores'));
 	}
 
 }

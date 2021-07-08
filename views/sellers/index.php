@@ -48,9 +48,11 @@ ValidationAsset::register($this);
 			'heading' => $this->title.(($dataProvider->totalCount > 0)?" (".Utils::pluralForm($dataProvider->totalCount, ['запись', 'записи', 'записей']).")":" (нет записей)"),
 		],
 		'summary' => null !== $searchModel?Html::a('Новая запись', $controller::to('create'), [
-			'class' => 'btn btn-success',
-			'onclick' => new JsExpression("AjaxModal('".$controller::to('create')."', '{$modelName}-modal-create-new');event.preventDefault();")
-		]):null,
+				'class' => 'btn btn-success',
+				'onclick' => new JsExpression("AjaxModal('".$controller::to('create')."', '{$modelName}-modal-create-new');event.preventDefault();")
+			])." ".Html::a("Прикрепить продавца", $controller::to('assign-mini-with-store'), [
+				'class' => 'btn btn-success'
+			]):null,
 		'showOnEmpty' => true,
 		'emptyText' => Html::a('Новая запись', $controller::to('create'), [
 			'class' => 'btn btn-success',

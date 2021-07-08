@@ -4,6 +4,7 @@ declare(strict_types = 1);
 namespace app\models\sys\users;
 
 use app\models\phones\Phones;
+use app\models\store\Stores;
 use app\models\sys\permissions\traits\UsersPermissionsTrait;
 use app\models\sys\users\active_record\Users as ActiveRecordUsers;
 use Exception;
@@ -222,4 +223,32 @@ class Users extends ActiveRecordUsers implements IdentityInterface {
 			:PathHelper::PathToUrl(PathHelper::RelativePath($fileAvatar->path, "@webroot"));
 	}
 
+	/**
+	 * @return bool
+	 */
+	public function isManager():bool {
+		$manager = $this->relatedManager;
+		return null !== $manager;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isSeller():bool {
+		$seller = $this->relatedSeller;
+		return null !== $seller;
+	}
+
+	/**
+	 * @return Stores[]
+	 */
+	public function getStoresViaRole():array {
+		if ($this->isManager()) {
+			return $this->relatedManager->stores;
+		}
+		if ($this->isSeller()) {
+			return $this->relatedSeller->stores;
+		}
+		return $this->relatedStores;
+	}
 }
