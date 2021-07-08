@@ -3,6 +3,8 @@ declare(strict_types = 1);
 
 namespace app\modules\fraud\controllers;
 
+use app\models\sys\permissions\filters\PermissionFilter;
+use app\models\sys\permissions\traits\ControllerPermissionsTrait;
 use app\modules\fraud\components\queue\ChangeFraudStepWithRepeatValidateJob;
 use app\modules\fraud\models\FraudCheckStepSearch;
 use app\modules\notifications\models\Notifications;
@@ -15,6 +17,20 @@ use Yii;
  * @package app\modules\fraud\controllers
  */
 class IndexController extends Controller {
+
+	use ControllerPermissionsTrait;
+
+	/**
+	 * @inheritDoc
+	 */
+	public function behaviors():array {
+		return [
+			'access' => [
+				'class' => PermissionFilter::class
+			]
+		];
+	}
+
 	/**
 	 * @return string
 	 * @throws Throwable

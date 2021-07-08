@@ -10,6 +10,7 @@ use app\controllers\StoresController;
 use app\controllers\UsersController;
 use app\components\web\DefaultController;
 use app\models\sys\users\Users;
+use app\modules\fraud\controllers\IndexController as FraudIndexController;
 use app\modules\fraud\FraudModule;
 use app\modules\history\HistoryModule;
 use app\widgets\smartadmin\sidebar\SideBarWidget;
@@ -64,7 +65,8 @@ use app\controllers\DealersController;
 		[
 			'label' => 'Фродмониторинг',
 			'url' => [FraudModule::to('index/list')],
-			'iconClass' => 'fa-alien'
+			'iconClass' => 'fa-alien',
+			'visible' => FraudIndexController::hasPermission('list')
 		],
 		[
 			'label' => 'Прототипирование',
