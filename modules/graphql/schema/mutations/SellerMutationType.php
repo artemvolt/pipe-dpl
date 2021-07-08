@@ -5,6 +5,7 @@ namespace app\modules\graphql\schema\mutations;
 
 use app\components\exceptions\ValidateException;
 use app\models\seller\RegisterMiniSellerForm;
+use app\models\seller\SellerMiniConfirmSmsForm;
 use app\models\seller\SellerMiniService;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
@@ -46,6 +47,25 @@ class SellerMutationType extends ObjectType implements MutationInterface {
 						return $this->getResult(true, [], self::MESSAGES);
 					},
 				],
+				'confirmSms' => [
+					'type' => Types::response(),
+					'args' => [
+						'phone_number' => Type::nonNull(Type::string()),
+						'sms' => Type::nonNull(Type::string())
+					],
+					'resolve' => function(array $fromMutation, array $args = []) {
+						$service = new SellerMiniService();
+						try {
+							$isConfirm = $service->confirmSms(new SellerMiniConfirmSmsForm([
+								'phone_number' => $args['phone_number'],
+								'sms' => $args['sms']
+							]));
+							return ['result' => $isConfirm];
+						} catch (ValidateException $e) {
+							return $this->getResult(false, $e->getErrors(), ['Ошибка запроса']);
+						}
+					}
+				]
 			]
 		]);
 	}
