@@ -7,6 +7,7 @@ use app\components\db\ActiveRecordTrait;
 use app\models\core\prototypes\RelationValidator;
 use app\models\products\ProductsInterface;
 use app\models\sys\users\Users;
+use app\modules\history\behaviors\HistoryBehavior;
 use yii\base\InvalidArgumentException;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
@@ -32,6 +33,17 @@ class SalesAR extends ActiveRecord {
 	 */
 	public static function tableName():string {
 		return 'sales';
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function behaviors():array {
+		return [
+			'history' => [
+				'class' => HistoryBehavior::class
+			]
+		];
 	}
 
 	/**

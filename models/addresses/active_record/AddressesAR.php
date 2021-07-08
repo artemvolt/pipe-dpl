@@ -4,6 +4,7 @@ declare(strict_types = 1);
 namespace app\models\addresses\active_record;
 
 use app\models\regions\active_record\references\RefRegions;
+use app\modules\history\behaviors\HistoryBehavior;
 use pozitronik\helpers\DateHelper;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
@@ -31,6 +32,17 @@ class AddressesAR extends ActiveRecord {
 	 */
 	public static function tableName():string {
 		return 'addresses';
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function behaviors():array {
+		return [
+			'history' => [
+				'class' => HistoryBehavior::class
+			]
+		];
 	}
 
 	/**

@@ -9,6 +9,7 @@ use app\components\db\ActiveRecordTrait;
 use app\models\store\Stores;
 use app\models\sys\users\Users;
 use app\modules\fraud\models\behaviours\ProductOrderSimcardAsyncBehaviour;
+use app\modules\history\behaviors\HistoryBehavior;
 use app\modules\status\models\traits\StatusesTrait;
 use pozitronik\helpers\DateHelper;
 use yii\db\ActiveQuery;
@@ -39,6 +40,9 @@ class ProductOrderAR extends ActiveRecord {
 	 */
 	public function behaviors():array {
 		return [
+			'history' => [
+				'class' => HistoryBehavior::class
+			],
 			ProductOrderSimcardAsyncBehaviour::class
 		];
 	}

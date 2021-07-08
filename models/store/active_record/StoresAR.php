@@ -17,6 +17,7 @@ use app\models\store\active_record\relations\RelStoresToSellers;
 use app\models\store\active_record\relations\RelStoresToUsers;
 use app\models\sys\permissions\traits\ActiveRecordPermissionsTrait;
 use app\models\sys\users\Users;
+use app\modules\history\behaviors\HistoryBehavior;
 use pozitronik\helpers\DateHelper;
 use Throwable;
 use yii\db\ActiveQuery;
@@ -58,6 +59,17 @@ class StoresAR extends ActiveRecord {
 	 */
 	public static function tableName():string {
 		return 'stores';
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function behaviors():array {
+		return [
+			'history' => [
+				'class' => HistoryBehavior::class
+			]
+		];
 	}
 
 	/**

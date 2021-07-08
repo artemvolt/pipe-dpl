@@ -7,6 +7,7 @@ use app\components\db\ActiveRecordTrait;
 use app\models\products\Products;
 use app\models\products\ProductsInterface;
 use app\models\sys\users\Users;
+use app\modules\history\behaviors\HistoryBehavior;
 use app\modules\status\models\traits\StatusesTrait;
 use Exception;
 use pozitronik\helpers\DateHelper;
@@ -43,6 +44,17 @@ class RewardsAR extends ActiveRecord {
 	 */
 	public static function tableName():string {
 		return 'rewards';
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function behaviors():array {
+		return [
+			'history' => [
+				'class' => HistoryBehavior::class
+			]
+		];
 	}
 
 	/**
