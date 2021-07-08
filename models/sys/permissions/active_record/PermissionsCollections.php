@@ -67,7 +67,9 @@ class PermissionsCollections extends ActiveRecord {
 		return [
 			'id' => 'ID',
 			'name' => 'Название',
-			'comment' => 'Комментарий'
+			'comment' => 'Комментарий',
+			'relatedUsers' => 'Присвоено пользователям',
+			'relatedPermissions' => 'Доступы'
 		];
 	}
 

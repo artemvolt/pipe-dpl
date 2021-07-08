@@ -10,9 +10,12 @@ declare(strict_types = 1);
 use app\assets\ModalHelperAsset;
 use app\controllers\PermissionsCollectionsController;
 use app\controllers\PermissionsController;
+use app\controllers\UsersController;
 use app\models\core\TemporaryHelper;
+use app\models\sys\permissions\active_record\PermissionsCollections;
 use app\models\sys\permissions\Permissions;
 use app\models\sys\permissions\PermissionsSearch;
+use app\models\sys\users\Users;
 use kartik\editable\Editable;
 use kartik\grid\ActionColumn;
 use kartik\grid\DataColumn;
@@ -181,10 +184,18 @@ ModalHelperAsset::register($this);
 			[
 				'class' => DataColumn::class,
 				'attribute' => 'collection',
+				'label' => 'Входит в группы',
 				'value' => static function(Permissions $permission) {
 					return BadgeWidget::widget([
 						'items' => $permission->relatedPermissionsCollections,
-						'subItem' => 'name'
+						'subItem' => 'name',
+						'options' => function($mapAttributeValue, PermissionsCollections $item) {
+							$url = PermissionsCollectionsController::to('edit', ['id' => $item->id]);
+							return [//навешиваем модальный просмотр
+								'onclick' => new JsExpression("AjaxModal('$url', '{$item->formName()}-modal-edit-{$item->id}');event.preventDefault();")
+							];
+						},
+						'urlScheme' => [PermissionsCollectionsController::to('edit'), 'id' => 'id']
 					]);
 				},
 				'format' => 'raw'
@@ -192,10 +203,18 @@ ModalHelperAsset::register($this);
 			[
 				'class' => DataColumn::class,
 				'attribute' => 'user',
+				'label' => 'Назначено пользователям',
 				'value' => static function(Permissions $permission) {
 					return BadgeWidget::widget([
 						'items' => $permission->relatedUsers,
-						'subItem' => 'username'
+						'subItem' => 'username',
+						'options' => function($mapAttributeValue, Users $item) {
+							$url = UsersController::to('view', ['id' => $item->id]);
+							return [//навешиваем модальный просмотр
+								'onclick' => new JsExpression("AjaxModal('$url', '{$item->formName()}-modal-view-{$item->id}');event.preventDefault();")
+							];
+						},
+						'urlScheme' => [UsersController::to('view'), 'id' => 'id']
 					]);
 				},
 				'format' => 'raw'
