@@ -16,6 +16,8 @@ use DomainException;
 use Throwable;
 use Yii;
 use yii\base\Exception;
+use yii\base\InvalidConfigException;
+use yii\db\StaleObjectException;
 use yii\helpers\ArrayHelper;
 use yii\mail\MailerInterface;
 
@@ -139,6 +141,38 @@ class SellerMiniService {
 			$this->sendEmail($existentLink->email, $existentLink->inviteUrl());
 		}
 		return $existentLink;
+	}
+
+	/**
+	 * @param RegisterMiniSellerForm $form
+	 * @return Sellers
+	 * @throws Throwable
+	 * @throws ValidateException
+	 * @throws InvalidConfigException
+	 * @throws StaleObjectException
+	 */
+	public function register(RegisterMiniSellerForm $form):Sellers {
+		if (!$form->validate()) throw new ValidateException($form->errors);
+
+		$seller = new Sellers();
+
+		if (!($seller->load([
+				'login' => $form->phone_number,
+				'surname' => $form->surname,
+				'name' => $form->name,
+				'patronymic' => $form->patronymic,
+				'email' => $form->email
+			], '') && $seller->save())) {
+			throw new ValidateException($seller->errors);
+		}
+
+		$seller->createAccess();
+		if ([] !== $seller->registrationErrors) {
+			throw new DomainException("Не получилось создать пользователя");
+		}
+
+		$seller->changeStatus(Sellers::SELLER_NOT_ACTIVE);
+		return $seller;
 	}
 
 	/**

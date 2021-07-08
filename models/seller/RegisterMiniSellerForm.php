@@ -3,14 +3,9 @@ declare(strict_types = 1);
 
 namespace app\models\seller;
 
-use app\components\exceptions\ValidateException;
 use app\models\phones\PhoneNumberValidator;
 use app\models\sys\users\Users;
-use DomainException;
-use Throwable;
-use yii\base\InvalidConfigException;
 use yii\base\Model;
-use yii\db\StaleObjectException;
 
 /**
  * Class MiniSeller
@@ -21,7 +16,7 @@ use yii\db\StaleObjectException;
  * @property string $email
  * @property bool $accept_agreement
  */
-class RegisterMiniSeller extends Model {
+class RegisterMiniSellerForm extends Model {
 
 	public ?string $surname = null;
 	public ?string $name = null;
@@ -54,36 +49,4 @@ class RegisterMiniSeller extends Model {
 			['accept_agreement', 'boolean']
 		];
 	}
-
-	/**
-	 * @return Sellers
-	 * @throws ValidateException
-	 * @throws Throwable
-	 * @throws InvalidConfigException
-	 * @throws StaleObjectException
-	 */
-	public function register():Sellers {
-		if (!$this->validate()) throw new ValidateException($this->errors);
-
-		$seller = new Sellers();
-
-		if (!($seller->load([
-				'login' => $this->phone_number,
-				'surname' => $this->surname,
-				'name' => $this->name,
-				'patronymic' => $this->patronymic,
-				'email' => $this->email
-			], '') && $seller->save())) {
-			throw new ValidateException($seller->errors);
-		}
-
-		$seller->createAccess();
-		if ([] !== $seller->registrationErrors) {
-			throw new DomainException("Не получилось создать пользователя");
-		}
-
-		$seller->changeStatus(Sellers::SELLER_NOT_ACTIVE);
-		return $seller;
-	}
-
 }
