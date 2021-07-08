@@ -7,6 +7,7 @@ declare(strict_types = 1);
  * @var ActiveForm $form
  */
 
+use app\controllers\PermissionsCollectionsController;
 use app\controllers\PermissionsController;
 use app\models\sys\permissions\active_record\Permissions;
 use app\models\sys\permissions\active_record\PermissionsCollections;
@@ -50,6 +51,18 @@ use yii\web\View;
 					'multiple' => true,
 				],
 				'data' => ArrayHelper::map($permissions, 'id', 'name'),
+			]) ?>
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-12">
+		<?= ([] === $permissionsCollections = PermissionsCollections::find()->where(null === $model->id?'1 = 1':['<>', 'id', $model->id])->all())/*Проверяем, есть ли другие коллекции, кроме этой*/
+			?Html::a('Сначала создайте другие группы доступов', PermissionsCollectionsController::to('index'), ['class' => 'btn btn-warning'])
+			:$form->field($model, 'relatedSlavePermissionsCollections')->widget(MultiSelectListBox::class, [
+				'options' => [
+					'multiple' => true,
+				],
+				'data' => ArrayHelper::map($permissionsCollections, 'id', 'name'),
 			]) ?>
 	</div>
 </div>

@@ -76,22 +76,43 @@ class Permissions extends ActiveRecordPermissions {
 	 * @return self[]
 	 */
 	public static function allUserPermissions(int $user_id, array $permissionFilters = [], bool $asArray = true):array {
-		$query = self::find()
-			->distinct()
-			->joinWith(['relatedUsersToPermissions directPermissions', 'relatedUsersToPermissionsCollections collectionPermissions'], false)
-			->where(['directPermissions.user_id' => $user_id])
-			->orWhere(['collectionPermissions.user_id' => $user_id])
-			->orderBy([
-				'priority' => SORT_DESC,
-				'id' => SORT_ASC
-			]);
+		$mainQuery = self::find()
+			->alias('perms')
+			->innerJoinWith('relatedPermissionsCollectionsToPermissions cols_to_perms')
+			->innerJoin('recursive_collections', 'recursive_collections.id = cols_to_perms.collection_id')
+			->withQuery(
+				//initial query
+				PermissionsCollections::find()
+					->alias('cols')
+					->innerJoinWith('relatedUsersToPermissionsCollections users_to_cols')
+					->where(['users_to_cols.user_id' => $user_id])
+					->union(
+						//recursive query
+						PermissionsCollections::find()
+							->alias('cols')
+							->innerJoinWith('relatedMasterPermissionsCollectionsToPermissionsCollections cols_to_cols')
+							->innerJoin('recursive_collections', 'recursive_collections.id = cols_to_cols.master_id')
+					),
+				'recursive_collections',
+				true
+			)
+			->union(
+				//direct permissions
+				self::find()
+					->alias('perms')
+					->joinWith('relatedUsersToPermissions users_to_perms')
+					->where(['users_to_perms.user_id' => $user_id])
+			);
+
+		$query = self::find()->from(['q' => $mainQuery])->orderBy(['priority' => SORT_DESC, 'id' => SORT_ASC]);
+
 		foreach ($permissionFilters as $paramName => $paramValue) {
 			$paramValues = [$paramValue];
 			/*для перечисленных параметров пустое значение приравнивается к любому*/
 			if (in_array($paramName, self::ALLOWED_EMPTY_PARAMS, true)) {
 				$paramValues[] = null;
 			}
-			$query->andWhere([self::tableName().".".$paramName => $paramValues]);
+			$query->andWhere(["perms.$paramName" => $paramValues]);
 
 		}
 		return $query->asArray($asArray)->all();
