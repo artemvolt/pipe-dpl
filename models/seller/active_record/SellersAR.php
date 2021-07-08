@@ -111,6 +111,7 @@ class SellersAR extends ActiveRecord {
 	 */
 	public function rules():array {
 		return [
+			[['name', 'surname'], 'required', 'on' => [self::SCENARIO_CREATE, self::SCENARIO_EDIT]],
 			[
 				[
 					'name', 'surname', 'patronymic', 'keyword', 'birthday', 'entry_date', 'email', 'login',

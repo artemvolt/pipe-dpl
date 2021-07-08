@@ -74,6 +74,7 @@ class Users extends ActiveRecord {
 	 */
 	public function rules():array {
 		return [
+			['email', 'required', 'on' => self::SCENARIO_DEFAULT],
 			[['username', 'login', 'password'], 'required'],//Не ставим create_date как required, поле заполнится default-валидатором (а если нет - отвалится при инсерте в базу)
 			[['comment'], 'string'],
 			[['create_date'], 'safe'],
