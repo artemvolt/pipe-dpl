@@ -10,7 +10,6 @@ use app\models\dealers\Dealers;
 use app\models\phones\Phones;
 use app\models\regions\active_record\references\RefRegions;
 use app\models\store\Stores;
-use app\models\sys\users\active_record\relations\RelUsersToPhones;
 use app\models\sys\users\Users;
 use app\modules\status\models\Status;
 use app\modules\status\models\StatusRulesModel;
@@ -309,8 +308,7 @@ final class SellersSearch extends Sellers {
 	 */
 	public function findMiniSellerWithPhone($phone):?Sellers {
 		$query = Sellers::find()->alias('s');
-		$query->innerJoin(RelUsersToPhones::tableName().' u_to_p', 'u_to_p.user_id = s.user');
-		$query->innerJoin(Phones::tableName().' phones', 'phones.id = u_to_p.phone_id');
+		$query->innerJoinWith('relatedPhones');
 		$query->andWhere(['phones.phone' => Phones::defaultFormat($phone)]);
 		return $query->limit(1)->one();
 	}
@@ -336,8 +334,8 @@ final class SellersSearch extends Sellers {
 	 */
 	public function findMiniSellerWithEmail($email):?Sellers {
 		$query = Sellers::find()->alias('s');
-		$query->innerJoin(Users::tableName().'us', 'us.id = s.user');
-		$query->andWhere(['us.email' => $email]);
+		$query->innerJoinWith('relatedUser');
+		$query->andWhere(['sys_users.email' => $email]);
 		return $query->limit(1)->one();
 	}
 }
