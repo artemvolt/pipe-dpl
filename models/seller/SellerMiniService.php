@@ -49,6 +49,7 @@ class SellerMiniService {
 	 */
 	public function __construct() {
 		$this->currentUser = Yii::$app->user->identity;
+
 		$this->smsNotification = new SmsNotification();
 		$this->emailNotification = new EmailNotification();
 		$this->mute = new MuteManager();
@@ -174,6 +175,7 @@ class SellerMiniService {
 		}
 
 		$seller->changeStatus(Sellers::SELLER_NOT_ACTIVE);
+		$this->smsNotification->smsLogon($form->phone_number);
 		return $seller;
 	}
 
