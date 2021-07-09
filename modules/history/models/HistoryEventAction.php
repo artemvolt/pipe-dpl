@@ -56,17 +56,17 @@ class HistoryEventAction extends Model {
 	}
 
 	/**
-	 * @param mixed $attributeNewValue
+	 * @param mixed $attribute
 	 * @return mixed
 	 */
-	public static function convertAttributeNewValue($attributeNewValue) {
-		if (is_array($attributeNewValue)) {
-			return json_encode($attributeNewValue, JSON_PRETTY_PRINT);
+	public static function convertAttributeNewValue($attribute) {
+		if (is_array($attribute)) {
+			return json_encode($attribute, JSON_PRETTY_PRINT);
 		}
 
-		if (is_bool($attributeNewValue)) {
-			return $attributeNewValue?'true':'false';
+		if (is_bool($attribute)) {
+			return $attribute?'true':'false';
 		}
-		return $attributeNewValue;
+		return $attribute;
 	}
 }
