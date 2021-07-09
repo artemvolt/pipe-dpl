@@ -104,8 +104,7 @@ use yii\web\View;
 			}
 		],
 		'scenario',
-		'delegate',
-		'operation_identifier'
+		'delegate'
 	]
 ]) ?>
 
