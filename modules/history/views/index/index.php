@@ -7,10 +7,12 @@ declare(strict_types = 1);
  * @var ActiveDataProvider $dataProvider
  */
 
+use app\controllers\UsersController;
 use app\modules\history\models\ActiveRecordHistory;
 use app\modules\history\models\HistoryEventInterface;
 use app\modules\history\models\HistorySearch;
 use kartik\datetime\DateTimePicker;
+use pozitronik\widgets\BadgeWidget;
 use yii\data\ActiveDataProvider;
 use yii\grid\DataColumn;
 use kartik\grid\GridView;
@@ -31,6 +33,23 @@ use yii\web\View;
 	],
 	'columns' => [
 		'id',
+		[
+			'attribute' => 'user',
+			'format' => 'raw',
+			'value' => static function(ActiveRecordHistory $model):string {
+				return BadgeWidget::widget([
+					'items' => $model->relatedUser,
+					'subItem' => 'id',
+					'useBadges' => false,
+					'urlScheme' => [
+						UsersController::to(
+							'index',
+							['UsersSearch[id]' => $model->relatedUser->id??null]
+						)
+					]
+				]);
+			}
+		],
 		[
 			'attribute' => 'event',
 			'value' => static function(ActiveRecordHistory $model) {
@@ -83,7 +102,10 @@ use yii\web\View;
 			'value' => static function(ActiveRecordHistory $model) {
 				return $model->historyEvent->timelineEntry->content;
 			}
-		]
+		],
+		'scenario',
+		'delegate',
+		'operation_identifier'
 	]
 ]) ?>
 

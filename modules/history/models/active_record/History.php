@@ -3,9 +3,11 @@ declare(strict_types = 1);
 
 namespace app\modules\history\models\active_record;
 
+use app\models\sys\users\Users;
 use app\modules\history\HistoryModule;
 use pozitronik\helpers\ArrayHelper;
 use pozitronik\helpers\ModuleHelper;
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 
 /**
@@ -21,6 +23,8 @@ use yii\db\ActiveRecord;
  * @property string|null $event Событие, вызвавшее сохранение слепка истории
  * @property string|null $operation_identifier Уникальный идентификатор (обычно клиентский csrf), связывающий несколько последовательных изменений, происходящих в одном событии
  * @property int|null $delegate Опционально: идентификатор "перекрывающего" пользователя, если поддерживается приложением
+ *
+ * @property Users $relatedUser Пользователь, который вызвал изменение
  */
 class History extends ActiveRecord {
 	/**
@@ -59,5 +63,12 @@ class History extends ActiveRecord {
 			'delegate' => 'Делегировавший пользователь',
 			'operation_identifier' => 'Идентификатор операции'
 		];
+	}
+
+	/**
+	 * @return ActiveQuery
+	 */
+	public function getRelatedUser():ActiveQuery {
+		return $this->hasOne(Users::class, ['id' => 'user']);
 	}
 }
