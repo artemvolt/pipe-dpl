@@ -19,6 +19,7 @@ use kartik\grid\GridView;
 use yii\helpers\Html;
 use yii\i18n\Formatter;
 use yii\web\View;
+use pozitronik\helpers\Utils;
 
 ?>
 
@@ -27,6 +28,12 @@ use yii\web\View;
 	'filterModel' => $searchModel,
 	'summary' => false,
 	'showOnEmpty' => false,
+	'resizableColumns' => true,
+	'responsive' => true,
+	'export' => false,
+	'panel' => [
+		'heading' => $this->title.(($dataProvider->totalCount > 0)?" (".Utils::pluralForm($dataProvider->totalCount, ['запись', 'записи', 'записей']).")":" (нет записей)"),
+	],
 	'formatter' => [
 		'class' => Formatter::class,
 		'nullDisplay' => ''
