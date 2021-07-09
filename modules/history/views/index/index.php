@@ -104,7 +104,23 @@ use yii\web\View;
 			}
 		],
 		'scenario',
-		'delegate'
+		[
+			'attribute' => 'delegate',
+			'format' => 'raw',
+			'value' => static function(ActiveRecordHistory $model):string {
+				return BadgeWidget::widget([
+					'items' => $model->relatedUserDelegated,
+					'subItem' => 'id',
+					'useBadges' => false,
+					'urlScheme' => [
+						UsersController::to(
+							'index',
+							['UsersSearch[id]' => $model->relatedUserDelegated->id??null]
+						)
+					]
+				]);
+			}
+		]
 	]
 ]) ?>
 

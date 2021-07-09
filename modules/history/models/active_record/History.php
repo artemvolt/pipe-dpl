@@ -25,6 +25,7 @@ use yii\db\ActiveRecord;
  * @property int|null $delegate Опционально: идентификатор "перекрывающего" пользователя, если поддерживается приложением
  *
  * @property Users $relatedUser Пользователь, который вызвал изменение
+ * @property Users $relatedUserDelegated Пользователь, который вызвал изменение за другого(авторизовался под user)
  */
 class History extends ActiveRecord {
 	/**
@@ -70,5 +71,12 @@ class History extends ActiveRecord {
 	 */
 	public function getRelatedUser():ActiveQuery {
 		return $this->hasOne(Users::class, ['id' => 'user']);
+	}
+
+	/**
+	 * @return ActiveQuery
+	 */
+	public function getRelatedUserDelegated():ActiveQuery {
+		return $this->hasOne(Users::class, ['id' => 'delegate']);
 	}
 }
