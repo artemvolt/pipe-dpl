@@ -32,12 +32,12 @@ use yii\web\View;
 	'columns' => [
 		'id',
 		[
-			'attribute' => 'eventType',
+			'attribute' => 'event',
 			'value' => static function(ActiveRecordHistory $model) {
 				return $model->historyEvent->eventCaption;
 			},
 			'format' => 'raw',
-			'filter' => HistoryEventInterface::EVENT_TYPE_NAMES,
+			'filter' => HistoryEventInterface::EVENT_TYPE_FRAMEWORK_NAMES,
 			'filterWidgetOptions' => [
 				'pluginOptions' => ['allowClear' => true, 'placeholder' => '']
 			]

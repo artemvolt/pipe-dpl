@@ -11,7 +11,6 @@ use yii\data\ActiveDataProvider;
  * Class HistorySearch
  */
 class HistorySearch extends History {
-	public $eventType;
 
 	/**
 	 * {@inheritDoc}
@@ -19,9 +18,9 @@ class HistorySearch extends History {
 	public function rules():array {
 		return [
 			[['id', 'user', 'model_key', 'at', 'model_class'], 'filter', 'filter' => 'trim'],
-			[['id', 'user', 'eventType', 'model_key'], 'integer'],
+			[['id', 'user', 'model_key'], 'integer'],
 			['at', 'date', 'format' => 'php:Y-m-d H:i'],
-			[['model_class'], 'string']
+			[['model_class', 'event'], 'string']
 		];
 	}
 
@@ -58,7 +57,8 @@ class HistorySearch extends History {
 				'at',
 				'model_key',
 				'model_class',
-				'user'
+				'user',
+				'event'
 			]
 		]);
 	}
@@ -72,6 +72,7 @@ class HistorySearch extends History {
 		$query->andFilterWhere([self::tableName().'.id' => $this->id])
 			->andFilterWhere([self::tableName().'.user' => $this->user])
 			->andFilterWhere([self::tableName().'.model_key' => $this->model_key])
+			->andFilterWhere([self::tableName().'.event' => $this->event])
 			->andFilterWhere(['>=', self::tableName().'.at', $this->at])
 			->andFilterWhere(['like', self::tableName().'.model_class', $this->model_class]);
 	}
