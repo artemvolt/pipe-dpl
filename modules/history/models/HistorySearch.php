@@ -17,10 +17,10 @@ class HistorySearch extends History {
 	 */
 	public function rules():array {
 		return [
-			[['id', 'user', 'model_key', 'at', 'model_class'], 'filter', 'filter' => 'trim'],
-			[['id', 'user', 'model_key'], 'integer'],
+			[['id', 'user', 'model_key', 'at', 'model_class', 'delegate', 'scenario'], 'filter', 'filter' => 'trim'],
+			[['id', 'user', 'model_key', 'delegate'], 'integer'],
 			['at', 'date', 'format' => 'php:Y-m-d H:i'],
-			[['model_class', 'event'], 'string']
+			[['model_class', 'event', 'scenario'], 'string']
 		];
 	}
 
@@ -58,7 +58,9 @@ class HistorySearch extends History {
 				'model_key',
 				'model_class',
 				'user',
-				'event'
+				'event',
+				'delegate',
+				'scenario'
 			]
 		]);
 	}
@@ -71,9 +73,11 @@ class HistorySearch extends History {
 	private function filterData($query):void {
 		$query->andFilterWhere([self::tableName().'.id' => $this->id])
 			->andFilterWhere([self::tableName().'.user' => $this->user])
+			->andFilterWhere([self::tableName().'.delegate' => $this->delegate])
 			->andFilterWhere([self::tableName().'.model_key' => $this->model_key])
 			->andFilterWhere([self::tableName().'.event' => $this->event])
 			->andFilterWhere(['>=', self::tableName().'.at', $this->at])
-			->andFilterWhere(['like', self::tableName().'.model_class', $this->model_class]);
+			->andFilterWhere(['like', self::tableName().'.model_class', $this->model_class])
+			->andFilterWhere(['like', self::tableName().'.scenario', $this->scenario]);
 	}
 }
