@@ -51,6 +51,7 @@ class SellersInviteLinksController extends DefaultController {
 
 		$request = Yii::$app->request;
 		if ($createForm->load($request->post()) && $createForm->validate()) {
+			/** @noinspection BadExceptionsProcessingInspection Терпимо для прототипа, но можно переделать*/
 			try {
 				$service = new SellerMiniService();
 				$savedLink = $service->createInviteLink($createForm);
@@ -93,6 +94,7 @@ class SellersInviteLinksController extends DefaultController {
 			'email' => $existentModel->email
 		]);
 		if ($editForm->load($request->post()) && $editForm->validate()) {
+			/** @noinspection BadExceptionsProcessingInspection Терпимо для прототипа, но можно переделать */
 			try {
 				$service = new SellerMiniService();
 				$service->editInviteLink($editForm);

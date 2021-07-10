@@ -5,6 +5,7 @@ namespace app\models\sys\permissions\active_record;
 
 use app\components\db\ActiveRecordTrait;
 use app\models\sys\permissions\active_record\relations\RelPermissionsCollectionsToPermissions;
+use app\models\sys\permissions\active_record\relations\RelPermissionsCollectionsToPermissionsCollections;
 use app\models\sys\permissions\active_record\relations\RelUsersToPermissionsCollections;
 use app\models\sys\users\Users;
 use app\modules\history\behaviors\HistoryBehavior;
@@ -21,10 +22,17 @@ use yii\db\ActiveRecord;
  * @property string|null $comment Описание группы доступа
  *
  * @property RelPermissionsCollectionsToPermissions[] $relatedPermissionsCollectionsToPermissions Связь к промежуточной таблице к правам доступа
+ * @property RelPermissionsCollectionsToPermissionsCollections[] $relatedPermissionsCollectionsToPermissionsCollections Связь к промежуточной таблице к ВКЛЮЧЁННЫМ группам доступа
+ * @property RelPermissionsCollectionsToPermissionsCollections[] $relatedMasterPermissionsCollectionsToPermissionsCollections Связь к промежуточной таблице к РОДИТЕЛЬСКИМ группам доступа
+ * @property PermissionsCollections[] $relatedSlavePermissionsCollections ВКЛЮЧЁННЫЕ группы доступа
+ * (родительские нам не нужны ни для чего)
  * @property RelUsersToPermissionsCollections[] $relatedUsersToPermissionsCollections Связь к промежуточной таблице к пользователям
  * @property Permissions[] $relatedPermissions Входящие в группу доступа права доступа
  * @property Users[] $relatedUsers Все пользователи, у которых есть эта группа доступа
+ * @property Users[] $relatedUsersRecursively Все пользователи, с учетом вложенности групп
  * @property-read Permissions[] $unrelatedPermissions Права доступа, которые не включены в набор
+ * @property RelPermissionsCollectionsToPermissions[] $relatedSlavePermissionsCollectionsToPermissions Связь к промежуточной таблице к правам доступа для всех ВКЛЮЧЁННЫХ групп
+ * @property-read Permissions[] $relatedPermissionsViaSlaveGroups Права доступа, попавшие в группу из дочерних групп
  */
 class PermissionsCollections extends ActiveRecord {
 	use ActiveRecordTrait;
@@ -56,7 +64,7 @@ class PermissionsCollections extends ActiveRecord {
 			[['name'], 'string', 'max' => 128],
 			[['name'], 'unique'],
 			[['name'], 'required'],
-			[['relatedPermissions', 'relatedUsers'], 'safe']
+			[['relatedPermissions', 'relatedUsers', 'relatedSlavePermissionsCollections'], 'safe']
 		];
 	}
 
@@ -69,7 +77,9 @@ class PermissionsCollections extends ActiveRecord {
 			'name' => 'Название',
 			'comment' => 'Комментарий',
 			'relatedUsers' => 'Присвоено пользователям',
-			'relatedPermissions' => 'Доступы'
+			'relatedPermissions' => 'Доступы',
+			'relatedSlavePermissionsCollections' => 'Включённые группы доступов',
+			'relatedPermissionsViaSlaveGroups' => 'Доступы из включённых групп'
 		];
 	}
 
@@ -118,6 +128,82 @@ class PermissionsCollections extends ActiveRecord {
 	 */
 	public function getRelatedUsers():ActiveQuery {
 		return $this->hasMany(Users::class, ['id' => 'user_id'])->via('relatedUsersToPermissionsCollections');
+	}
+
+	/**
+	 * Проблематично построить связь для join'а при использовании CTE, поэтому только live-получение.
+	 * CTE нужен, чтобы рекурсивно вычислять группы, включённые в группы.
+	 * Выборка не проверялась в поисковых моделях, но должно будет работать.
+	 * @return Users[]
+	 */
+	public function getRelatedUsersRecursively():array {
+		return Users::find()
+			->alias('users')
+			->innerJoin('t', 't.user_id = users.id')
+			->withQuery(
+				//initial query
+				RelUsersToPermissionsCollections::find()
+					->alias('users_to_cols')
+					->select(['users_to_cols.collection_id', 'users_to_cols.user_id'])
+					->union(
+						//recursive query
+						RelPermissionsCollectionsToPermissionsCollections::find()
+							->alias('cols_to_cols')
+							->select(['cols_to_cols.slave_id', 't.user_id'])
+							->innerJoin('t', 't.collection_id = cols_to_cols.master_id')
+					),
+				't',
+				true
+			)
+			->where(['t.collection_id' => $this->id])
+			->all();
+	}
+
+	/**
+	 * @return ActiveQuery
+	 */
+	public function getRelatedPermissionsCollectionsToPermissionsCollections():ActiveQuery {
+		return $this->hasMany(RelPermissionsCollectionsToPermissionsCollections::class, ['master_id' => 'id']);
+	}
+
+	/**
+	 * @return ActiveQuery
+	 */
+	public function getRelatedMasterPermissionsCollectionsToPermissionsCollections():ActiveQuery {
+		return $this->hasOne(RelPermissionsCollectionsToPermissionsCollections::class, ['slave_id' => 'id']);
+	}
+
+	/**
+	 * @return ActiveQuery
+	 */
+	public function getRelatedSlavePermissionsCollections():ActiveQuery {
+		return $this->hasMany(self::class, ['id' => 'slave_id'])->via('relatedPermissionsCollectionsToPermissionsCollections');
+	}
+
+	/**
+	 * @param mixed $relatedSlavePermissionsCollections
+	 * @throws Throwable
+	 */
+	public function setRelatedSlavePermissionsCollections($relatedSlavePermissionsCollections):void {
+		if (empty($relatedSlavePermissionsCollections)) {
+			RelPermissionsCollectionsToPermissionsCollections::clearLinks($this);
+		} else {
+			RelPermissionsCollectionsToPermissionsCollections::linkModels($this, $relatedSlavePermissionsCollections);
+		}
+	}
+
+	/**
+	 * @return ActiveQuery
+	 */
+	public function getRelatedSlavePermissionsCollectionsToPermissions():ActiveQuery {
+		return $this->hasMany(RelPermissionsCollectionsToPermissions::class, ['collection_id' => 'id'])->via('relatedSlavePermissionsCollections');
+	}
+
+	/**
+	 * @return ActiveQuery
+	 */
+	public function getRelatedPermissionsViaSlaveGroups():ActiveQuery {
+		return $this->hasMany(Permissions::class, ['id' => 'permission_id'])->via('relatedSlavePermissionsCollectionsToPermissions');
 	}
 
 }
