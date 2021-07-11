@@ -7,6 +7,8 @@ use app\components\exceptions\ValidateException;
 use app\models\seller\RegisterMiniSellerForm;
 use app\models\seller\SellerMiniConfirmSmsForm;
 use app\models\seller\SellerMiniService;
+use app\modules\dol\components\exceptions\ServerDomainError;
+use app\modules\dol\components\exceptions\ValidateServerErrors;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
 use app\modules\graphql\schema\types\Types;
@@ -63,6 +65,12 @@ class SellerMutationType extends ObjectType implements MutationInterface {
 							return ['result' => $isConfirm];
 						} catch (ValidateException $e) {
 							return $this->getResult(false, $e->getErrors(), ['Ошибка запроса']);
+						} catch (ValidateServerErrors | ServerDomainError $e) {
+							/**
+							 * @TODO обсудить с фронтом пару моментов
+							 * с форматом ответа
+							 */
+							return $this->getResult(false, [], ['Ошибка сервиса']);
 						}
 					}
 				]

@@ -15,6 +15,7 @@ use app\models\sys\users\Users;
 use app\modules\dol\components\exceptions\ValidateServerErrors;
 use app\modules\dol\models\DolAPI;
 use DomainException;
+use RuntimeException;
 use Throwable;
 use Yii;
 use yii\base\Exception;
@@ -234,10 +235,11 @@ class SellerMiniService {
 		}
 
 		$isConfirm = $this->dol->confirmSmsLogon($form->phone_number, $form->sms);
-		if ($isConfirm) {
-			$invite = new SellerInviteLink();
-			$invite->deleteByPhone($form->phone_number);
+		if (!$isConfirm) {
+			throw new RuntimeException("Сервер вернул некорректный ответ");
 		}
-		return $isConfirm;
+		$invite = new SellerInviteLink();
+		$invite->deleteByPhone($form->phone_number);
+		return true;
 	}
 }
