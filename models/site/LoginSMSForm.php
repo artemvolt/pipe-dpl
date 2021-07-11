@@ -102,12 +102,15 @@ class LoginSMSForm extends LoginForm {
 			return false;
 		}
 		$dolAPI = new DolAPI();
-		$dolAPI->smsLogon($this->_phoneNumber);
-		if ($dolAPI->success) {
+		try {
+			$dolAPI->smsLogon($this->_phoneNumber);
 			$this->_smsSent = true;
 			return true;
+		} catch (ValidateServerErrors $e) {
+			$this->addError('login', $e->getErrorsInOneRow());
+		} catch (ServerDomainError $e) {
+			$this->addError('login', $e->getMessage());
 		}
-		$this->addError('login', $dolAPI->errorMessage);
 		return false;
 	}
 

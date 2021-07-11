@@ -5,8 +5,9 @@ namespace app\modules\dol\models;
 
 use app\models\phones\Phones;
 use app\modules\dol\components\confirmSmsLogon\ConfirmSmsLogonHandler;
+use app\modules\dol\components\confirmSmsLogon\SmsLogonHandler;
 use app\modules\dol\components\exceptions\ValidateServerErrors;
-use Exception;
+use DateTime;
 use RuntimeException;
 use simialbi\yii2\rest\ActiveRecord;
 use Yii;
@@ -92,40 +93,24 @@ class DolAPI extends ActiveRecord {
 	}
 
 	/**
-	 * @param string $answer
-	 * @return array
-	 * @throws Exception
-	 */
-	private function parseAnswer(string $answer):array {
-		$this->success = false;
-		if (null === $result = json_decode($answer, true, 512, JSON_OBJECT_AS_ARRAY)) {
-			$this->errorMessage = 'Ошибка парсинга ответа DOL API';
-			return [];
-		}
-		if ($this->success = ArrayHelper::getValue($result, 'success', $this->success)) {
-			return $result;
-		}
-		$this->errorMessage = 'Ошибка запроса DOL API';
-		return $result;
-	}
-
-	/**
 	 * @param string $phoneAsLogin
-	 * @return array
+	 * @return string
 	 * @throws HttpClientException
 	 * @throws InvalidConfigException
+	 * @throws ValidateServerErrors
 	 */
-	public function smsLogon(string $phoneAsLogin):array {
+	public function smsLogon(string $phoneAsLogin):string {
+		$phoneFormat = Phones::nationalFormat($phoneAsLogin);
 		if (ArrayHelper::keyExists($phoneAsLogin, $this->_debugPhones)) {
-			$this->success = true;
-			return [
-				"success" => true
-			];
+			return (new DateTime())->format("Y-m-d H:i:s");
 		}
+
 		$response = $this->doRequest($this->baseUrl.self::METHOD_SMS_LOGON, [
-			'phoneAsLogin' => $phoneAsLogin
+			'phoneAsLogin' => $phoneFormat
 		]);
-		return $this->parseAnswer($response->content);
+		$handler = new SmsLogonHandler();
+		$content = $handler->handle($response);
+		return $content['smsCodeExpiration'];
 	}
 
 	/**
