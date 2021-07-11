@@ -25,8 +25,8 @@ class SmsLogonHandler {
 	 */
 	public function handle(Response $response):array {
 		$content = $this->handler->handle($response);
-		$this->handler->exist('success', $content);
-		$this->handler->exist('smsCodeExpiration', $content);
+		$this->handler->existKeyInResponse('success', $content);
+		$this->handler->existKeyInResponse('smsCodeExpiration', $content);
 		return $content;
 	}
 }

@@ -30,8 +30,8 @@ class ConfirmSmsLogonHandler {
 	 */
 	public function handle(Response $response):array {
 		$content = $this->baseHandler->handle($response);
-		$this->baseHandler->exist('success', $content);
-		$this->baseHandler->exist('isTimeout', $content);
+		$this->baseHandler->existKeyInResponse('success', $content);
+		$this->baseHandler->existKeyInResponse('isTimeout', $content);
 		if ($content['isTimeout']) {
 			throw new ServerDomainError("Истекло время ожидания для подтверждение смс. Запросите повторно.");
 		}

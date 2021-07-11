@@ -38,7 +38,7 @@ class BaseHandler {
 	 * @param string $key
 	 * @param array $content
 	 */
-	public function exist(string $key, array $content):void {
+	public function existKeyInResponse(string $key, array $content):void {
 		if (!array_key_exists($key, $content)) {
 			throw new RuntimeException("Неправильный ответ сервера. Ключ {$key} не найден.");
 		}
