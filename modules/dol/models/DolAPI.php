@@ -3,6 +3,9 @@ declare(strict_types = 1);
 
 namespace app\modules\dol\models;
 
+use app\models\phones\Phones;
+use app\modules\dol\components\confirmSmsLogon\ConfirmSmsLogonHandler;
+use app\modules\dol\components\exceptions\ValidateServerErrors;
 use Exception;
 use RuntimeException;
 use simialbi\yii2\rest\ActiveRecord;
@@ -62,7 +65,7 @@ class DolAPI extends ActiveRecord {
 	 * @throws HttpClientException
 	 * @throws InvalidConfigException
 	 */
-	private function doRequest(string $url, array $data):Response {
+	protected function doRequest(string $url, array $data):Response {
 		$client = new Client([
 			'transport' => CurlTransport::class
 		]);
@@ -128,19 +131,20 @@ class DolAPI extends ActiveRecord {
 	/**
 	 * @param string $phoneAsLogin
 	 * @param string $code
-	 * @return array
+	 * @return bool
 	 * @throws HttpClientException
 	 * @throws InvalidConfigException
+	 * @throws ValidateServerErrors
 	 */
-	public function confirmSmsLogon(string $phoneAsLogin, string $code):array {
+	public function confirmSmsLogon(string $phoneAsLogin, string $code):bool {
+		$phoneFormat = Phones::nationalFormat($phoneAsLogin);
 		if ($code === ArrayHelper::getValue($this->_debugPhones, $phoneAsLogin)) {
-			$this->success = true;
-			return [
-				"success" => true
-			];
+			return true;
 		}
-		$response = $this->doRequest($this->baseUrl.self::METHOD_CONFIRM_SMS_LOGON, compact('phoneAsLogin', 'code'));
-		return $this->parseAnswer($response->content);
+		$response = $this->doRequest($this->baseUrl.self::METHOD_CONFIRM_SMS_LOGON, compact('phoneFormat', 'code'));
+		$handler = new ConfirmSmsLogonHandler();
+		$content = $handler->handle($response);
+		return $content['success'];
 	}
 
 	/**

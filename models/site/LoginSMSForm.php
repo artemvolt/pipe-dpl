@@ -5,6 +5,8 @@ namespace app\models\site;
 
 use app\models\phones\Phones;
 use app\models\sys\users\Users;
+use app\modules\dol\components\exceptions\ServerDomainError;
+use app\modules\dol\components\exceptions\ValidateServerErrors;
 use app\modules\dol\models\DolAPI;
 use Exception;
 use pozitronik\helpers\DateHelper;
@@ -112,11 +114,18 @@ class LoginSMSForm extends LoginForm {
 	public function doConfirmSmsLogon():bool {
 		if (!$this->validate()) return false;
 		$dolAPI = new DolAPI();
-		$dolAPI->confirmSmsLogon($this->_phoneNumber, $this->smsCode);
-		if ($dolAPI->success) {
-			return Yii::$app->user->login($this->user, $this->rememberMe?DateHelper::SECONDS_IN_MONTH:0);
+		try {
+			$isConfirm = $dolAPI->confirmSmsLogon($this->_phoneNumber, $this->smsCode);
+			if ($isConfirm) {
+				return Yii::$app->user->login($this->user, $this->rememberMe?DateHelper::SECONDS_IN_MONTH:0);
+			}
+			$this->addError('smsCode', 'Ошибки не возникло, но сервер вернул отрицательный ответ');
+		} catch (ValidateServerErrors $e) {
+			$this->addError('smsCode', $e->getErrorsInOneRow());
+		} catch (ServerDomainError $e) {
+			$this->addError('smsCode', $e->getMessage());
 		}
-		$this->addError('smsCode', $dolAPI->errorMessage);
+
 		return false;
 	}
 

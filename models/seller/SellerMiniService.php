@@ -12,9 +12,9 @@ use app\models\seller\invite_link\notification\EmailNotification;
 use app\models\seller\invite_link\notification\SmsNotification;
 use app\models\store\active_record\relations\RelStoresToSellers;
 use app\models\sys\users\Users;
+use app\modules\dol\components\exceptions\ValidateServerErrors;
 use app\modules\dol\models\DolAPI;
 use DomainException;
-use RuntimeException;
 use Throwable;
 use Yii;
 use yii\base\Exception;
@@ -27,6 +27,8 @@ use yii\mail\MailerInterface;
 /**
  * Class SellerMiniService
  * @package app\models\seller
+ *
+ * @property DolAPI $dol
  */
 class SellerMiniService {
 
@@ -221,21 +223,21 @@ class SellerMiniService {
 	/**
 	 * @param SellerMiniConfirmSmsForm $form
 	 * @return bool
+	 * @throws HttpException
 	 * @throws InvalidConfigException
 	 * @throws ValidateException
-	 * @throws HttpException
+	 * @throws ValidateServerErrors
 	 */
 	public function confirmSms(SellerMiniConfirmSmsForm $form):bool {
 		if (!$form->validate()) {
 			throw new ValidateException($form->getErrors());
 		}
-		$result = $this->dol->confirmSmsLogon($form->phone_number, $form->sms);
-		if (!array_key_exists('success', $result)) {
-			throw new RuntimeException("Неправильный ответ сервера");
-		}
 
-		$invite = new SellerInviteLink();
-		$invite->deleteByPhone($form->phone_number);
-		return $result['success'];
+		$isConfirm = $this->dol->confirmSmsLogon($form->phone_number, $form->sms);
+		if ($isConfirm) {
+			$invite = new SellerInviteLink();
+			$invite->deleteByPhone($form->phone_number);
+		}
+		return $isConfirm;
 	}
 }
