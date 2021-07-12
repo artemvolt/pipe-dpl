@@ -65,12 +65,15 @@ class SellerMutationType extends ObjectType implements MutationInterface {
 							return ['result' => $isConfirm];
 						} catch (ValidateException $e) {
 							return $this->getResult(false, $e->getErrors(), ['Ошибка запроса']);
-						} catch (ValidateServerErrors | ServerDomainError $e) {
-							/**
-							 * @TODO обсудить с фронтом пару моментов
-							 * с форматом ответа
-							 */
-							return $this->getResult(false, [], ['Ошибка сервиса']);
+						} catch (ValidateServerErrors $e) {
+							return $this->getResult(false, $e->mapErrors([
+								'phoneAsLogin' => 'phone_number',
+								'Code' => 'sms'
+							]), ['Ошибка при выполнении']);
+						} catch (ServerDomainError $e) {
+							return $this->getResult(false, [
+								'phone_number' => $e->getMessage()
+							], ['Ошибка при выполнении']);
 						}
 					}
 				]

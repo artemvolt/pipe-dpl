@@ -39,4 +39,15 @@ class ValidateServerErrors extends Exception {
 		}
 		return $result;
 	}
+
+	public function mapErrors(array $map):array {
+		$errors = $this->getErrors();
+		$result = [];
+		foreach ($map as $field => $outField) {
+			if (array_key_exists($field, $errors)) {
+				$result[$outField] = $errors[$field];
+			}
+		}
+		return $result;
+	}
 }
