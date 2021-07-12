@@ -30,6 +30,8 @@ class Types {
 
 	private static ?ProfileType $profile = null;
 
+	private static ?SellerInviteLinkType $sellerInviteLinkType = null;
+
 	/**
 	 * Запрос
 	 * @return QueryType
@@ -102,5 +104,13 @@ class Types {
 	 */
 	public static function profile():ProfileType {
 		return static::$profile?:static::$profile = new ProfileType();
+	}
+
+	/**
+	 * Профиль пользователя
+	 * @return SellerInviteLinkType
+	 */
+	public static function sellerInviteLink():SellerInviteLinkType {
+		return static::$sellerInviteLinkType?:static::$sellerInviteLinkType = new SellerInviteLinkType();
 	}
 }

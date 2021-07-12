@@ -148,7 +148,8 @@ class SelectModelWidget extends Select2 {
 			throw new InvalidConfigException("{$this->selectModel} must have primary key and it should not be composite");
 		}
 
-		$this->options['id'] = isset($this->options['id'])?$this->options['id'].$this->model->primaryKey:Html::getInputId($this->model, $this->attribute).$this->model->primaryKey;
+		$this->options['id'] = $this->options['id']??Html::getInputId($this->model, $this->attribute);
+		$this->options['id'] .= property_exists($this->model, 'primaryKey')?$this->model->primaryKey:random_int(0, 1000);
 
 		/*В зависимости от режима работы AJAX/LOAD настраиваем виджет и генерируем выводимый список*/
 		switch ($this->loadingMode) {

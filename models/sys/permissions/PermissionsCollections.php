@@ -20,7 +20,7 @@ class PermissionsCollections extends ActiveRecordPermissionsCollections {
 	 */
 	public function afterSave($insert, $changedAttributes):void {
 		if (false === $insert) {
-			$usersInGroup = ArrayHelper::getColumn($this->relatedUsers, 'id');
+			$usersInGroup = ArrayHelper::getColumn($this->relatedUsersRecursively, 'id');
 			foreach ($usersInGroup as $userId) {
 				TagDependency::invalidate(Yii::$app->cache, [CacheHelper::MethodSignature('Users::allPermissions', ['id' => $userId])]);
 			}

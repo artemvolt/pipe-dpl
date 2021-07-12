@@ -104,7 +104,17 @@ $config = [
 		'fraud' => [
 			'class' => FraudModule::class
 		],
-		'recogdol' => ['class' => RecogDolModule::class],
+		'recogdol' => [
+			'class' => RecogDolModule::class,
+			'params' => [
+				'connection' => [
+					'host' => '',
+					'sslCertificate' => false,
+					'user' => '',
+					'password' => ''
+				]
+			]
+		],
 		'api' => [
 			'class' => ApiModule::class
 		]

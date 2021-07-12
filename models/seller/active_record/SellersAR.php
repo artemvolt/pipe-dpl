@@ -10,14 +10,17 @@ use app\models\dealers\active_record\relations\RelDealersToSellers;
 use app\models\dealers\Dealers;
 use app\models\managers\Managers;
 use app\models\phones\PhoneNumberValidator;
+use app\models\phones\Phones;
 use app\models\regions\active_record\references\RefRegions;
 use app\models\store\active_record\relations\RelStoresToSellers;
 use app\models\store\Stores;
 use app\models\sys\permissions\traits\ActiveRecordPermissionsTrait;
+use app\models\sys\users\active_record\relations\RelUsersToPhones;
 use app\models\sys\users\Users;
 use app\modules\history\behaviors\HistoryBehavior;
 use app\modules\status\models\traits\StatusesTrait;
 use pozitronik\helpers\DateHelper;
+use pozitronik\relations\traits\RelationsTrait;
 use Throwable;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
@@ -61,8 +64,11 @@ use yii\web\JsExpression;
  * @property Users $relatedUser Пользователь связанный с продавцом
  * @property Addresses $relAddress Адрес регистрации/проживания связанный с продавцом
  * @property RefRegions $refRegion
+ * @property RelUsersToPhones[] $relatedUsersToPhones
+ * @property Phones[] $relatedPhones
  */
 class SellersAR extends ActiveRecord {
+	use RelationsTrait;
 	use ActiveRecordTrait;
 	use StatusesTrait;
 	use ActiveRecordPermissionsTrait;
@@ -107,6 +113,7 @@ class SellersAR extends ActiveRecord {
 	 */
 	public function rules():array {
 		return [
+			[['name', 'surname'], 'required', 'on' => [self::SCENARIO_CREATE, self::SCENARIO_EDIT]],
 			[
 				[
 					'name', 'surname', 'patronymic', 'keyword', 'birthday', 'entry_date', 'email', 'login',
@@ -161,7 +168,7 @@ class SellersAR extends ActiveRecord {
 			['login', PhoneNumberValidator::class, 'on' => [self::SCENARIO_CREATE, self::SCENARIO_EDIT]],
 			[['create_date', 'update_date', 'stores', 'dealers', 'currentStatusId'], 'safe'],
 			[['passport_when', 'birthday', 'entry_date'], 'date', 'format' => 'php:Y-m-d'],
-			[['patronymic'], 'default', 'value' => null],
+			[['name', 'surname', 'patronymic'], 'default', 'value' => null],
 			[
 				'entry_date',
 				'required',
@@ -348,6 +355,20 @@ class SellersAR extends ActiveRecord {
 	 */
 	public function getRefRegion():ActiveQuery {
 		return $this->hasOne(RefRegions::class, ['id' => 'area'])->via('relAddress');
+	}
+
+	/**
+	 * @return ActiveQuery
+	 */
+	public function getRelatedUsersToPhones():ActiveQuery {
+		return $this->hasMany(RelUsersToPhones::class, ['user_id' => 'user']);
+	}
+
+	/**
+	 * @return ActiveQuery
+	 */
+	public function getRelatedPhones():ActiveQuery {
+		return $this->hasMany(Phones::class, ['id' => 'phone_id'])->via('relatedUsersToPhones');
 	}
 
 	/**

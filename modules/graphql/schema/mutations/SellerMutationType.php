@@ -4,7 +4,8 @@ declare(strict_types = 1);
 namespace app\modules\graphql\schema\mutations;
 
 use app\components\exceptions\ValidateException;
-use app\models\seller\RegisterMiniSeller;
+use app\models\seller\RegisterMiniSellerForm;
+use app\models\seller\SellerMiniService;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
 use app\modules\graphql\schema\types\Types;
@@ -35,8 +36,8 @@ class SellerMutationType extends ObjectType implements MutationInterface {
 					'resolve' => function(array $fromMutationArgs, array $args = []) {
 						try {
 							Yii::$app->db->transaction(function() use ($args) {
-								$miniSeller = new RegisterMiniSeller($args);
-								$miniSeller->register();
+								$service = new SellerMiniService();
+								$service->register(new RegisterMiniSellerForm($args));
 							});
 						} catch (ValidateException $e) {
 							return $this->getResult(false, $e->getErrors(), self::MESSAGES);
@@ -54,25 +55,9 @@ class SellerMutationType extends ObjectType implements MutationInterface {
 	 */
 	public function getArgs():array {
 		return [
-			'surname' => [
-				'type' => Type::nonNull(Type::string()),
-				'description' => 'Фамилия',
-			],
-			'name' => [
-				'type' => Type::nonNull(Type::string()),
-				'description' => 'Имя',
-			],
-			'patronymic' => [
-				'type' => Type::string(),
-				'description' => 'Отчество',
-			],
 			'phone_number' => [
 				'type' => Type::nonNull(Type::string()),
 				'description' => 'Номер телефона',
-			],
-			'email' => [
-				'type' => Type::nonNull(Type::string()),
-				'description' => 'Электронная почта',
 			],
 			'accept_agreement' => [
 				'type' => Type::boolean(),

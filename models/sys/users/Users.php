@@ -4,6 +4,8 @@ declare(strict_types = 1);
 namespace app\models\sys\users;
 
 use app\models\phones\Phones;
+use app\models\seller\Sellers;
+use app\models\store\Stores;
 use app\models\sys\permissions\traits\UsersPermissionsTrait;
 use app\models\sys\users\active_record\Users as ActiveRecordUsers;
 use Exception;
@@ -39,6 +41,8 @@ class Users extends ActiveRecordUsers implements IdentityInterface {
 	/*файловые атрибуты*/
 	public $avatar;
 
+	private static ?self $_current = null;
+
 	public function rules():array {
 		return array_merge(parent::rules(), [
 			[['avatar'], 'file', 'extensions' => 'png, jpg, jpeg', 'skipOnEmpty' => true],
@@ -62,10 +66,11 @@ class Users extends ActiveRecordUsers implements IdentityInterface {
 	 * @throws ForbiddenHttpException
 	 */
 	public static function Current():self {
-		if (null === $user = self::findIdentity(Yii::$app->user->id)) {
+		if ((null === self::$_current) && null === self::$_current = self::findIdentity(Yii::$app->user->id)) {
 			throw new ForbiddenHttpException('Пользователь не авторизован');
 		}
-		return $user;
+
+		return self::$_current;
 	}
 
 	/**
@@ -130,6 +135,41 @@ class Users extends ActiveRecordUsers implements IdentityInterface {
 	 */
 	public static function generateSalt():string {
 		return sha1(uniqid((string)mt_rand(), true));
+	}
+
+	/**
+	 * При создании менеджера, продавца и т.д
+	 * может потребоваться создание
+	 * связанной учетной записи пользователя
+	 * @param string $login
+	 * @param string $username
+	 * @param string $comment
+	 * @param string $email
+	 * @return static
+	 */
+	public static function createAdditionalAccount(string $login, string $username, string $comment, string $email):self {
+		$user = new Users([
+			'login' => $login,
+			'username' => $username,
+			'password' => self::DEFAULT_PASSWORD,
+			'comment' => $comment,
+			'email' => $email,
+			'phones' => $login
+		]);
+		$user->scenario = self::SCENARIO_ADDITIONAL_ACCOUNT;
+		return $user;
+	}
+
+	public static function createAdditionalAccountForMiniSeller(string $login):self {
+		$user = self::createAdditionalAccount(
+			$login,
+			$login,
+			"Пользователь создан автоматически для модели ".Sellers::class,
+			""
+		);
+		$user->email = null;
+		$user->scenario = self::SCENARIO_ADDITIONAL_ACCOUNT_FOR_SELLER_MINI;
+		return $user;
 	}
 
 	/**
@@ -219,4 +259,32 @@ class Users extends ActiveRecordUsers implements IdentityInterface {
 			:PathHelper::PathToUrl(PathHelper::RelativePath($fileAvatar->path, "@webroot"));
 	}
 
+	/**
+	 * @return bool
+	 */
+	public function isManager():bool {
+		$manager = $this->relatedManager;
+		return null !== $manager;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isSeller():bool {
+		$seller = $this->relatedSeller;
+		return null !== $seller;
+	}
+
+	/**
+	 * @return Stores[]
+	 */
+	public function getStoresViaRole():array {
+		if ($this->isManager()) {
+			return $this->relatedManager->stores;
+		}
+		if ($this->isSeller()) {
+			return $this->relatedSeller->stores;
+		}
+		return $this->relatedStores;
+	}
 }

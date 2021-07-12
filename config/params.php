@@ -11,6 +11,13 @@ use app\models\sys\users\Users;
 
 return [
 	'bsVersion' => '4',
+	'frontend' => [
+		'scheme' => 'https',
+		'host' => 'frontend.url'
+	],
+	'emailRobot' => [
+		'from' => 'demon@hello.com'
+	],
 	'searchConfig' => [
 		'Users' => [//<== алиас модели
 			'class' => Users::class,//<== FQN-название ActiveRecord-класса

@@ -5,11 +5,13 @@ use app\controllers\ManagersController;
 use app\controllers\PermissionsCollectionsController;
 use app\controllers\PermissionsController;
 use app\controllers\SellersController;
+use app\controllers\SellersInviteLinksController;
 use app\controllers\SiteController;
 use app\controllers\StoresController;
 use app\controllers\UsersController;
 use app\components\web\DefaultController;
 use app\models\sys\users\Users;
+use app\modules\fraud\controllers\IndexController as FraudIndexController;
 use app\modules\fraud\FraudModule;
 use app\modules\history\HistoryModule;
 use app\widgets\smartadmin\sidebar\SideBarWidget;
@@ -47,7 +49,6 @@ use app\controllers\DealersController;
 			'url' => [ManagersController::to('index')],
 			'iconClass' => 'fa fa-user-tie',
 			'visible' => ManagersController::hasPermission('index')
-
 		],
 		[
 			'label' => StoresController::Title(),
@@ -57,14 +58,28 @@ use app\controllers\DealersController;
 		],
 		[
 			'label' => SellersController::Title(),
-			'url' => [SellersController::to('index')],
+			'url' => '#',
 			'iconClass' => 'fa-smile-beam',
-			'visible' => SellersController::hasPermission('index')
+			'visible' => SellersController::hasPermission('index'),
+			'items' => [
+				[
+					'label' => "Управление",
+					'url' => [SellersController::to('index')],
+					'visible' => SellersController::hasPermission('index')
+				],
+				[
+					'label' => 'Приглашения',
+					'url' => [SellersInviteLinksController::to("index")],
+					'visible' => SellersInviteLinksController::hasPermission('index')
+				],
+			],
+
 		],
 		[
 			'label' => 'Фродмониторинг',
 			'url' => [FraudModule::to('index/list')],
-			'iconClass' => 'fa-alien'
+			'iconClass' => 'fa-alien',
+			'visible' => FraudIndexController::hasPermission('list')
 		],
 		[
 			'label' => 'Прототипирование',

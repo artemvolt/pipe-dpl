@@ -32,7 +32,7 @@ $this->title = 'Смена пароля';
 			</div>
 			<?= Html::submitButton('Сменить пароль', ['class' => 'btn btn-primary btn-lg btn-block', 'name' => 'login-button']) ?>
 			<?php ActiveForm::end(); ?>
-			<?= Html::a('Назад', Yii::$app->homeUrl, ['class' => 'btn-link mar-lft']) ?>
+			<?= Html::a('Назад', '/', ['class' => 'btn-link mar-lft']) ?>
 		</div>
 	</div>
 </div>
