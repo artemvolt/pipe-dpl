@@ -112,7 +112,7 @@ class Permissions extends ActiveRecordPermissions {
 			if (in_array($paramName, self::ALLOWED_EMPTY_PARAMS, true)) {
 				$paramValues[] = null;
 			}
-			$query->andWhere(["perms.$paramName" => $paramValues]);
+			$query->andWhere(["q.$paramName" => $paramValues]);
 
 		}
 		return $query->asArray($asArray)->all();
