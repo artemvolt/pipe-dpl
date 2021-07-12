@@ -23,7 +23,7 @@ use yii\httpclient\Response;
  * @property null|array $userProfile Профиль пользователя из ДОЛ
  */
 class DolAPI extends ActiveRecord {
-	public string $baseUrl = "https://dolfront.beelinetst.ru/api/";
+	public ?string $baseUrl = null;
 
 	public const METHOD_SMS_LOGON = 'v3/auth/sms-logon';
 	public const METHOD_CONFIRM_SMS_LOGON = 'v3/auth/confirm-sms-logon';
@@ -188,6 +188,7 @@ class DolAPI extends ActiveRecord {
 		}
 		return $result;
 	}
+
 	/**
 	 * @return bool[]
 	 */
