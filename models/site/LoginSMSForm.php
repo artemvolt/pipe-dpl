@@ -150,7 +150,7 @@ class LoginSMSForm extends LoginForm {
 			if (null === $this->_user) {/*мы авторизовали в DOL пользователя, которого нет в системе.*/
 				/** Теперь нам с этим токеном надо получить данные этого юзера, и перенести их к нам.*/
 				$this->dolAPI->authToken->loadFromResponseArray($response);
-				$responseData = $this->dolAPI->getUserProfile();
+				$responseData = $this->dolAPI->userProfile;
 				if (null === $responseData) {
 					$this->addError('smsCode', $this->dolAPI->errorMessage);
 					return false;
@@ -174,13 +174,21 @@ class LoginSMSForm extends LoginForm {
 	private function createUserFromDol(array $dolData):bool {
 		$this->_user = new Users([
 			'login' => $this->_phoneNumber,
-			'username' => $dolData['name']??null,
+			'username' => self::createFio($dolData),
 			'password' => Users::DEFAULT_PASSWORD,
-			'comment' => "Пользователь создан при сквозной авторизации в DOL ",
+			'comment' => 'Пользователь создан при сквозной авторизации в DOL',
 			'email' => $dolData['email']??null,
 			'phones' => $this->_phoneNumber
 		]);
 		return $this->_user->save();
+	}
+
+	/**
+	 * @param array $data
+	 * @return string
+	 */
+	public static function createFio(array $data):string {
+		return trim(implode(' ', [$data['lastName']??null, $data['firstName']??null, $data['middleName']??null]));
 	}
 
 	/**

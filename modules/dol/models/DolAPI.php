@@ -19,14 +19,16 @@ use yii\httpclient\Response;
  * @property-read null|bool $success Last operation response status
  * @property-read string $errorMessage Last operation error message
  * @property-read DolAuthToken $authToken Объект токена, используемый для подписи запросов
+ *
+ * @property null|array $userProfile Профиль пользователя из ДОЛ
  */
 class DolAPI extends ActiveRecord {
 	public string $baseUrl = "https://dolfront.beelinetst.ru/api/";
 
-	public const METHOD_SMS_LOGON = 'v2/auth/sms-logon';
-	public const METHOD_CONFIRM_SMS_LOGON = 'v2/auth/confirm-sms-logon';
-	public const METHOD_REFRESH = 'v2/auth/refresh';
-	public const METHOD_USER = 'v2/auth/user';
+	public const METHOD_SMS_LOGON = 'v3/auth/sms-logon';
+	public const METHOD_CONFIRM_SMS_LOGON = 'v3/auth/confirm-sms-logon';
+	public const METHOD_REFRESH = 'v3/auth/refresh';
+	public const METHOD_USER = 'v3/auth/user';
 
 	/**
 	 * @var bool|null
