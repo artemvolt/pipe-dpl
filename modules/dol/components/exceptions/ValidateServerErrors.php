@@ -27,15 +27,19 @@ class ValidateServerErrors extends Exception {
 	}
 
 	public function getErrors():array {
-		return $this->errors;
+		$result = [];
+		foreach ($this->errors as $field => $errors) {
+			foreach ($errors as $error) {
+				$result[$field][] = Html::encode($error);
+			}
+		}
+		return $result;
 	}
 
 	public function getErrorsInOneRow():string {
 		$result = "";
 		foreach ($this->getErrors() as $field => $errors) {
-			foreach ($errors as $error) {
-				$result .= $field." ".Html::encode($error);
-			}
+			$result .= $field." ".implode(",", $errors);
 		}
 		return $result;
 	}
