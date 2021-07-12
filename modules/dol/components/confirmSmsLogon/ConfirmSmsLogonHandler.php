@@ -6,6 +6,7 @@ namespace app\modules\dol\components\confirmSmsLogon;
 use app\modules\dol\components\exceptions\ServerDomainError;
 use app\modules\dol\components\exceptions\ValidateServerErrors;
 use app\modules\dol\components\BaseHandler;
+use RuntimeException;
 use yii\httpclient\Response;
 
 /**
@@ -34,6 +35,9 @@ class ConfirmSmsLogonHandler {
 		$this->baseHandler->existKeyInResponse('isTimeout', $content);
 		if ($content['isTimeout']) {
 			throw new ServerDomainError("Истекло время ожидания для подтверждение смс. Запросите повторно.");
+		}
+		if (!$content['success']) {
+			throw new RuntimeException("Ожидалось другое поведение");
 		}
 		return $content;
 	}

@@ -128,8 +128,8 @@ class DolAPI extends ActiveRecord {
 		}
 		$response = $this->doRequest($this->baseUrl.self::METHOD_CONFIRM_SMS_LOGON, compact('phoneFormat', 'code'));
 		$handler = new ConfirmSmsLogonHandler();
-		$content = $handler->handle($response);
-		return $content['success'];
+		$handler->handle($response);
+		return true;
 	}
 
 	/**
