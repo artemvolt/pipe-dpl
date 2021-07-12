@@ -14,14 +14,6 @@ use yii\httpclient\Response;
  * @package app\modules\dol\components\confirmSmsLogon
  */
 class ConfirmSmsLogonHandler {
-	/**
-	 * @var BaseHandler $baseHandler
-	 */
-	protected $baseHandler;
-
-	public function __construct() {
-		$this->baseHandler = new BaseHandler();
-	}
 
 	/**
 	 * @param Response $response
@@ -30,9 +22,9 @@ class ConfirmSmsLogonHandler {
 	 * @throws ServerDomainError
 	 */
 	public function handle(Response $response):array {
-		$content = $this->baseHandler->handle($response);
-		$this->baseHandler->existKeyInResponse('success', $content);
-		$this->baseHandler->existKeyInResponse('isTimeout', $content);
+		$content = BaseHandler::handle($response);
+		BaseHandler::existKeyInResponse('success', $content);
+		BaseHandler::existKeyInResponse('isTimeout', $content);
 		if ($content['isTimeout']) {
 			throw new ServerDomainError("Истекло время ожидания для подтверждение смс. Запросите повторно.");
 		}

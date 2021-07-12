@@ -21,7 +21,7 @@ class BaseHandler {
 	 * @throws ValidateServerErrors
 	 * @throws ServerDomainError
 	 */
-	public function handle(Response $response):array {
+	public static function handle(Response $response):array {
 		if (null === $content = json_decode($response->content, true, 512, JSON_OBJECT_AS_ARRAY)) {
 			throw new RuntimeException('Не получилось распознать ответ от сервера');
 		}
@@ -38,7 +38,7 @@ class BaseHandler {
 	 * @param string $key
 	 * @param array $content
 	 */
-	public function existKeyInResponse(string $key, array $content):void {
+	public static function existKeyInResponse(string $key, array $content):void {
 		if (!array_key_exists($key, $content)) {
 			throw new RuntimeException("Неправильный ответ сервера. Ключ {$key} не найден.");
 		}
