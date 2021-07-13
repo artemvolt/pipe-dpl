@@ -194,7 +194,7 @@ class SellerMiniService {
 		}
 
 		$seller->changeStatus(Sellers::SELLER_NOT_ACTIVE);
-		$this->smsNotification->smsLogon($form->phone_number);
+		$this->dol->smsLogon($form->phone_number);
 		return $seller;
 	}
 
