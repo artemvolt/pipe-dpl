@@ -4,6 +4,7 @@ declare(strict_types = 1);
 namespace app\modules\dol\models;
 
 use app\modules\dol\components\v3\auth\confirmSms\ConfirmSmsHandler;
+use app\modules\dol\components\v3\auth\confirmSms\ConfirmSmsResponse;
 use app\modules\dol\components\v3\auth\smsLogOn\SmsLogonHandler;
 use app\modules\dol\components\requestUserProfile\RequestUserProfileHandler;
 use app\modules\dol\components\exceptions\ValidateServerErrors;
@@ -13,7 +14,6 @@ use DateTime;
 use app\models\phones\Phones;
 use simialbi\yii2\rest\ActiveRecord;
 use Yii;
-use yii\helpers\Json;
 use yii\web\ForbiddenHttpException;
 use yii\web\UnauthorizedHttpException;
 use yii\base\InvalidConfigException;
@@ -101,7 +101,7 @@ class DolAPI extends ActiveRecord {
 
 	/**
 	 * @param string $phoneAsLogin
-	 * @return array
+	 * @return SmsLogonResponse
 	 * @throws HttpClientException
 	 * @throws InvalidConfigException
 	 * @throws ValidateServerErrors
@@ -120,25 +120,26 @@ class DolAPI extends ActiveRecord {
 		]);
 		$handler = new SmsLogonHandler();
 		$handler->handle($response);
-		return new SmsLogonResponse(Json::decode($response));
+		return SmsLogonResponse::fromJsonString($response->content);
 	}
 
 	/**
 	 * @param string $phoneAsLogin
 	 * @param string $code
-	 * @return array
+	 * @return ConfirmSmsResponse
 	 * @throws HttpClientException
 	 * @throws InvalidConfigException
 	 * @throws ValidateServerErrors
 	 */
-	public function confirmSmsLogon(string $phoneAsLogin, string $code):array {
+	public function confirmSmsLogon(string $phoneAsLogin, string $code):ConfirmSmsResponse {
 		$phoneFormat = Phones::nationalFormat($phoneAsLogin);
 		if ($code === ArrayHelper::getValue($this->_debugPhones, $phoneAsLogin)) {
-			return ['success' => true];
+			return new ConfirmSmsResponse(['success' => true]);
 		}
 		$response = $this->doRequest($this->baseUrl.self::METHOD_CONFIRM_SMS_LOGON, compact('phoneFormat', 'code'));
 		$handler = new ConfirmSmsHandler();
-		return $handler->handle($response);
+		$handler->handle($response);
+		return ConfirmSmsResponse::fromJsonString($response->content);
 	}
 
 	/**
