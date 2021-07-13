@@ -99,23 +99,25 @@ class DolAPI extends ActiveRecord {
 
 	/**
 	 * @param string $phoneAsLogin
-	 * @return string
+	 * @return array
 	 * @throws HttpClientException
 	 * @throws InvalidConfigException
 	 * @throws ValidateServerErrors
 	 */
-	public function smsLogon(string $phoneAsLogin):string {
+	public function smsLogon(string $phoneAsLogin):array {
 		$phoneFormat = Phones::nationalFormat($phoneAsLogin);
 		if (ArrayHelper::keyExists($phoneAsLogin, $this->_debugPhones)) {
-			return (new DateTime())->format("Y-m-d H:i:s");
+			return [
+				'success' => true,
+				'smsCodeExpiration' => (new DateTime())->format("Y-m-d H:i:s")
+			];
 		}
 
 		$response = $this->doRequest($this->baseUrl.self::METHOD_SMS_LOGON, [
 			'phoneAsLogin' => $phoneFormat
 		]);
 		$handler = new SmsLogonHandler();
-		$content = $handler->handle($response);
-		return $content['smsCodeExpiration'];
+		return $handler->handle($response);
 	}
 
 	/**
