@@ -8,7 +8,5 @@ modules:
     - Asserts
     - \Helper\Unit
     - Db
-    - Yii2:
-        parts: [ orm ]
-        configFile: 'config/test.sample.php'
+    - Yii2
   step_decorators: ~

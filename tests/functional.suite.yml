@@ -17,7 +17,5 @@ modules:
         part: json
         shortDebugResponse: 600
     - Asserts
-    - Yii2:
-        parts: [ orm ]
-        configFile: 'config/test.sample.php'
+    - Yii2
   step_decorators: ~

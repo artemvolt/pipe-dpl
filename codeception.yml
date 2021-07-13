@@ -15,6 +15,9 @@ modules:
       dump: 'tests/_data/dumps/base_structure.sql'
       populate: true
       cleanup: false
+    Yii2:
+      parts: [ orm ]
+      configFile: 'config/test.php'
 params:
   env: tests/.env
 extensions:
