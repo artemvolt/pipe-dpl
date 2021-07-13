@@ -1,24 +1,20 @@
 <?php
+declare(strict_types = 1);
 use app\models\seller\invite_link\CreateSellerInviteLinkForm;
 use app\models\seller\RegisterMiniSellerForm;
 use app\models\seller\SellerInviteLinkSearch;
 use app\models\seller\SellerMiniService;
-use app\models\seller\Sellers;
 use app\models\seller\SellersSearch;
 use app\models\tests\MemoryDolApi;
 use app\models\tests\store\StoresTests;
 use app\modules\dol\models\DolAPI;
 use Codeception\Stub;
-use yii\helpers\Url;
 use yii\httpclient\Response;
 
 /**
  * Class SalesCest
  */
 class SellerCest {
-	public function _before(FunctionalTester $I) {
-	}
-
 	/**
 	 * @param FunctionalTester $I
 	 */
@@ -116,6 +112,9 @@ mutation {
 		]);
 	}
 
+	/**
+	 * @param FunctionalTester $I
+	 */
 	public function inviteLink(FunctionalTester $I) {
 		$I->sendGraphQlRequest('
 query {
@@ -169,6 +168,10 @@ query {
 		]);
 	}
 
+	/**
+	 * @param FunctionalTester $I
+	 * @skip
+	 */
 	public function confirmSms(FunctionalTester $I) {
 		Yii::$container->setSingleton(DolAPI::class, function() {
 			return new MemoryDolApi();
@@ -212,6 +215,7 @@ mutation {
 
 	/**
 	 * @param FunctionalTester $I
+	 * @skip
 	 */
 	public function confirmSmsErrors(FunctionalTester $I) {
 		$I->sendGraphQlRequest('
@@ -243,6 +247,7 @@ mutation {
 
 	/**
 	 * @param FunctionalTester $I
+	 * @skip
 	 */
 	public function confirmSmsValidateServerErrors(FunctionalTester $I) {
 		Yii::$container->setSingleton(DolAPI::class, function() {
