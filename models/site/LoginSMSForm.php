@@ -6,6 +6,9 @@ namespace app\models\site;
 use app\models\core\TemporaryHelper;
 use app\models\phones\Phones;
 use app\models\sys\users\Users;
+use app\modules\dol\components\exceptions\NotSuccessError;
+use app\modules\dol\components\exceptions\ServerDomainError;
+use app\modules\dol\components\exceptions\ValidateServerErrors;
 use app\modules\dol\models\DolAPI;
 use Exception;
 use pozitronik\helpers\DateHelper;
@@ -13,6 +16,8 @@ use Yii;
 use yii\base\InvalidConfigException;
 use yii\helpers\ArrayHelper;
 use yii\httpclient\Exception as HttpException;
+use yii\web\ForbiddenHttpException;
+use yii\web\UnauthorizedHttpException;
 
 /**
  * Авторизация по SMS
@@ -99,41 +104,29 @@ class LoginSMSForm extends LoginForm {
 	}
 
 	/**
+	 * Два варианта:
+	 * 1. Учётка есть в системе. Разрешаем ему войти к нам, через смс-подтверждение в DOL.
+	 * 2. Учётка есть в DOL, но не у нас. Разрешаем ему войти, проксируя авторизацию в DOL (с последующим стягиванием
+	 * данных)
 	 * @return bool
 	 * @throws Exception
 	 * @throws InvalidConfigException
 	 */
 	public function doSmsLogon():bool {
 //		if (!$this->validate()) return false; <== больше не нужно, т.к. валидацией мы отсекали проверку пользователей, отсутствующих в системе.
-		/*пользователь с таким логином в системе есть*/
-		if ((null !== $this->_user) && null === $this->_phoneNumber) {/*но к этому логину не привязан телефон*/
+		/*пользователь с таким логином в системе есть, но к этому логину не привязан телефон*/
+		if ((null !== $this->_user) && null === $this->_phoneNumber) {
 			$this->addError($this->login, 'У пользователя не указан телефон');
 			return false;
 		}
-		if (!$this->DolLogon()) {
-			/*DOL об этом чуваке не в курсе*/
-			$this->addError($this->login, $this->dolAPI->errorMessage);
-			return false;
-		}
-		/**
-		 * Учётка есть в системе. Разрешаем ему войти к нам, через смс-подтверждение в DOL.
-		 * либо
-		 * Учётка есть в DOL, но не у нас. Разрешаем ему войти, проксируя авторизацию в DOL (с последующим стягиванием
-		 * данных)
-		 */
-		return true;
-	}
-
-	/**
-	 * @return bool
-	 * @throws HttpException
-	 * @throws InvalidConfigException
-	 */
-	private function DolLogon():bool {
-		$this->dolAPI->smsLogon($this->_phoneNumber);
-		if ($this->dolAPI->success) {
+		try {
+			$this->dolAPI->smsLogon($this->_phoneNumber);
 			$this->_smsSent = true;
 			return true;
+		} catch (ValidateServerErrors $e) {
+			$this->addError('login', $e->getErrorsInOneRow());
+		} catch (ServerDomainError | NotSuccessError $e) {
+			$this->addError('login', $e->getMessage());
 		}
 		return false;
 	}
@@ -145,24 +138,28 @@ class LoginSMSForm extends LoginForm {
 	 */
 	public function doConfirmSmsLogon():bool {
 		//if (!$this->validate()) return false; <== больше не нужно, т.к. валидацией мы отсекали проверку пользователей, отсутствующих в системе.
-		$response = $this->dolAPI->confirmSmsLogon($this->_phoneNumber, $this->smsCode);
-		if ($this->dolAPI->success) {
-			if (null === $this->_user) {/*мы авторизовали в DOL пользователя, которого нет в системе.*/
-				/** Теперь нам с этим токеном надо получить данные этого юзера, и перенести их к нам.*/
-				$this->dolAPI->authToken->loadFromResponseArray($response);
-				$responseData = $this->dolAPI->userProfile;
-				if (null === $responseData) {
-					$this->addError('smsCode', $this->dolAPI->errorMessage);
-					return false;
+		try {
+			$response = $this->dolAPI->confirmSmsLogon($this->_phoneNumber, $this->smsCode);
+			if ($response['success']) {
+				if (null === $this->_user) {/*мы авторизовали в DOL пользователя, которого нет в системе.*/
+					/** Теперь нам с этим токеном надо получить данные этого юзера, и перенести их к нам.*/
+					$this->dolAPI->authToken->loadFromResponseArray($response);
+					$responseData = $this->dolAPI->requestUserProfile();
+
+					if (!$this->createUserFromDol($responseData)) {/*сразу генерим себе пользователя*/
+						$this->addError('login', TemporaryHelper::Errors2String($this->_user->errors));
+						return false;
+					}
 				}
-				if (!$this->createUserFromDol($responseData)) {/*сразу генерим себе пользователя*/
-					$this->addError('login', TemporaryHelper::Errors2String($this->_user->errors));
-					return false;
-				}
+				return Yii::$app->user->login($this->_user, $this->rememberMe?DateHelper::SECONDS_IN_MONTH:0);
 			}
-			return Yii::$app->user->login($this->_user, $this->rememberMe?DateHelper::SECONDS_IN_MONTH:0);
+		} catch (ValidateServerErrors $e) {
+			$this->addError('smsCode', $e->getErrorsInOneRow());
+		} catch (ServerDomainError | NotSuccessError $e) {
+			$this->addError('smsCode', $e->getMessage());
+		} catch (ForbiddenHttpException | UnauthorizedHttpException $e) {
+			$this->addError('login', $e->getMessage());
 		}
-		$this->addError('smsCode', $this->dolAPI->errorMessage);
 		return false;
 	}
 

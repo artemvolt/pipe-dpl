@@ -27,7 +27,7 @@ class DolAuthToken extends Model {
 	 * @throws Exception
 	 */
 	public function loadFromResponseArray(array $responseArray):void {
-		$this->value = ArrayHelper::getValue($responseArray, 'authToken.value');
-		$this->expires = ArrayHelper::getValue($responseArray, 'authToken.expires');
+		$this->value = ArrayHelper::getValue($responseArray, 'auth.accessToken.value');
+		$this->expires = ArrayHelper::getValue($responseArray, 'auth.accessToken.expires');
 	}
 }

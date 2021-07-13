@@ -3,10 +3,15 @@ declare(strict_types = 1);
 
 namespace app\modules\dol\models;
 
-use Exception;
+use app\modules\dol\components\confirmSmsLogon\ConfirmSmsLogonHandler;
+use app\modules\dol\components\confirmSmsLogon\SmsLogonHandler;
+use app\modules\dol\components\requestUserProfile\RequestUserProfileHandler;
+use app\modules\dol\components\exceptions\ValidateServerErrors;
 use RuntimeException;
 use simialbi\yii2\rest\ActiveRecord;
 use Yii;
+use yii\web\ForbiddenHttpException;
+use yii\web\UnauthorizedHttpException;
 use yii\base\InvalidConfigException;
 use yii\helpers\ArrayHelper;
 use yii\httpclient\Client;
@@ -19,14 +24,12 @@ use yii\httpclient\Response;
  * @property-read null|bool $success Last operation response status
  * @property-read string $errorMessage Last operation error message
  * @property-read DolAuthToken $authToken Объект токена, используемый для подписи запросов
- *
- * @property null|array $userProfile Профиль пользователя из ДОЛ
  */
 class DolAPI extends ActiveRecord {
 	public ?string $baseUrl = null;
 
 	public const METHOD_SMS_LOGON = 'v3/auth/sms-logon';
-	public const METHOD_CONFIRM_SMS_LOGON = 'v3/auth/confirm-sms-logon';
+	public const METHOD_CONFIRM_SMS_LOGON = 'v3/auth/confirm-sms';
 	public const METHOD_REFRESH = 'v3/auth/refresh';
 	public const METHOD_USER = 'v3/auth/user';
 
@@ -105,40 +108,22 @@ class DolAPI extends ActiveRecord {
 	}
 
 	/**
-	 * @param string $answer
-	 * @return array
-	 * @throws Exception
-	 */
-	private function parseAnswer(string $answer):array {
-		$this->success = false;
-		if (null === $result = json_decode($answer, true, 512, JSON_OBJECT_AS_ARRAY)) {
-			$this->errorMessage = 'Ошибка парсинга ответа DOL API';
-			return [];
-		}
-		if ($this->success = ArrayHelper::getValue($result, 'success', $this->success)) {
-			return $result;
-		}
-		$this->errorMessage = 'Ошибка запроса DOL API';
-		return $result;
-	}
-
-	/**
 	 * @param string $phoneAsLogin
-	 * @return array
+	 * @return bool
 	 * @throws HttpClientException
 	 * @throws InvalidConfigException
+	 * @throws ValidateServerErrors
 	 */
-	public function smsLogon(string $phoneAsLogin):array {
+	public function smsLogon(string $phoneAsLogin):bool {
 		if (ArrayHelper::keyExists($phoneAsLogin, $this->_debugPhones)) {
-			$this->success = true;
-			return [
-				"success" => true
-			];
+			return true;
 		}
 		$response = $this->doRequest($this->baseUrl.self::METHOD_SMS_LOGON, [
 			'phoneAsLogin' => $phoneAsLogin
 		]);
-		return $this->parseAnswer($response->content);
+		$handler = new SmsLogonHandler();
+		$handler->handle($response);
+		return true;
 	}
 
 	/**
@@ -147,16 +132,15 @@ class DolAPI extends ActiveRecord {
 	 * @return array
 	 * @throws HttpClientException
 	 * @throws InvalidConfigException
+	 * @throws ValidateServerErrors
 	 */
 	public function confirmSmsLogon(string $phoneAsLogin, string $code):array {
 		if ($code === ArrayHelper::getValue($this->_debugPhones, $phoneAsLogin)) {
-			$this->success = true;
-			return [
-				"success" => true
-			];
+			return ['success' => true];
 		}
 		$response = $this->doRequest($this->baseUrl.self::METHOD_CONFIRM_SMS_LOGON, compact('phoneAsLogin', 'code'));
-		return $this->parseAnswer($response->content);
+		$handler = new ConfirmSmsLogonHandler();
+		return $handler->handle($response);
 	}
 
 	/**
@@ -171,22 +155,14 @@ class DolAPI extends ActiveRecord {
 	 * @return array
 	 * @throws HttpClientException
 	 * @throws InvalidConfigException
+	 * @throws ValidateServerErrors
+	 * @throws ForbiddenHttpException
+	 * @throws UnauthorizedHttpException
 	 */
-	public function getUserProfile():array {
+	public function requestUserProfile():array {
 		$response = $this->doRequest($this->baseUrl.self::METHOD_USER, [], 'GET');
-		return $this->parseGetAnswer($response->content);
-	}
-
-	/**
-	 * @param string $answer
-	 * @return array
-	 * @throws Exception
-	 */
-	private function parseGetAnswer(string $answer):array {
-		if (null === $result = json_decode($answer, true, 512, JSON_OBJECT_AS_ARRAY)) {
-			$this->errorMessage = 'Ошибка парсинга ответа DOL API';
-		}
-		return $result;
+		$handler = new RequestUserProfileHandler();
+		return $handler->handle($response);
 	}
 
 	/**
