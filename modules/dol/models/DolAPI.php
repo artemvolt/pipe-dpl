@@ -3,8 +3,8 @@ declare(strict_types = 1);
 
 namespace app\modules\dol\models;
 
-use app\modules\dol\components\confirmSmsLogon\ConfirmSmsLogonHandler;
-use app\modules\dol\components\confirmSmsLogon\SmsLogonHandler;
+use app\modules\dol\components\v3\auth\confirmSms\ConfirmSmsHandler;
+use app\modules\dol\components\v3\auth\smsLogOn\SmsLogonHandler;
 use app\modules\dol\components\requestUserProfile\RequestUserProfileHandler;
 use app\modules\dol\components\exceptions\ValidateServerErrors;
 use RuntimeException;
@@ -134,7 +134,7 @@ class DolAPI extends ActiveRecord {
 			return ['success' => true];
 		}
 		$response = $this->doRequest($this->baseUrl.self::METHOD_CONFIRM_SMS_LOGON, compact('phoneFormat', 'code'));
-		$handler = new ConfirmSmsLogonHandler();
+		$handler = new ConfirmSmsHandler();
 		return $handler->handle($response);
 	}
 

@@ -1,33 +1,28 @@
 <?php
 declare(strict_types = 1);
 
-namespace app\modules\dol\components\confirmSmsLogon;
+namespace app\modules\dol\components\v3\auth\smsLogOn;
 
-use app\modules\dol\components\exceptions\NotSuccessError;
-use app\modules\dol\components\exceptions\ServerDomainError;
-use app\modules\dol\components\exceptions\ValidateServerErrors;
 use app\modules\dol\components\BaseHandler;
+use app\modules\dol\components\exceptions\NotSuccessError;
+use app\modules\dol\components\exceptions\ValidateServerErrors;
 use yii\httpclient\Response;
 
 /**
- * Class ConfirmSmsLogonHandler
+ * Class SmsLogonHandler
  * @package app\modules\dol\components\confirmSmsLogon
  */
-class ConfirmSmsLogonHandler {
+class SmsLogonHandler {
 
 	/**
 	 * @param Response $response
-	 * @return mixed
+	 * @return array
 	 * @throws ValidateServerErrors
-	 * @throws ServerDomainError
 	 */
 	public function handle(Response $response):array {
 		$content = BaseHandler::handleWithErrors($response);
 		BaseHandler::existKeyInResponse('success', $content);
-		BaseHandler::existKeyInResponse('isTimeout', $content);
-		if ($content['isTimeout']) {
-			throw new ServerDomainError("Истекло время ожидания для подтверждение смс. Запросите повторно.");
-		}
+		BaseHandler::existKeyInResponse('smsCodeExpiration', $content);
 		if (!$content['success']) {
 			throw new NotSuccessError('Ожидалось другое поведение');
 		}
