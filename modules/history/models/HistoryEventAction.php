@@ -61,7 +61,7 @@ class HistoryEventAction extends Model {
 	 */
 	public static function convertAttributeNewValue($attribute) {
 		if (is_array($attribute)) {
-			return json_encode($attribute, JSON_PRETTY_PRINT);
+			return json_encode($attribute, JSON_PRETTY_PRINT);//fixme not json
 		}
 
 		if (is_bool($attribute)) {
