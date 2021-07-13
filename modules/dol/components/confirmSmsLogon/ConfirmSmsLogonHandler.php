@@ -22,7 +22,7 @@ class ConfirmSmsLogonHandler {
 	 * @throws ServerDomainError
 	 */
 	public function handle(Response $response):array {
-		$content = BaseHandler::handle($response);
+		$content = BaseHandler::handleWithErrors($response);
 		BaseHandler::existKeyInResponse('success', $content);
 		BaseHandler::existKeyInResponse('isTimeout', $content);
 		if ($content['isTimeout']) {

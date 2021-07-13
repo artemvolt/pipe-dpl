@@ -20,7 +20,7 @@ class SmsLogonHandler {
 	 * @throws ValidateServerErrors
 	 */
 	public function handle(Response $response):array {
-		$content = BaseHandler::handle($response);
+		$content = BaseHandler::handleWithErrors($response);
 		BaseHandler::existKeyInResponse('success', $content);
 		BaseHandler::existKeyInResponse('smsCodeExpiration', $content);
 		if (!$content['success']) {

@@ -15,16 +15,28 @@ use yii\httpclient\Response;
  * @package app\modules\dol\components
  */
 class BaseHandler {
+	public const UNAUTHORIZED_CODE = '401';
+	public const FORBIDDEN_CODE = '403';
+	/**
+	 * @param Response $response
+	 * @return array
+	 */
+	public static function handle(Response $response):array {
+		if (null === $content = json_decode($response->content, true, 512, JSON_OBJECT_AS_ARRAY)) {
+			throw new RuntimeException('Не получилось распознать ответ от сервера');
+		}
+		return $content;
+	}
+
 	/**
 	 * @param Response $response
 	 * @return array
 	 * @throws ValidateServerErrors
 	 * @throws ServerDomainError
 	 */
-	public static function handle(Response $response):array {
-		if (null === $content = json_decode($response->content, true, 512, JSON_OBJECT_AS_ARRAY)) {
-			throw new RuntimeException('Не получилось распознать ответ от сервера');
-		}
+	public static function handleWithErrors(Response $response):array {
+		$content = self::handle( $response);
+
 		if ($errors = ArrayHelper::getValue($content, 'errors', [])) {
 			throw new ValidateServerErrors($errors, 'Ошибка валидации на стороне сервиса');
 		}
