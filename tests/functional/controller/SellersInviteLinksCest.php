@@ -1,4 +1,6 @@
 <?php
+declare(strict_types = 1);
+use app\components\exceptions\ValidateException;
 use app\models\seller\invite_link\CreateSellerInviteLinkForm;
 use app\models\seller\SellerInviteLink;
 use app\models\seller\SellerInviteLinkSearch;
@@ -9,6 +11,8 @@ use app\models\tests\sys\permissions\PermissionsTest;
 use app\models\tests\sys\users\SysUsersTest;
 use app\modules\dol\models\DolAPI;
 use Webmozart\Assert\Assert;
+use yii\base\InvalidConfigException;
+use yii\di\NotInstantiableException;
 use yii\helpers\Url;
 use yii\mail\MessageInterface;
 
@@ -21,7 +25,7 @@ class SellersInviteLinksCest {
 	 */
 	protected $user;
 
-	public function _before(FunctionalTester $I) {
+	public function _before() {
 		$user = SysUsersTest::create()->changeUsername('manager')->saveAndReturn();
 		$user->withPermission(PermissionsTest::sellersInviteLinksCreate('GET')->saveAndReturn());
 		$user->withPermission(PermissionsTest::sellersInviteLinksCreate('POST')->saveAndReturn());
@@ -34,6 +38,12 @@ class SellersInviteLinksCest {
 	}
 
 	// tests
+
+	/**
+	 * @param FunctionalTester $I
+	 * @throws InvalidConfigException
+	 * @throws NotInstantiableException
+	 */
 	public function create(FunctionalTester $I) {
 		$I->amLoggedInAs($this->user);
 		Yii::$container->setSingleton(DolAPI::class, function() {
@@ -79,7 +89,7 @@ class SellersInviteLinksCest {
 		 */
 		$I->assertCount(1, $smses = $smsService->smses);
 		$I->assertEquals($phoneWithFormat, $smses[0]['phone']);
-		$I->assertEquals("Ваша ссылка: ".$link->inviteUrl(), $smses[0]['text']);
+		$I->assertEquals("Ваша ссылка: ".$link->inviteUrl(), $smses[0]['message']);
 
 		/**
 		 * @var MessageInterface $message
@@ -93,12 +103,18 @@ class SellersInviteLinksCest {
 		$I->seeInCurrentUrl($createUrl);
 	}
 
+	/**
+	 * @param FunctionalTester $I
+	 * @throws Throwable
+	 * @throws ValidateException
+	 * @throws \yii\base\Exception
+	 */
 	public function edit(FunctionalTester $I) {
 		$I->amLoggedInAs($this->user);
 		$store = StoresTests::create("Kitty")->saveAndReturn();
 		$createLink = new CreateSellerInviteLinkForm([
 			'phone_number' => '89055600902',
-			'email' => $email = 'devok@example.com',
+			'email' => 'devok@example.com',
 			'store_id' => $store->id
 		]);
 		$savedLink = (new SellerMiniService())->createInviteLink($createLink);
