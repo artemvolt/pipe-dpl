@@ -7,11 +7,13 @@ use app\modules\dol\components\v3\auth\confirmSms\ConfirmSmsHandler;
 use app\modules\dol\components\v3\auth\smsLogOn\SmsLogonHandler;
 use app\modules\dol\components\requestUserProfile\RequestUserProfileHandler;
 use app\modules\dol\components\exceptions\ValidateServerErrors;
+use app\modules\dol\components\v3\auth\smsLogOn\SmsLogonResponse;
 use RuntimeException;
 use DateTime;
 use app\models\phones\Phones;
 use simialbi\yii2\rest\ActiveRecord;
 use Yii;
+use yii\helpers\Json;
 use yii\web\ForbiddenHttpException;
 use yii\web\UnauthorizedHttpException;
 use yii\base\InvalidConfigException;
@@ -104,20 +106,21 @@ class DolAPI extends ActiveRecord {
 	 * @throws InvalidConfigException
 	 * @throws ValidateServerErrors
 	 */
-	public function smsLogon(string $phoneAsLogin):array {
+	public function smsLogon(string $phoneAsLogin):SmsLogonResponse {
 		$phoneFormat = Phones::nationalFormat($phoneAsLogin);
 		if (ArrayHelper::keyExists($phoneAsLogin, $this->_debugPhones)) {
-			return [
+			return new SmsLogonResponse([
 				'success' => true,
 				'smsCodeExpiration' => (new DateTime())->format("Y-m-d H:i:s")
-			];
+			]);
 		}
 
 		$response = $this->doRequest($this->baseUrl.self::METHOD_SMS_LOGON, [
 			'phoneAsLogin' => $phoneFormat
 		]);
 		$handler = new SmsLogonHandler();
-		return $handler->handle($response);
+		$handler->handle($response);
+		return new SmsLogonResponse(Json::decode($response));
 	}
 
 	/**
