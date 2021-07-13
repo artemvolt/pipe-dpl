@@ -3,41 +3,45 @@ declare(strict_types = 1);
 
 namespace app\models\tests;
 
+use app\modules\dol\components\v3\auth\confirmSms\ConfirmSmsResponse;
+use app\modules\dol\components\v3\auth\smsLogOn\SmsLogonResponse;
+use app\modules\dol\models\DolAPIInterface;
+
 /**
  * Class MemoryDolApi
  * @package app\models\tests
  */
-class MemoryDolApi {
+class MemoryDolApi implements DolAPIInterface {
 	public $smses = [];
 	public $smsLogon = [];
 	public $confirmSmsLogon = [];
 
 	/**
 	 * @param string $phone
-	 * @param string $text
+	 * @param string $message
 	 * @return array
 	 */
-	public function sendSms(string $phone, string $text):array {
-		$this->smses[] = compact('phone', 'text');
+	public function sendSms(string $phone, string $message):array {
+		$this->smses[] = compact('phone', 'message');
 		return ['success' => true];
 	}
 
 	/**
-	 * @param string $phone
-	 * @return bool[]
+	 * @param string $phoneAsLogin
+	 * @return SmsLogonResponse
 	 */
-	public function smsLogon(string $phone):array {
-		$this->smsLogon[] = $phone;
-		return ['success' => true];
+	public function smsLogon(string $phoneAsLogin):SmsLogonResponse {
+		$this->smsLogon[] = $phoneAsLogin;
+		return new SmsLogonResponse(['success' => true]);
 	}
 
 	/**
-	 * @param string $phone
-	 * @param string $sms
-	 * @return bool[]
+	 * @param string $phoneAsLogin
+	 * @param string $code
+	 * @return ConfirmSmsResponse
 	 */
-	public function confirmSmsLogon(string $phone, string $sms):array {
-		$this->confirmSmsLogon[] = [$phone, $sms];
-		return ['success' => true];
+	public function confirmSmsLogon(string $phoneAsLogin, string $code):ConfirmSmsResponse {
+		$this->confirmSmsLogon[] = [$phoneAsLogin, $code];
+		return new ConfirmSmsResponse(['success' => true]);
 	}
 }

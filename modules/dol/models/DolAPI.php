@@ -27,7 +27,7 @@ use yii\httpclient\Response;
  * Class DolAPI
  * @property-read DolAuthToken $authToken Объект токена, используемый для подписи запросов
  */
-class DolAPI extends ActiveRecord {
+class DolAPI extends ActiveRecord implements DolAPIInterface {
 	public ?string $baseUrl = null;
 
 	public const METHOD_SMS_LOGON = 'v3/auth/sms-logon';
