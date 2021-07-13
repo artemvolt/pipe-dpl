@@ -18,9 +18,9 @@ abstract class Response {
 
 	/**
 	 * @param string $json
-	 * @return array
+	 * @return static
 	 */
-	public static function fromJsonString(string $json):array {
+	public static function fromJsonString(string $json) {
 		$class = static::class;
 		return new $class(Json::decode($json));
 	}
