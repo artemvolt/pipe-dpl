@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 namespace app\models\phones\active_record;
 
+use app\modules\history\behaviors\HistoryBehavior;
 use pozitronik\helpers\DateHelper;
 use yii\db\ActiveRecord;
 
@@ -22,6 +23,17 @@ class PhonesAR extends ActiveRecord {
 	 */
 	public static function tableName():string {
 		return 'phones';
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function behaviors():array {
+		return [
+			'history' => [
+				'class' => HistoryBehavior::class
+			]
+		];
 	}
 
 	/**

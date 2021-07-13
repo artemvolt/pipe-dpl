@@ -4,6 +4,7 @@ declare(strict_types = 1);
 namespace app\models\products\active_record;
 
 use app\components\db\ActiveRecordTrait;
+use app\modules\history\behaviors\HistoryBehavior;
 use yii\db\ActiveRecord;
 
 /**
@@ -21,6 +22,17 @@ class SimCardAR extends ActiveRecord {
 	 */
 	public static function tableName():string {
 		return 'simcard';
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function behaviors():array {
+		return [
+			'history' => [
+				'class' => HistoryBehavior::class
+			]
+		];
 	}
 
 	/**
