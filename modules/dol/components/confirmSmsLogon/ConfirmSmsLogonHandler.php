@@ -29,7 +29,7 @@ class ConfirmSmsLogonHandler {
 			throw new ServerDomainError("Истекло время ожидания для подтверждение смс. Запросите повторно.");
 		}
 		if (!$content['success']) {
-			throw new NotSuccessError($content['errorMessage']??'Ожидалось другое поведение');
+			throw new NotSuccessError('Ожидалось другое поведение');
 		}
 		return $content;
 	}

@@ -155,9 +155,10 @@ class LoginSMSForm extends LoginForm {
 			}
 		} catch (ValidateServerErrors $e) {
 			$this->addError('smsCode', $e->getErrorsInOneRow());
-		} catch (ServerDomainError | NotSuccessError $e) {
+		} catch (ServerDomainError $e) {
 			$this->addError('smsCode', $e->getMessage());
-		} catch (ForbiddenHttpException | UnauthorizedHttpException $e) {
+		} catch (ForbiddenHttpException | UnauthorizedHttpException | NotSuccessError $e) {
+			Yii::error($e);
 			$this->addError('login', $e->getMessage());
 		}
 

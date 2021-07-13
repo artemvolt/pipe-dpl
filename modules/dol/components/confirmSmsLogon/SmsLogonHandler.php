@@ -24,7 +24,7 @@ class SmsLogonHandler {
 		BaseHandler::existKeyInResponse('success', $content);
 		BaseHandler::existKeyInResponse('smsCodeExpiration', $content);
 		if (!$content['success']) {
-			throw new NotSuccessError($content['errorMessage']??'Ожидалось другое поведение');
+			throw new NotSuccessError('Ожидалось другое поведение');
 		}
 		return $content;
 	}
