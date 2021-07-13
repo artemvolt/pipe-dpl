@@ -160,6 +160,7 @@ class LoginSMSForm extends LoginForm {
 		} catch (ForbiddenHttpException | UnauthorizedHttpException $e) {
 			$this->addError('login', $e->getMessage());
 		}
+
 		return false;
 	}
 

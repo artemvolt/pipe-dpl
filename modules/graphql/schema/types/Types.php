@@ -31,6 +31,7 @@ class Types {
 	private static ?ProfileType $profile = null;
 
 	private static ?SellerInviteLinkType $sellerInviteLinkType = null;
+	private static ?SellerMiniConfirmSmsType $sellerMiniConfirmSms = null;
 
 	/**
 	 * Запрос
@@ -112,5 +113,12 @@ class Types {
 	 */
 	public static function sellerInviteLink():SellerInviteLinkType {
 		return static::$sellerInviteLinkType?:static::$sellerInviteLinkType = new SellerInviteLinkType();
+	}
+
+	/**
+	 * @return SellerMiniConfirmSmsType
+	 */
+	public static function sellerConfirmSms():SellerMiniConfirmSmsType {
+		return static::$sellerMiniConfirmSms?:static::$sellerMiniConfirmSms = new SellerMiniConfirmSmsType();
 	}
 }

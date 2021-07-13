@@ -8,6 +8,8 @@ use app\modules\dol\components\confirmSmsLogon\SmsLogonHandler;
 use app\modules\dol\components\requestUserProfile\RequestUserProfileHandler;
 use app\modules\dol\components\exceptions\ValidateServerErrors;
 use RuntimeException;
+use DateTime;
+use app\models\phones\Phones;
 use simialbi\yii2\rest\ActiveRecord;
 use Yii;
 use yii\web\ForbiddenHttpException;
@@ -63,7 +65,7 @@ class DolAPI extends ActiveRecord {
 	 * @throws HttpClientException
 	 * @throws InvalidConfigException
 	 */
-	private function doRequest(string $url, array $data = [], string $method = 'POST'):Response {
+	protected function doRequest(string $url, array $data = [], string $method = 'POST'):Response {
 		$client = new Client([
 			'transport' => CurlTransport::class
 		]);
@@ -97,21 +99,23 @@ class DolAPI extends ActiveRecord {
 
 	/**
 	 * @param string $phoneAsLogin
-	 * @return bool
+	 * @return string
 	 * @throws HttpClientException
 	 * @throws InvalidConfigException
 	 * @throws ValidateServerErrors
 	 */
-	public function smsLogon(string $phoneAsLogin):bool {
+	public function smsLogon(string $phoneAsLogin):string {
+		$phoneFormat = Phones::nationalFormat($phoneAsLogin);
 		if (ArrayHelper::keyExists($phoneAsLogin, $this->_debugPhones)) {
-			return true;
+			return (new DateTime())->format("Y-m-d H:i:s");
 		}
+
 		$response = $this->doRequest($this->baseUrl.self::METHOD_SMS_LOGON, [
-			'phoneAsLogin' => $phoneAsLogin
+			'phoneAsLogin' => $phoneFormat
 		]);
 		$handler = new SmsLogonHandler();
-		$handler->handle($response);
-		return true;
+		$content = $handler->handle($response);
+		return $content['smsCodeExpiration'];
 	}
 
 	/**
@@ -123,10 +127,11 @@ class DolAPI extends ActiveRecord {
 	 * @throws ValidateServerErrors
 	 */
 	public function confirmSmsLogon(string $phoneAsLogin, string $code):array {
+		$phoneFormat = Phones::nationalFormat($phoneAsLogin);
 		if ($code === ArrayHelper::getValue($this->_debugPhones, $phoneAsLogin)) {
 			return ['success' => true];
 		}
-		$response = $this->doRequest($this->baseUrl.self::METHOD_CONFIRM_SMS_LOGON, compact('phoneAsLogin', 'code'));
+		$response = $this->doRequest($this->baseUrl.self::METHOD_CONFIRM_SMS_LOGON, compact('phoneFormat', 'code'));
 		$handler = new ConfirmSmsLogonHandler();
 		return $handler->handle($response);
 	}
