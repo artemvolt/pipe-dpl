@@ -51,6 +51,13 @@ class DolAPI extends ActiveRecord {
 	private ?DolAuthToken $_authToken = null;
 
 	/**
+	 * @param DolAuthToken $token
+	 */
+	public function changeAuthToken(DolAuthToken $token):void {
+		$this->_authToken = $token;
+	}
+
+	/**
 	 * @inheritDoc
 	 */
 	public function init():void {

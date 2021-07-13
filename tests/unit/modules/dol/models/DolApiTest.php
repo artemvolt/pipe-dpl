@@ -1,18 +1,23 @@
 <?php
+declare(strict_types = 1);
 
 namespace modules\dol\models;
 
 use app\modules\dol\components\exceptions\ServerDomainError;
 use app\modules\dol\components\exceptions\ValidateServerErrors;
+use app\modules\dol\components\v3\auth\confirmSms\ConfirmSmsResponse;
 use app\modules\dol\models\DolAPI;
 use Codeception\Stub;
 use Codeception\Test\Unit;
 use Exception;
 use Throwable;
 use UnitTester;
-use yii\base\InvalidConfigException;
 use yii\httpclient\Response;
 
+/**
+ * Class DolApiTest
+ * @package modules\dol\models
+ */
 class DolApiTest extends Unit {
 	/**
 	 * @var UnitTester
@@ -100,7 +105,7 @@ class DolApiTest extends Unit {
 			'isTimeout' => false,
 			'errorMessage' => null
 		]);
-		$this->assertNotEmpty($dolApi->confirmSmsLogon("789989", '123'));
+		$this->assertInstanceOf(ConfirmSmsResponse::class, $dolApi->confirmSmsLogon("789989", '123'));
 	}
 
 	/**

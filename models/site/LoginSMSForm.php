@@ -12,6 +12,7 @@ use app\modules\dol\components\exceptions\ValidateServerErrors;
 use app\modules\dol\models\DolAPI;
 use Exception;
 use pozitronik\helpers\DateHelper;
+use Throwable;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\helpers\ArrayHelper;
@@ -133,26 +134,25 @@ class LoginSMSForm extends LoginForm {
 
 	/**
 	 * @return bool
-	 * @throws InvalidConfigException
 	 * @throws HttpException
+	 * @throws InvalidConfigException
+	 * @throws Throwable
 	 */
 	public function doConfirmSmsLogon():bool {
 		//if (!$this->validate()) return false; <== больше не нужно, т.к. валидацией мы отсекали проверку пользователей, отсутствующих в системе.
 		try {
 			$response = $this->dolAPI->confirmSmsLogon($this->_phoneNumber, $this->smsCode);
-			if ($response['success']) {
-				if (null === $this->_user) {/*мы авторизовали в DOL пользователя, которого нет в системе.*/
-					/** Теперь нам с этим токеном надо получить данные этого юзера, и перенести их к нам.*/
-					$this->dolAPI->authToken->loadFromResponseArray($response);
-					$responseData = $this->dolAPI->requestUserProfile();
+			if (null === $this->_user) {/*мы авторизовали в DOL пользователя, которого нет в системе.*/
+				/** Теперь нам с этим токеном надо получить данные этого юзера, и перенести их к нам.*/
+				$this->dolAPI->changeAuthToken($response->getAuthToken());
+				$responseData = $this->dolAPI->requestUserProfile();
 
-					if (!$this->createUserFromDol($responseData)) {/*сразу генерим себе пользователя*/
-						$this->addError('login', TemporaryHelper::Errors2String($this->_user->errors));
-						return false;
-					}
+				if (!$this->createUserFromDol($responseData)) {/*сразу генерим себе пользователя*/
+					$this->addError('login', TemporaryHelper::Errors2String($this->_user->errors));
+					return false;
 				}
-				return Yii::$app->user->login($this->_user, $this->rememberMe?DateHelper::SECONDS_IN_MONTH:0);
 			}
+			return Yii::$app->user->login($this->_user, $this->rememberMe?DateHelper::SECONDS_IN_MONTH:0);
 		} catch (ValidateServerErrors $e) {
 			$this->addError('smsCode', $e->getErrorsInOneRow());
 		} catch (ServerDomainError $e) {
