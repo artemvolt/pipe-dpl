@@ -21,8 +21,6 @@ use yii\httpclient\Response;
 
 /**
  * Class DolAPI
- * @property-read null|bool $success Last operation response status
- * @property-read string $errorMessage Last operation error message
  * @property-read DolAuthToken $authToken Объект токена, используемый для подписи запросов
  */
 class DolAPI extends ActiveRecord {
@@ -32,16 +30,6 @@ class DolAPI extends ActiveRecord {
 	public const METHOD_CONFIRM_SMS_LOGON = 'v3/auth/confirm-sms';
 	public const METHOD_REFRESH = 'v3/auth/refresh';
 	public const METHOD_USER = 'v3/auth/user';
-
-	/**
-	 * @var bool|null
-	 */
-	public ?bool $success = null;
-
-	/**
-	 * @var string
-	 */
-	public string $errorMessage = '';
 
 	/**
 	 * @var array
