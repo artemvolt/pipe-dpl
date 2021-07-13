@@ -150,7 +150,6 @@ class DolAPI extends ActiveRecord {
 	 * @return array
 	 * @throws HttpClientException
 	 * @throws InvalidConfigException
-	 * @throws ValidateServerErrors
 	 * @throws ForbiddenHttpException
 	 * @throws UnauthorizedHttpException
 	 */
