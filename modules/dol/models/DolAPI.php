@@ -5,6 +5,8 @@ namespace app\modules\dol\models;
 
 use app\modules\dol\components\v3\auth\confirmSms\ConfirmSmsHandler;
 use app\modules\dol\components\v3\auth\confirmSms\ConfirmSmsResponse;
+use app\modules\dol\components\v3\auth\register\CheckCodeHandler;
+use app\modules\dol\components\v3\auth\register\CheckCodeResponse;
 use app\modules\dol\components\v3\auth\register\RegisterHandler;
 use app\modules\dol\components\v3\auth\register\RegisterResponse;
 use app\modules\dol\components\v3\auth\smsLogOn\SmsLogonHandler;
@@ -192,5 +194,25 @@ class DolAPI extends ActiveRecord implements DolAPIInterface {
 		$response = $this->doRequest("/api/v3/auth/register", ['phoneAsLogin' => $phoneFormat]);
 		(new RegisterHandler())->handle($response);
 		return RegisterResponse::fromJsonString($response->content);
+	}
+
+	/**
+	 * @param string $phoneAsLogin
+	 * @param string $code
+	 * @param string $verificationToken
+	 * @return CheckCodeResponse
+	 * @throws HttpClientException
+	 * @throws InvalidConfigException
+	 * @throws ValidateServerErrors
+	 */
+	public function checkCode(string $phoneAsLogin, string $code, string $verificationToken):CheckCodeResponse {
+		$phoneFormat = Phones::nationalFormat($phoneAsLogin);
+		$response = $this->doRequest('/api/v3/auth/register/check-code', [
+			'phoneAsLogin' => $phoneFormat,
+			'code' => $code,
+			'verificationToken' => $verificationToken
+		]);
+		(new CheckCodeHandler())->handle($response);
+		return CheckCodeResponse::fromJsonString($response->content);
 	}
 }
