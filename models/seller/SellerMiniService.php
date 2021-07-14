@@ -239,4 +239,18 @@ class SellerMiniService {
 		$invite->deleteByPhone($form->phone_number);
 		return true;
 	}
+
+	/**
+	 * @param ConfirmSmsAfterRegisterForm $form
+	 * @throws HttpException
+	 * @throws InvalidConfigException
+	 * @throws ValidateException
+	 * @throws ValidateServerErrors
+	 */
+	public function confirmSmsAfterRegister(ConfirmSmsAfterRegisterForm $form):void {
+		if (!$form->validate()) {
+			throw new ValidateException($form->getErrors());
+		}
+		$this->dol->checkCode($form->phoneNumber, $form->smsCode, $form->verificationCode);
+	}
 }

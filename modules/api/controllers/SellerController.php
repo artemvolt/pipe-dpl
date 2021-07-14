@@ -3,6 +3,8 @@ declare(strict_types = 1);
 
 namespace app\modules\api\controllers;
 
+use app\components\exceptions\ValidateException;
+use app\models\seller\ConfirmSmsAfterRegisterForm;
 use app\models\seller\RegisterMiniSellerForm;
 use app\models\seller\SellerMiniService;
 use app\models\seller\Sellers;
@@ -71,6 +73,31 @@ class SellerController extends Controller {
 				'phoneAsLogin' => 'phone_number'
 			]));
 		}
+	}
 
+	/**
+	 * @return array
+	 * @throws ValidateServerErrors
+	 * @throws ValidateException
+	 */
+	public function actionConfirmSms():array {
+		try {
+			$request = Yii::$app->request;
+			$form = new ConfirmSmsAfterRegisterForm();
+			$form->phoneNumber = $request->post('phone_number');
+			$form->smsCode = $request->post('sms_code');
+			$form->verificationToken = $request->post('verification_token');
+
+			$service = new SellerMiniService();
+			$service->confirmSmsAfterRegister($form);
+
+			return ['data' => ['result' => true]];
+		} catch (ValidateServerErrors $e) {
+			throw new ValidateServerErrors($e->mapErrors([
+				'phoneAsLogin' => 'phoneNumber',
+				'code' => 'smsCode',
+				'verificationToken' => 'verificationToken'
+			]));
+		}
 	}
 }

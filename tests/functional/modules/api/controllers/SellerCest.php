@@ -8,6 +8,7 @@ use app\models\seller\SellerMiniService;
 use app\models\seller\SellersSearch;
 use app\models\tests\MemoryDolApi;
 use app\models\tests\store\StoresTests;
+use app\modules\dol\components\exceptions\ServerDomainError;
 use app\modules\dol\models\DolAPI;
 use Codeception\Stub;
 use yii\helpers\Json;
@@ -60,7 +61,7 @@ class SellerCest {
 		$smss = Yii::$container->get(DolAPI::class);
 
 		$I->assertCount(1, $registerPhones = $smss->register);
-		$I->assertEquals('89061601001', $registerPhones[0]);
+		$I->assertEquals('89061601001', $registerPhones[0]['phone']);
 
 		$I->expectThrowable(ValidateException::class, function() use ($I, $registerUrl, $postData) {
 			$I->sendPost($registerUrl, $postData);
@@ -77,6 +78,40 @@ class SellerCest {
 				"accept_agreement" => true
 			]);
 		});
+	}
+
+	/**
+	 * @param FunctionalTester $I
+	 */
+	public function checkCode(FunctionalTester $I) {
+		Yii::$container->setSingleton(DolAPI::class, function() {
+			return new MemoryDolApi();
+		});
+
+		$service = new SellerMiniService();
+		$form = new RegisterMiniSellerForm();
+		$form->phone_number = $phone = '89055600901';
+		$form->accept_agreement = true;
+		$seller = $service->register($form);
+
+		$I->expectThrowable(ServerDomainError::class, function() use ($I, $phone) {
+			$I->sendPost('/api/seller/confirm-code', [
+				'phone_number' => $phone,
+				'sms' => 444,
+				'token' => Yii::$app->security->generateRandomString()
+			]);
+		});
+
+		$I->sendPost('/api/seller/confirm-code', [
+			'phone_number' => $phone,
+			'sms' => 4444,
+			'verificationToken' => $seller->getVerificationToken()
+		]);
+		$I->seeResponseContainsJson([
+			'data' => [
+				'result' => true
+			]
+		]);
 	}
 
 	/**

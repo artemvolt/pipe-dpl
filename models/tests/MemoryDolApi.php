@@ -8,6 +8,9 @@ use app\modules\dol\components\v3\auth\register\CheckCodeResponse;
 use app\modules\dol\components\v3\auth\register\RegisterResponse;
 use app\modules\dol\components\v3\auth\smsLogOn\SmsLogonResponse;
 use app\modules\dol\models\DolAPIInterface;
+use Yii;
+use yii\base\Exception;
+use yii\helpers\ArrayHelper;
 
 /**
  * Class MemoryDolApi
@@ -52,10 +55,15 @@ class MemoryDolApi implements DolAPIInterface {
 	/**
 	 * @param string $phoneAsLogin
 	 * @return RegisterResponse
+	 * @throws Exception
 	 */
 	public function register(string $phoneAsLogin):RegisterResponse {
-		$this->register[] = $phoneAsLogin;
-		return new RegisterResponse(['success' => true, 'verificationToken' => date('Y-m-d H:i:s', time() + 30)]);
+		$response = new RegisterResponse([
+			'success' => true,
+			'verificationToken' => $token = Yii::$app->security->generateRandomString()
+		]);
+		$this->register[] = ['phone' => $phoneAsLogin, 'token' => $token];
+		return $response;
 	}
 
 	/**
@@ -65,7 +73,14 @@ class MemoryDolApi implements DolAPIInterface {
 	 * @return CheckCodeResponse
 	 */
 	public function checkCode(string $phoneAsLogin, string $code, string $verificationToken):CheckCodeResponse {
-		$this->checkCode[] = [$phoneAsLogin, $code, $verificationToken];
+		$group = ArrayHelper::index($this->register, null, ['phone', 'token']);
+		if (!array_key_exists($phoneAsLogin, $group)) {
+			if (!array_key_exists($verificationToken, $group[$phoneAsLogin])) {
+				return new CheckCodeResponse(['success' => false, 'errorMessage' => 'Не получилось подтвердилось']);
+			}
+			return new CheckCodeResponse(['success' => false, 'errorMessage' => 'Не получилось подтвердилось']);
+		}
+
 		return new CheckCodeResponse(['success' => true]);
 	}
 }
