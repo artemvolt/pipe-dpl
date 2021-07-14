@@ -8,7 +8,7 @@ on:
       - master
 env:
   TEST_DB_DSN: "mysql:host=localhost;dbname=dpl;port=33306"
-  TEST_DB_USER: "root"
+  TEST_DB_USER: "dpl"
   TEST_DB_PASS: "password"
   MYSQL_HOST: 127.0.0.1
   MYSQL_DATABASE: "dpl"
@@ -72,7 +72,7 @@ jobs:
         run: composer migrations
         env:
           TEST_DB_DSN: "mysql:host=localhost;dbname=dpl;port=33306"
-          TEST_DB_USER: "root"
+          TEST_DB_USER: "dpl"
           TEST_DB_PASS: "password"
           MYSQL_HOST: 127.0.0.1
           MYSQL_DATABASE: "dpl"
