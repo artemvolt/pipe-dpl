@@ -19,11 +19,7 @@ jobs:
         image: mysql:8
         ports:
           - 3306:3306
-        options: >-
-          --health-cmd="mysqladmin ping"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=3
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
         env:
           MYSQL_DATABASE: "dpl_db"
           MYSQL_ROOT_PASSWORD: "password"
@@ -39,6 +35,15 @@ jobs:
         run: php -v && composer --version
       - name: Check env
         run: php test-env.php
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+      - name: Cache composer dependencies
+        uses: actions/cache@v1
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
       - name: Install composer dependencies
         run: composer install
       - name: CP CONFIG
