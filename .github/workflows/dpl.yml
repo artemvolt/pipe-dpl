@@ -1,7 +1,13 @@
 name: CI
-on: [ push ]
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
 env:
-  TEST_DB_DSN: "mysql:host=mysql;dbname=dpl_db"
+  TEST_DB_DSN: "mysql:host=mysql_worker;dbname=dpl_db"
   TEST_DB_USER: "root"
   TEST_DB_PASS: "password"
 
@@ -9,8 +15,15 @@ jobs:
   composer:
     runs-on: ubuntu-latest
     services:
-      mysql:
+      mysql_worker:
         image: mysql:8
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
         env:
           MYSQL_DATABASE: "dpl_db"
           MYSQL_ROOT_PASSWORD: "password"
@@ -30,3 +43,9 @@ jobs:
         run: cp config/db_for_test.php config/db.php
       - name: Install migrations
         run: composer migrations
+        env:
+          TEST_DB_DSN: "mysql:host=mysql_worker;dbname=dpl_db"
+          TEST_DB_USER: "root"
+          TEST_DB_PASS: "password"
+          MYSQL_DATABASE: "dpl_db"
+          MYSQL_ROOT_PASSWORD: "password"
