@@ -7,9 +7,13 @@ on:
     branches:
       - master
 env:
-  TEST_DB_DSN: "mysql:host=localhost;dbname=dpl_db;port=33306"
-  TEST_DB_USER: "root"
-  TEST_DB_PASS: "password"
+  TEST_DB_DSN: "mysql:host=localhost;dbname=dpl;port=33306"
+  TEST_DB_USER: "dpl"
+  TEST_DB_PASS: "dpl"
+  MYSQL_DATABASE: "dpl"
+  MYSQL_USER: dpl
+  MYSQL_PASSWORD: dpl
+  MYSQL_ROOT_PASSWORD: "password"
 
 jobs:
   composer:
@@ -21,7 +25,9 @@ jobs:
         ports:
           - 33306:3306
         env:
-          MYSQL_DATABASE: "dpl_db"
+          MYSQL_DATABASE: "dpl"
+          MYSQL_USER: dpl
+          MYSQL_PASSWORD: dpl
           MYSQL_ROOT_PASSWORD: "password"
     steps:
       - uses: actions/checkout@v2
@@ -55,8 +61,8 @@ jobs:
       - name: Install migrations
         run: composer migrations
         env:
-          TEST_DB_DSN: "mysql:host=localhost;dbname=dpl_db;port=33306"
-          TEST_DB_USER: "root"
-          TEST_DB_PASS: "password"
-          MYSQL_DATABASE: "dpl_db"
+          TEST_DB_DSN: "mysql:host=localhost;dbname=dpl;port=33306"
+          TEST_DB_USER: "dpl"
+          TEST_DB_PASS: "dpl"
+          MYSQL_DATABASE: "dpl"
           MYSQL_ROOT_PASSWORD: "password"
