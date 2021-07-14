@@ -82,6 +82,6 @@ jobs:
           MYSQL_PASSWORD: dpl
           MYSQL_ROOT_PASSWORD: "password"
       - name: Prepare test
-        run: cp tests/.env.example tests/.env
+        run: cp tests/.env.sample tests/.env
       - name: Run tests
         run: composer tests
