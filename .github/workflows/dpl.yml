@@ -18,7 +18,6 @@ env:
 jobs:
   composer:
     runs-on: ubuntu-latest
-    container: ubuntu:18
     services:
       mysql:
         image: mysql:8
