@@ -19,7 +19,7 @@ use yii\base\Model;
 class RegisterMiniSellerForm extends Model {
 
 	public ?string $phone_number = null;
-	public bool $accept_agreement = false;
+	public ?bool $accept_agreement = false;
 
 	/**
 	 * @inheritDoc

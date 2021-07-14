@@ -1,5 +1,6 @@
 <?php
 declare(strict_types = 1);
+use app\components\exceptions\ValidateException;
 use app\models\seller\invite_link\CreateSellerInviteLinkForm;
 use app\models\seller\RegisterMiniSellerForm;
 use app\models\seller\SellerInviteLinkSearch;
@@ -9,6 +10,7 @@ use app\models\tests\MemoryDolApi;
 use app\models\tests\store\StoresTests;
 use app\modules\dol\models\DolAPI;
 use Codeception\Stub;
+use yii\helpers\Json;
 use yii\httpclient\Response;
 
 /**
@@ -23,28 +25,19 @@ class SellerCest {
 			return new MemoryDolApi();
 		});
 
-		$I->sendGraphQlRequest($mutation = '
-mutation {
-    seller {
-    	register(phone_number: "89061601001", accept_agreement: true) {
-    		...on Response{
-    			result,
-                message,
-                errors{field, messages}
-    		}
-    	}
-    }
-}
-');
+		$I->sendPost($registerUrl = '/api/seller/register', $postData = [
+			'phone_number' => "89061601001",
+			"accept_agreement" => true
+		]);
+
 		$I->seeResponseContainsJson([
 			'data' => [
-				'seller' => [
-					'register' => [
-						'result' => true
-					]
-				]
+				'result' => true
 			]
 		]);
+		$response = Json::decode($I->grabResponse());
+		$I->assertArrayHasKey('expiredAt', $response['data']);
+		$I->assertNotEmpty($response['data']['expiredAt']);
 
 		$search = new SellersSearch();
 		$I->assertCount(1, $sellers = $search->findAllRows());
@@ -66,50 +59,24 @@ mutation {
 		 */
 		$smss = Yii::$container->get(DolAPI::class);
 
-		$I->assertCount(1, $logOn = $smss->smsLogon);
-		$I->assertEquals('89061601001', $logOn[0]);
+		$I->assertCount(1, $registerPhones = $smss->register);
+		$I->assertEquals('89061601001', $registerPhones[0]);
 
-		$I->sendGraphQlRequest($mutation);
-		$I->seeResponseContainsJson([
-			'data' => [
-				'seller' => [
-					'register' => [
-						'result' => false
-					]
-				]
-			]
-		]);
+		$I->expectThrowable(ValidateException::class, function() use ($I, $registerUrl, $postData) {
+			$I->sendPost($registerUrl, $postData);
+		});
 	}
 
 	/**
 	 * @param FunctionalTester $I
 	 */
 	public function registerMiniWithValidateError(FunctionalTester $I) {
-		$I->sendGraphQlRequest('
-mutation {
-    seller {
-    	register(phone_number: "890616withInvalid", accept_agreement: true) {
-    		...on Response{
-    			result,
-                message,
-                errors{field, messages}
-    		}
-    	}
-    }
-}
-');
-		$I->seeResponseContainsJson([
-			'data' => [
-				'seller' => [
-					'register' => [
-						'result' => false,
-						'errors' => [
-							['field' => 'phone_number'],
-						]
-					]
-				]
-			]
-		]);
+		$I->expectThrowable(ValidateException::class, function() use ($I) {
+			$I->sendPost('/api/seller/register', [
+				'phone_number' => "890616withInvalid",
+				"accept_agreement" => true
+			]);
+		});
 	}
 
 	/**

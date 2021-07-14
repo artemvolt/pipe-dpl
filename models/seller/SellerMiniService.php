@@ -172,16 +172,16 @@ class SellerMiniService {
 	 * @throws StaleObjectException
 	 */
 	public function register(RegisterMiniSellerForm $form):Sellers {
-		if (!$form->validate()) throw new ValidateException($form->errors);
+		if (!$form->validate()) throw new ValidateException($form->getErrors());
 
 		if (!$form->accept_agreement) {
-			throw new DomainException("К сожалению, мы не можем вас зарегистрировать");
+			throw new DomainException("К сожалению, мы не можем вас зарегистрировать. Вы должны дать согласие.");
 		}
 
 		$seller = new Sellers();
 
 		if (!($seller->load(['login' => $form->phone_number], '') && $seller->save())) {
-			throw new ValidateException($seller->errors);
+			throw new ValidateException($seller->getErrors());
 		}
 
 		$additional = Users::createAdditionalAccountForMiniSeller($form->phone_number);
@@ -194,7 +194,8 @@ class SellerMiniService {
 		}
 
 		$seller->changeStatus(Sellers::SELLER_NOT_ACTIVE);
-		$this->dol->smsLogon($form->phone_number);
+		$response = $this->dol->register($form->phone_number);
+		Yii::$app->cache->set('seller_mini_service_register_verification_token', $response->getVerificationToken(), 35);
 		return $seller;
 	}
 
