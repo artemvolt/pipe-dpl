@@ -81,3 +81,5 @@ jobs:
           MYSQL_USER: dpl
           MYSQL_PASSWORD: dpl
           MYSQL_ROOT_PASSWORD: "password"
+      - name: Run tests
+        run: composer tests
