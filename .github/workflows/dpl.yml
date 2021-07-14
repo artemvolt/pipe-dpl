@@ -7,7 +7,7 @@ on:
     branches:
       - master
 env:
-  TEST_DB_DSN: "mysql:host=mysql_worker;dbname=dpl_db"
+  TEST_DB_DSN: "mysql:host=mysql;dbname=dpl_db"
   TEST_DB_USER: "root"
   TEST_DB_PASS: "password"
 
@@ -15,9 +15,11 @@ jobs:
   composer:
     runs-on: ubuntu-latest
     services:
-      mysql_worker:
+      mysql:
         image: mysql:8
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+        ports:
+          - 3306:3306
         env:
           MYSQL_DATABASE: "dpl_db"
           MYSQL_ROOT_PASSWORD: "password"
@@ -49,7 +51,7 @@ jobs:
       - name: Install migrations
         run: composer migrations
         env:
-          TEST_DB_DSN: "mysql:host=mysql_worker;dbname=dpl_db"
+          TEST_DB_DSN: "mysql:host=mysql;dbname=dpl_db"
           TEST_DB_USER: "root"
           TEST_DB_PASS: "password"
           MYSQL_DATABASE: "dpl_db"
