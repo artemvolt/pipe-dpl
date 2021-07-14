@@ -3,6 +3,9 @@ declare(strict_types = 1);
 
 namespace app\modules\api\error;
 
+use app\components\exceptions\ValidateException;
+use app\modules\dol\components\exceptions\ValidateServerErrors;
+use DomainException;
 use Error;
 use Exception;
 use Yii;
@@ -30,16 +33,38 @@ class ErrorHandler extends YiiErrorHandler {
 	 * @return array
 	 */
 	protected function convertExceptionToArray($exception):array {
-		if (!YII_DEBUG && !$exception instanceof UserException && !$exception instanceof HttpException) {
-			$exception = new HttpException(500, 'An internal server error occurred.');
+		$newException = $exception;
+		if (!YII_DEBUG && !$newException instanceof UserException && !$newException instanceof HttpException) {
+			$newException = new HttpException(500, 'An internal server error occurred.');
 		}
 
 		$result = [
-			'error' => $exception instanceof HttpException?$exception->statusCode:$exception->getCode(),
-			'error_description' => $exception->getMessage()
+			'error' => $newException instanceof HttpException?$newException->statusCode:$newException->getCode(),
+			'error_description' => $newException->getMessage()
 		];
+
+		if ($exception instanceof ValidateServerErrors || $exception instanceof ValidateException) {
+			$newException = new HttpException(421, "Ошибка валидации");
+			$outputErrors = [];
+			foreach ($exception->getErrors() as $field => $errorsField) {
+				foreach ($errorsField as $fieldError) {
+					$outputErrors[] = [
+						'field' => $field,
+						'description' => $fieldError
+					];
+				}
+			}
+			$result['errors'] = $outputErrors;
+		}
+
+		if ($exception instanceof DomainException) {
+			$result['errors'] = [
+				['field' => 'phone_number', 'description' => $exception->getMessage()]
+			];
+		}
+
 		if (YII_DEBUG) {
-			$result['debug']['trace'] = $exception->getTraceAsString();
+			$result['debug']['trace'] = $newException->getTraceAsString();
 		}
 		return $result;
 	}

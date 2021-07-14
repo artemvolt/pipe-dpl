@@ -75,7 +75,6 @@
 			"yii\\composer\\Installer::postInstall"
 		],
 		"test": "phpunit",
-		"codeception": "vendor/bin/codecept run",
 		"migrations": [
 			"php yii migrate --migrationPath=@vendor/pozitronik/yii2-users-options/migrations --interactive=0",
 			"php yii migrate --migrationPath=@vendor/pozitronik/yii2-options/migrations --interactive=0",

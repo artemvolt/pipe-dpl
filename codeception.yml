@@ -1,0 +1,25 @@
+paths:
+  tests: tests
+  output: tests/_output
+  data: tests/_data
+  support: tests/_support
+  envs: tests/_envs
+actor_suffix: Tester
+bootstrap: _bootstrap.php
+modules:
+  config:
+    Db:
+      dsn: "%TEST_DB_DSN%"
+      user: "%TEST_DB_USER%"
+      password: "%TEST_DB_PASS%"
+      dump: 'tests/_data/dumps/base_structure.sql'
+      populate: true
+      cleanup: false
+    Yii2:
+      parts: [ orm ]
+      configFile: 'config/test.php'
+params:
+  env: tests/.env
+extensions:
+  enabled:
+    - Codeception\Extension\RunFailed

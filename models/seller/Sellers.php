@@ -58,6 +58,15 @@ class Sellers extends SellersAR {
 	public $visa;
 
 	/**
+	 * После первой регистрации дол возвращает проверочный токен
+	 * который надо передать в метод подтверждения смс
+	 * отдаем его на фронт
+	 *
+	 * @var string|null
+	 */
+	protected ?string $verificationSmsToken = null;
+
+	/**
 	 * {@inheritdoc}
 	 */
 	public function attributeLabels():array {
@@ -203,5 +212,19 @@ class Sellers extends SellersAR {
 				'color' => '#00ff00'
 			]
 		];
+	}
+
+	/**
+	 * @param string $verificationToken
+	 */
+	public function changeVerificationToken(string $verificationToken):void {
+		$this->verificationSmsToken = $verificationToken;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getVerificationToken():string {
+		return $this->verificationSmsToken;
 	}
 }

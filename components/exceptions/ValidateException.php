@@ -35,4 +35,8 @@ class ValidateException extends Exception {
 	public function getErrors():array {
 		return $this->errors;
 	}
+
+	public function mapErrors():array {
+		return $this->errors;
+	}
 }

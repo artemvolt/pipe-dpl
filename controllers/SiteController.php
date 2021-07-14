@@ -23,6 +23,7 @@ use yii\web\Response;
 use yii\web\UnauthorizedHttpException;
 use yii2mod\swagger\SwaggerUIRenderer;
 use yii2mod\swagger\OpenAPIRenderer;
+use yii\httpclient\Exception as HttpException;
 
 /**
  * @SWG\Swagger(
@@ -83,6 +84,7 @@ class SiteController extends Controller {
 	/**
 	 * @return string|Response
 	 * @throws InvalidConfigException
+	 * @throws HttpException
 	 */
 	public function actionLoginSms() {
 		$model = new LoginSMSForm();
