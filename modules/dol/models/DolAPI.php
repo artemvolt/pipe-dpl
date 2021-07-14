@@ -5,6 +5,8 @@ namespace app\modules\dol\models;
 
 use app\modules\dol\components\v3\auth\confirmSms\ConfirmSmsHandler;
 use app\modules\dol\components\v3\auth\confirmSms\ConfirmSmsResponse;
+use app\modules\dol\components\v3\auth\register\RegisterHandler;
+use app\modules\dol\components\v3\auth\register\RegisterResponse;
 use app\modules\dol\components\v3\auth\smsLogOn\SmsLogonHandler;
 use app\modules\dol\components\requestUserProfile\RequestUserProfileHandler;
 use app\modules\dol\components\exceptions\ValidateServerErrors;
@@ -176,5 +178,19 @@ class DolAPI extends ActiveRecord implements DolAPIInterface {
 	public function sendSms(string $phone, string $message):array {
 		if (YII_DEBUG || YII_ENV_TEST) return ["success" => true, 'phone' => $phone, 'message' => $message];
 		throw new RuntimeException("Realize this method");
+	}
+
+	/**
+	 * @param string $phoneAsLogin
+	 * @return RegisterResponse
+	 * @throws HttpClientException
+	 * @throws InvalidConfigException
+	 * @throws ValidateServerErrors
+	 */
+	public function register(string $phoneAsLogin):RegisterResponse {
+		$phoneFormat = Phones::nationalFormat($phoneAsLogin);
+		$response = $this->doRequest("/api/v3/auth/register", ['phoneAsLogin' => $phoneFormat]);
+		(new RegisterHandler())->handle($response);
+		return RegisterResponse::fromJsonString($response->content);
 	}
 }

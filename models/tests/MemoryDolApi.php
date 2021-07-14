@@ -4,6 +4,7 @@ declare(strict_types = 1);
 namespace app\models\tests;
 
 use app\modules\dol\components\v3\auth\confirmSms\ConfirmSmsResponse;
+use app\modules\dol\components\v3\auth\register\RegisterResponse;
 use app\modules\dol\components\v3\auth\smsLogOn\SmsLogonResponse;
 use app\modules\dol\models\DolAPIInterface;
 
@@ -15,6 +16,7 @@ class MemoryDolApi implements DolAPIInterface {
 	public $smses = [];
 	public $smsLogon = [];
 	public $confirmSmsLogon = [];
+	public $register = [];
 
 	/**
 	 * @param string $phone
@@ -43,5 +45,10 @@ class MemoryDolApi implements DolAPIInterface {
 	public function confirmSmsLogon(string $phoneAsLogin, string $code):ConfirmSmsResponse {
 		$this->confirmSmsLogon[] = [$phoneAsLogin, $code];
 		return new ConfirmSmsResponse(['success' => true]);
+	}
+
+	public function register(string $phoneAsLogin):RegisterResponse {
+		$this->register[] = $phoneAsLogin;
+		return new RegisterResponse(['success' => true, 'verificationToken' => date('Y-m-d H:i:s', time() + 30)]);
 	}
 }
