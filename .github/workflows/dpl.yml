@@ -30,11 +30,11 @@ jobs:
         with:
           php-version: '7.4'
           tools: composer:v2
-          extensions: imagick
-      - name: Set up MySQL
-        run: |
-          sudo /etc/init.d/mysql start
-          mysql -e 'CREATE DATABASE dpl_db;' -h127.0.0.1 -uroot -ppassword
+          extensions: imagick, mysql
+      #      - name: Set up MySQL
+      #        run: |
+      #          sudo /etc/init.d/mysql start
+      #          mysql -e 'CREATE DATABASE dpl_db;' -h127.0.0.1 -uroot -ppassword
       - name: Check php and composer
         run: php -v && composer --version
       - name: Check env
