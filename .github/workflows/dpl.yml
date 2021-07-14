@@ -8,8 +8,8 @@ on:
       - master
 env:
   TEST_DB_DSN: "mysql:host=localhost;dbname=dpl;port=33306"
-  TEST_DB_USER: "dpl"
-  TEST_DB_PASS: "dpl"
+  TEST_DB_USER: "root"
+  TEST_DB_PASS: "password"
   MYSQL_HOST: 127.0.0.1
   MYSQL_DATABASE: "dpl"
   MYSQL_USER: dpl
@@ -42,6 +42,7 @@ jobs:
       - name: Set up MySQL
         run: |
           sudo /etc/init.d/mysql start
+          mysql -e 'CREATE DATABASE dpl;'-udpl -pdpl --port=33306
         env:
           TEST_DB_DSN: "mysql:host=localhost;dbname=dpl;port=33306"
           TEST_DB_USER: "dpl"
@@ -72,8 +73,8 @@ jobs:
         run: composer migrations
         env:
           TEST_DB_DSN: "mysql:host=localhost;dbname=dpl;port=33306"
-          TEST_DB_USER: "dpl"
-          TEST_DB_PASS: "dpl"
+          TEST_DB_USER: "root"
+          TEST_DB_PASS: "password"
           MYSQL_HOST: 127.0.0.1
           MYSQL_DATABASE: "dpl"
           MYSQL_USER: dpl
