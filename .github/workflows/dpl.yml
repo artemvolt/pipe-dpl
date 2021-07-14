@@ -31,10 +31,6 @@ jobs:
           php-version: '7.4'
           tools: composer:v2
           extensions: imagick
-      - name: Set up MySQL
-        run: |
-          sudo /etc/init.d/mysql start
-          mysql -e 'CREATE DATABASE ${{ env.MYSQL_DATABASE }};' -uroot -p${{ env.MYSQL_ROOT_PASSWORD }}
 
       - name: Check php and composer
         run: php -v && composer --version
