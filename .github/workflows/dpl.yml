@@ -5,16 +5,15 @@ env:
   TEST_DB_USER: "root"
   TEST_DB_PASS: "password"
 
-services:
-  mysql:
-    image: mysql:8
-    env:
-      MYSQL_DATABASE: "dpl_db"
-      MYSQL_ROOT_PASSWORD: "password"
-
 jobs:
   composer:
     runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8
+        env:
+          MYSQL_DATABASE: "dpl_db"
+          MYSQL_ROOT_PASSWORD: "password"
     steps:
       - uses: actions/checkout@v2
       - name: Setup PHP with PECL extension

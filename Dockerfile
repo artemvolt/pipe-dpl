@@ -1,4 +1,4 @@
-#FROM alpine:3.14 
+#FROM alpine:3.14
 FROM harbor.vimpelcom.ru/dockerhub/library/alpine:3.14
 RUN apk --no-cache add \
   curl \
