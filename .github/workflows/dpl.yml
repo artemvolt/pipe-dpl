@@ -34,7 +34,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Set dirs
-        run: mkdir web/assets && chmod -R web/assets && chmod 777 runtime
+        run: |
+          mkdir web/assets
+          chmod -R web/assets
+          chmod 777 runtime
       - name: Setup PHP with PECL extension
         uses: shivammathur/setup-php@v2
         with:
