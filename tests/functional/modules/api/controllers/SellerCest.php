@@ -82,6 +82,7 @@ class SellerCest {
 
 	/**
 	 * @param FunctionalTester $I
+	 * @skip
 	 */
 	public function checkCode(FunctionalTester $I) {
 		Yii::$container->setSingleton(DolAPI::class, function() {
