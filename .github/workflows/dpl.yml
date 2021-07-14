@@ -24,3 +24,7 @@ jobs:
           extensions: imagick
       - name: Check php and composer
         run: php -v && composer --version
+      - name: Install composer dependencies
+        run: composer install
+      - name: CP CONFIG
+        run: cp config/db_for_test.php config/db.php
