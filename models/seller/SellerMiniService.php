@@ -195,7 +195,7 @@ class SellerMiniService {
 
 		$seller->changeStatus(Sellers::SELLER_NOT_ACTIVE);
 		$response = $this->dol->register($form->phone_number);
-		Yii::$app->cache->set('seller_mini_service_register_verification_token', $response->getVerificationToken(), 35);
+		$seller->changeVerificationToken($response->getVerificationToken());
 		return $seller;
 	}
 

@@ -5,6 +5,7 @@ namespace app\modules\api\controllers;
 
 use app\models\seller\RegisterMiniSellerForm;
 use app\models\seller\SellerMiniService;
+use app\models\seller\Sellers;
 use app\modules\dol\components\exceptions\ValidateServerErrors;
 use DateTime;
 use Throwable;
@@ -48,18 +49,28 @@ class SellerController extends Controller {
 			$form = new RegisterMiniSellerForm();
 			$form->phone_number = $request->post('phone_number');
 			$form->accept_agreement = (bool)$request->post('accept_agreement', false);
-			Yii::$app->db->transaction(function() use ($form) {
+			/**
+			 * @var Sellers $registeredSeller
+			 */
+			$registeredSeller = Yii::$app->db->transaction(function() use ($form) {
 				$service = new SellerMiniService();
-				$service->register($form);
+				return $service->register($form);
 			});
+
+			$time = new DateTime();
+			$time->modify('+30 seconds');
+			return [
+				'data' => [
+					'result' => true,
+					'expiredAt' => $time->format('Y-m-d\TH:i:sO'),
+					'verificationToken' => $registeredSeller->getVerificationToken()
+				]
+			];
 		} catch (ValidateServerErrors $e) {
 			throw new ValidateServerErrors($e->mapErrors([
 				'phoneAsLogin' => 'phone_number'
 			]));
 		}
 
-		$time = new DateTime();
-		$time->modify('+30 seconds');
-		return ['data' => ['result' => true, 'expiredAt' => $time->format('Y-m-d\TH:i:sO')]];
 	}
 }
