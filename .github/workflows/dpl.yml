@@ -37,6 +37,8 @@ jobs:
           extensions: imagick
       - name: Check php and composer
         run: php -v && composer --version
+      - name: Check env
+        run: php test-env.php
       - name: Install composer dependencies
         run: composer install
       - name: CP CONFIG
