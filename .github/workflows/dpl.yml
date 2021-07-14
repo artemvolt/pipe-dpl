@@ -7,7 +7,7 @@ on:
     branches:
       - master
 env:
-  TEST_DB_DSN: "mysql:host=mysql;dbname=dpl_db;port=33306"
+  TEST_DB_DSN: "mysql:host=localhost;dbname=dpl_db;port=33306"
   TEST_DB_USER: "root"
   TEST_DB_PASS: "password"
 
@@ -55,7 +55,7 @@ jobs:
       - name: Install migrations
         run: composer migrations
         env:
-          TEST_DB_DSN: "mysql:host=mysql;dbname=dpl_db;port=33306"
+          TEST_DB_DSN: "mysql:host=localhost;dbname=dpl_db;port=33306"
           TEST_DB_USER: "root"
           TEST_DB_PASS: "password"
           MYSQL_DATABASE: "dpl_db"
