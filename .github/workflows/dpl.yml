@@ -10,6 +10,7 @@ env:
   TEST_DB_DSN: "mysql:host=localhost;dbname=dpl;port=33306"
   TEST_DB_USER: "dpl"
   TEST_DB_PASS: "dpl"
+  MYSQL_HOST: 127.0.0.1
   MYSQL_DATABASE: "dpl"
   MYSQL_USER: dpl
   MYSQL_PASSWORD: dpl
@@ -25,6 +26,7 @@ jobs:
         ports:
           - 33306:3306
         env:
+          MYSQL_HOST: 127.0.0.1
           MYSQL_DATABASE: "dpl"
           MYSQL_USER: dpl
           MYSQL_PASSWORD: dpl
@@ -41,6 +43,15 @@ jobs:
         run: |
           sudo /etc/init.d/mysql start
           mysql -e 'CREATE DATABASE dpl;'-udpl -pdpl
+        env:
+          TEST_DB_DSN: "mysql:host=localhost;dbname=dpl;port=33306"
+          TEST_DB_USER: "dpl"
+          TEST_DB_PASS: "dpl"
+          MYSQL_HOST: 127.0.0.1
+          MYSQL_DATABASE: "dpl"
+          MYSQL_USER: dpl
+          MYSQL_PASSWORD: dpl
+          MYSQL_ROOT_PASSWORD: "password"
       - name: Check php and composer
         run: php -v && composer --version
       - name: Check env
@@ -64,5 +75,8 @@ jobs:
           TEST_DB_DSN: "mysql:host=localhost;dbname=dpl;port=33306"
           TEST_DB_USER: "dpl"
           TEST_DB_PASS: "dpl"
+          MYSQL_HOST: 127.0.0.1
           MYSQL_DATABASE: "dpl"
+          MYSQL_USER: dpl
+          MYSQL_PASSWORD: dpl
           MYSQL_ROOT_PASSWORD: "password"
