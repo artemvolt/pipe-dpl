@@ -18,7 +18,7 @@ env:
 jobs:
   composer:
     runs-on: ubuntu-latest
-    container: ununtu:latest
+    container: node:10.16-jessie
     services:
       mysql:
         image: mysql:8
