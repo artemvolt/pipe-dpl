@@ -75,3 +75,7 @@ jobs:
         run: cp tests/.env.ci tests/.env
       - name: Run tests
         run: composer tests
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to prod
