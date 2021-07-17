@@ -4,6 +4,7 @@ on:
     branches:
       - master
   pull_request:
+    types: [ closed ]
     branches:
       - master
 env:
@@ -18,6 +19,7 @@ env:
 
 jobs:
   build:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     services:
       mysql:
@@ -38,46 +40,3 @@ jobs:
           php-version: '8.0'
           tools: composer:v2
           extensions: imagick, mysql
-      - name: Set up MySQL
-        run: |
-          sudo /etc/init.d/mysql start
-      - name: Check MySQL
-        run: mysql -h127.0.0.1 --port 33306 -uroot -ppassword -e 'CREATE DATABASE IF NOT EXISTS dpl;'
-        env:
-          TEST_DB_DSN: "mysql:host=localhost;dbname=dpl;port=33306"
-          TEST_DB_USER: "dpl"
-          TEST_DB_PASS: "dpl"
-          MYSQL_HOST: 127.0.0.1
-          MYSQL_DATABASE: "dpl"
-          MYSQL_USER: dpl
-          MYSQL_PASSWORD: dpl
-          MYSQL_ROOT_PASSWORD: "password"
-      - name: Check php and composer
-        run: php -v && composer --version
-      - name: Check env
-        run: php test-env.php
-      - name: Get composer cache directory
-        id: composer-cache
-        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
-      - name: Cache composer dependencies
-        uses: actions/cache@v1
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
-          restore-keys: ${{ runner.os }}-composer-
-      - name: Install composer dependencies
-        run: composer install
-      - name: CP CONFIG
-        run: cp config/db.ci.php config/db.php
-      - name: Install migrations
-        run: composer migrations
-      - name: Prepare test
-        run: cp tests/.env.ci tests/.env
-      - name: Run tests
-        run: composer tests
-  deploy:
-    runs-on: ubuntu-latest
-    needs: [ build ]
-    steps:
-      - name: Deploy to prod
-        run: echo 'hello'
