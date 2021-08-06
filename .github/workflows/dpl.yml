@@ -19,8 +19,7 @@ env:
 
 jobs:
   build:
-    if: github.event.pull_request.merged == true || (github.event_name == 'push' && github.event.push.ref == 'refs/heads/master')
     runs-on: ubuntu-latest
     steps:
       - name: Output base_ref
-        run: echo ${{github.event_name}} ${{ toJson(github.event) }}
+        run: echo ${{github.event.pull_request.merged}} ${{github.event_name}} ${{github.event.push.ref}} ${{ toJson(github.event) }}
