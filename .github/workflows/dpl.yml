@@ -19,6 +19,7 @@ env:
 
 jobs:
   build:
+    if: github.event.pull_request.merged == true || (github.event_name == 'push' && github.event.push.ref == 'refs/heads/master')
     runs-on: ubuntu-latest
     steps:
       - name: Output base_ref
