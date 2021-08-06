@@ -22,4 +22,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Output base_ref
-        run: echo ${{ toJson(github.event.pull_request) }} ${{ github.event_name }} ${{ github.event.push.ref }} ${{ toJson(github.even.push) }}
+        run: echo ${{ toJson(github.event.pull_request) }} ${{ github.event_name }} ${{ github.event.push.ref }} ${{ toJson(github.event.push) }}
