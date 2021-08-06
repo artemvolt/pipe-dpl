@@ -19,7 +19,6 @@ env:
 
 jobs:
   build:
-    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     services:
       mysql:
@@ -28,15 +27,5 @@ jobs:
         ports:
           - 33306:3306
     steps:
-      - uses: actions/checkout@v2
-      - name: Set dirs
-        run: |
-          mkdir web/assets
-          chmod 777 web/assets
-          chmod 777 runtime
-      - name: Setup PHP with PECL extension
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.0'
-          tools: composer:v2
-          extensions: imagick, mysql
+      - name: Output base_ref
+        run: echo ${{github.event_name}} ${{ toJson(github.event) }}
