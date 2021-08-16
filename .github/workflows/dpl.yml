@@ -26,3 +26,4 @@ jobs:
           echo '1' ${{ toJson(github.event.pull_request) }} ${{ github.event.pull_request }} 
           echo '2' ${{ github.event_name }} ${{ github.event.push.ref }} 
           echo '3' ${{ github.event.push }} ${{ toJson(github.event.push) }}
+          echo '4' ${{ toJson(github.event) }}
